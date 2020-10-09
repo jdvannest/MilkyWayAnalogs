@@ -1,5 +1,5 @@
 import argparse,pickle,sys,os,warnings
-sys.path.append('.')
+sys.path.append('MilkyWayAnalogs/')
 from FormattedPlots.Plots import *
 
 warnings.filterwarnings("ignore")
