@@ -96,5 +96,3 @@ else:
                 sys.stdout.write("\033[F")
                 sys.stdout.write("\033[K")
                 print(''.join(progress))
-
-os.system('mv /Users/jdvannest/Pynbody/SAGA/Plots/*.pdf /Users/jdvannest/Pynbody/SAGA/Plots/pdf/')
