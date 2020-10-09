@@ -2,6 +2,8 @@
 import pickle, sys, argparse, os, datetime
 import numpy as np 
 
+output_path=""
+
 parser = argparse.ArgumentParser(description="Searches Romulus25 for Milky Way Analogs"
                                 +" and identifies their Satellite halos."+
                                 " Outputs pickle files in run directory.", 
@@ -222,13 +224,13 @@ myprint('Closest Large Halos Found',clear=True)
 
 #Output Data Files
 print('Creating Data Files...')
-out = open(f'MilkyWay.{args.definition}.{args.radius}.pickle','wb')
+out = open(output_path + f'MilkyWay.{args.definition}.{args.radius}.pickle','wb')
 pickle.dump(MilkyWays,out)
 out.close()
-out = open(f'Satellite.{args.definition}.{args.radius}.pickle','wb')
+out = open(output_path + f'Satellite.{args.definition}.{args.radius}.pickle','wb')
 pickle.dump(Satellites,out)
 out.close()
-out = open(f'LargeHalos.pickle','wb')
+out = open(output_path + f'LargeHalos.pickle','wb')
 pickle.dump(LargeHalos,out)
 out.close()
 myprint('Data Files Written',clear=True)
@@ -236,8 +238,11 @@ myprint('Data Files Written',clear=True)
 #Update Log File
 print('Updating Log File...')
 now = datetime.datetime.now()
-with open('SAGA.log.txt','r') as log:
-    l = log.readlines()
+try:
+    with open(output_path + 'SAGA.log.txt','r') as log:
+        l = log.readlines()
+except:
+    l = ['Criteria\tMW\tSatellites\tMaxCount\tLastRun','1','2','3','4','1_300','2_300','3_300','4_300']
 
 satcount = []
 for mw in MilkyWays:
@@ -252,7 +257,7 @@ else:
 l[line] = (f'{args.definition}{R}\t{len(MilkyWays)}\t{len(Satellites)}\t'
             +f'{max(satcount)}\t{now.hour}:{now.minute}:{now.second}-'
             +f'{now.month}/{now.day}/{now.year}\n')
-log = open('SAGA.log.txt','w')
+log = open(output_path + 'SAGA.log.txt','w')
 log.writelines(l)
 log.close()
 myprint('Log File Updated',clear=True)
