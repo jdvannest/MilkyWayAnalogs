@@ -112,7 +112,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
         maxy.append(max(m))
         i += 1
 
-    wkbk = xlrd.open_workbook('MilkyWayAnalogs/AdditionalData/M31_Vb.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/M31_Vb.xlsx')
     wk = wkbk.sheet_by_index(0)
 
     mwx = []
@@ -130,7 +130,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
         m31y.append(wk.cell_value(line,4))
         line += 1
 
-    wkbk = xlrd.open_workbook('MilkyWayAnalogs/AdditionalData/other.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/other.xlsx')
     wk = wkbk.sheet_by_index(0)
 
     h148 = []
@@ -179,7 +179,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
         h329y.append(ct)
         i += 1
 
-    wkbk = xlrd.open_workbook('MilkyWayAnalogs/AdditionalData/LumFunc.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/LumFunc.xlsx')
     wk = wkbk.sheet_by_index(0)
     mwx2 = []
     mwy2 = []
@@ -251,7 +251,7 @@ def MassFunction(host,sats,rest,rad,path=''):
         maxy.append(max(m))
         i += 1
 
-    wkbk = xlrd.open_workbook('MilkyWayAnalogs/AdditionalData/MW_M31.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/MW_M31.xlsx')
     wk = wkbk.sheet_by_index(0)
 
     mwx = []
@@ -269,7 +269,7 @@ def MassFunction(host,sats,rest,rad,path=''):
         m31y.append(wk.cell_value(line,4))
         line += 1
 
-    wkbk = xlrd.open_workbook('MilkyWayAnalogs/AdditionalData/other.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/other.xlsx')
     wk = wkbk.sheet_by_index(0)
 
     h148 = []
@@ -427,14 +427,14 @@ def SatelliteCountVsStellarMassVsEnvironment(host,rest,rad,path=''):
         y.append(len(host[h]['Satellites']))
         c.append(host[h]['Closest'][0]/1000.)
     xs,ys = [[],[]]
-    wkbk = xlrd.open_workbook('MilkyWayAnalogs/AdditionalData/NvMst.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/NvMst.xlsx')
     wk = wkbk.sheet_by_index(0)
     line = 0
     while line < 8:
         xs.append(wk.cell_value(line,0))
         ys.append(wk.cell_value(line,2))
         line += 1
-    wkbk2 = xlrd.open_workbook('MilkyWayAnalogs/AdditionalData/JL.xlsx')
+    wkbk2 = xlrd.open_workbook('AdditionalData/JL.xlsx')
     wk2 = wkbk2.sheet_by_index(0)
     xjl,yjl,cjl = [[],[],[]]
     line = 1
