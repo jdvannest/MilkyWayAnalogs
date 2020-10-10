@@ -29,3 +29,7 @@ This script outputs plots (*.png* and *.pdf* files) in the directory ../Plots. T
 The script will prompt the user for a *definition* and *radius* argument (based on the flags explained in the MilkyWayAnalogs.py section) when run. If you want to plot all definitions, simply pass the flag *-a* when running the script.<br />
 The details for the data being plotted, how it's calculated, and how the plot is formatted are defined in the script *FormattedPlots/Plots.py*.<br />
 Comparison Data for the plots is stored in the folder *AdditionalData*.<br />
+
+### Citations
+1: SAGA-I https://arxiv.org/pdf/1705.06743.pdf<br />
+2: SAGA-II https://arxiv.org/pdf/2008.12783.pdf<br />
