@@ -2,7 +2,7 @@
 import pickle, sys, argparse, os, datetime
 import numpy as np 
 
-output_path=""
+output_path="../"
 
 parser = argparse.ArgumentParser(description="Searches Romulus25 for Milky Way Analogs"
                                 +" and identifies their Satellite halos."+

@@ -1,5 +1,4 @@
 import argparse,pickle,sys,os,warnings
-sys.path.append('MilkyWayAnalogs/')
 from FormattedPlots.Plots import *
 
 warnings.filterwarnings("ignore")
@@ -9,8 +8,8 @@ parser = argparse.ArgumentParser(description='', usage='')
 parser.add_argument('-a','--all', dest='all', action='store_true')
 args = parser.parse_args()
 
-datafile_path = ""
-output_path = ""
+datafile_path = "../"
+output_path = "../Plots/"
 
 if not args.all:
     looping = True 
