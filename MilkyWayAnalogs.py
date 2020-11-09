@@ -46,7 +46,7 @@ def wrap(relpos,scale=1,boxsize=25e3):
 
 #Load in Romulus25 and the desired halo properties
 print('Loading Database...')
-os.environ['TANGOS_DB_CONNECTION'] = '/myhome2/users/vannest/data_romulus25.working.db'
+os.environ['TANGOS_DB_CONNECTION'] = '/myhome2/users/munshi/Romulus/data_romulus25.working.db'
 import tangos
 rom = tangos.get_simulation('cosmo25')
 hnum, cen, mvir, rvir, vmag, rmag, kmag, bmag, mstar, csfh, sfr = rom[-1].calculate_all(
