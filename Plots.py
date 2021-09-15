@@ -8,8 +8,8 @@ parser = argparse.ArgumentParser(description='', usage='')
 parser.add_argument('-a','--all', dest='all', action='store_true')
 args = parser.parse_args()
 
-datafile_path = "../"
-output_path = "../Plots/"
+datafile_path = "DataFiles/"
+output_path = "DataFiles/Plots/"
 
 if not args.all:
     looping = True 
