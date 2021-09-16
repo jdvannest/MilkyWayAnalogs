@@ -49,7 +49,7 @@ if not args.all:
     SpecificFrequncyDistance(MW,rest,rad,output_path)
     BinnedSpecificFrequncyStellarMass(MW,rest,rad,output_path)
     BinnedSpecificFrequncyDistance(MW,rest,rad,output_path)
-    T90VsT50(MW,S,rest,rad,output_path)
+    #T90VsT50(MW,S,rest,rad,output_path)
     QuenchedFractionVsEnvironment(MW,S,rest,rad,output_path)
     SAGA_Nsat_Comparison(MW,rest,rad,output_path)
 else:
@@ -86,7 +86,7 @@ else:
             SpecificFrequncyDistance(MW,rest,rad,output_path)
             BinnedSpecificFrequncyStellarMass(MW,rest,rad,output_path)
             BinnedSpecificFrequncyDistance(MW,rest,rad,output_path)
-            T90VsT50(MW,S,rest,rad,output_path)
+            #T90VsT50(MW,S,rest,rad,output_path)
             QuenchedFractionVsEnvironment(MW,S,rest,rad,output_path)
             SAGA_Nsat_Comparison(MW,rest,rad,output_path)
             progress[i] = u'\u2588'

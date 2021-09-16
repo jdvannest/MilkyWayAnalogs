@@ -79,7 +79,7 @@ def SatelliteCountHistogram(host,rest,rad,path=''):
     ax.set_xlabel(r'N$_{sat}$',fontsize=15)
     ax.set_ylabel('Number of Hosts',fontsize=15)
     f.savefig(path+'SatelliteCountHistogram'+'.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'SatelliteCountHistogram'+'.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/SatelliteCountHistogram'+'.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
@@ -112,7 +112,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
         maxy.append(max(m))
         i += 1
 
-    wkbk = xlrd.open_workbook('AdditionalData/M31_Vb.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/M31_Vb.xls')
     wk = wkbk.sheet_by_index(0)
 
     mwx = []
@@ -130,7 +130,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
         m31y.append(wk.cell_value(line,4))
         line += 1
 
-    wkbk = xlrd.open_workbook('AdditionalData/other.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/other.xls')
     wk = wkbk.sheet_by_index(0)
 
     h148 = []
@@ -179,7 +179,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
         h329y.append(ct)
         i += 1
 
-    wkbk = xlrd.open_workbook('AdditionalData/LumFunc.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/LumFunc.xls')
     wk = wkbk.sheet_by_index(0)
     mwx2 = []
     mwy2 = []
@@ -202,10 +202,10 @@ def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
     #ax.plot(m31x,m31y,color='purple',label='M31')
     ax.plot(mwx2,mwy2,color='orange',label='Milky Way')
     ax.plot(m31x2,m31y2,color='purple',label='M31')
-    ax.plot(x,h148y,label='h148',linestyle='--',color='b')
-    ax.plot(x,h229y,label='h229',linestyle='--',color='g')
-    ax.plot(x,h242y,label='h242',linestyle='--',color='r')
-    ax.plot(x,h329y,label='h329',linestyle='--',color='brown')
+    ax.plot(x,h148y,label='Sandra',linestyle='--',color='b')
+    ax.plot(x,h229y,label='Ruth',linestyle='--',color='g')
+    ax.plot(x,h242y,label='Sonia',linestyle='--',color='r')
+    ax.plot(x,h329y,label='Elena',linestyle='--',color='brown')
     ax.plot([-1,0],[-1,0],color='0.5',alpha=.5,label='Rom25')
     ax.set_xlim([-12,-25])
     ax.set_ylim([0,12])
@@ -214,7 +214,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,path=''):
     ax.tick_params(labelsize=12,length=5)
     ax.legend(loc='upper right',prop={'size':12})
     f.savefig(path+'LuminosityFunction'+'.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'LuminosityFunction'+'.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/LuminosityFunction'+'.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def MassFunction(host,sats,rest,rad,path=''):
@@ -251,7 +251,7 @@ def MassFunction(host,sats,rest,rad,path=''):
         maxy.append(max(m))
         i += 1
 
-    wkbk = xlrd.open_workbook('AdditionalData/MW_M31.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/MW_M31.xls')
     wk = wkbk.sheet_by_index(0)
 
     mwx = []
@@ -269,7 +269,7 @@ def MassFunction(host,sats,rest,rad,path=''):
         m31y.append(wk.cell_value(line,4))
         line += 1
 
-    wkbk = xlrd.open_workbook('AdditionalData/other.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/other.xls')
     wk = wkbk.sheet_by_index(0)
 
     h148 = []
@@ -322,10 +322,10 @@ def MassFunction(host,sats,rest,rad,path=''):
     ax.fill_between(x,miny,maxy,color='0.5',alpha=.5)
     ax.plot(mwx,mwy,color='orange',label='Milky Way')
     ax.plot(m31x,m31y,color='purple',label='M31')
-    ax.plot(x,h148y,label='h148',linestyle='--',color='b')
-    ax.plot(x,h229y,label='h229',linestyle='--',color='g')
-    ax.plot(x,h242y,label='h242',linestyle='--',color='r')
-    ax.plot(x,h329y,label='h329',linestyle='--',color='brown')
+    ax.plot(x,h148y,label='Sandra',linestyle='--',color='b')
+    ax.plot(x,h229y,label='Ruth',linestyle='--',color='g')
+    ax.plot(x,h242y,label='Sonia',linestyle='--',color='r')
+    ax.plot(x,h329y,label='Elena',linestyle='--',color='brown')
     ax.plot([-1,0],[-1,0],color='0.5',alpha=.5,label='Rom25')
     ax.set_xlabel(r'Log(M$_{star}$) [M$_{\odot}$]',fontsize=15)
     ax.set_ylabel('N',fontsize=15)
@@ -334,7 +334,7 @@ def MassFunction(host,sats,rest,rad,path=''):
     ax.set_xlim([7,11])
     ax.legend(loc='upper right',prop={'size':12})
     f.savefig(path+'MassFunction'+'.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'MassFunction'+'.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/MassFunction'+'.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def NsatVsEnvironment(host,rest,rad,path=''):
@@ -356,7 +356,7 @@ def NsatVsEnvironment(host,rest,rad,path=''):
     ax.tick_params(direction='in',labelsize=12,length=5)
     ax.scatter(x,y,c='k')
     f.savefig(path+'NsatVsEnvironment.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'NsatVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/NsatVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def LargestSatelliteDistribution(host,sats,rest,rad,path=''):
@@ -376,7 +376,7 @@ def LargestSatelliteDistribution(host,sats,rest,rad,path=''):
     ax.set_ylim([0,10])
     ax.hist(y,x)
     f.savefig(path+'LargestSatelliteDistribution.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'LargestSatelliteDistribution.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/LargestSatelliteDistribution.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def LargestSatelliteVsEnvironment(host,sats,rest,rad,path=''):
@@ -417,7 +417,7 @@ def LargestSatelliteVsEnvironment(host,sats,rest,rad,path=''):
     ax[1].tick_params(labelsize=15,direction='in',length=5,top=True)
     f.subplots_adjust(hspace=0)
     f.savefig(path+'LargestSatelliteVsEnvironment.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'LargestSatelliteVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/LargestSatelliteVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def SatelliteCountVsStellarMassVsEnvironment(host,rest,rad,path=''):
@@ -427,14 +427,14 @@ def SatelliteCountVsStellarMassVsEnvironment(host,rest,rad,path=''):
         y.append(len(host[h]['Satellites']))
         c.append(host[h]['Closest'][0]/1000.)
     xs,ys = [[],[]]
-    wkbk = xlrd.open_workbook('AdditionalData/NvMst.xlsx')
+    wkbk = xlrd.open_workbook('AdditionalData/NvMst.xls')
     wk = wkbk.sheet_by_index(0)
     line = 0
     while line < 8:
         xs.append(wk.cell_value(line,0))
         ys.append(wk.cell_value(line,2))
         line += 1
-    wkbk2 = xlrd.open_workbook('AdditionalData/JL.xlsx')
+    wkbk2 = xlrd.open_workbook('AdditionalData/JL.xls')
     wk2 = wkbk2.sheet_by_index(0)
     xjl,yjl,cjl = [[],[],[]]
     line = 1
@@ -464,7 +464,7 @@ def SatelliteCountVsStellarMassVsEnvironment(host,rest,rad,path=''):
     cbar.set_label(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir}$ $>$ 5*10$^{11}$) [Mpc]',fontsize=20)
     ax.legend(loc='upper left',bbox_to_anchor=(-.03,1.01),prop={'size':14},frameon=False)
     f.savefig(path+'SatelliteCountVsStellarMassVsEnvironment.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
-    f.savefig(path+'SatelliteCountVsStellarMassVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(path+'pdf/SatelliteCountVsStellarMassVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def StellarMassVsOrbitalDistanceVsT90(host,sats,BB,rest,rad,path=''):
@@ -508,7 +508,7 @@ def StellarMassVsOrbitalDistanceVsT90(host,sats,BB,rest,rad,path=''):
     cbar.ax.tick_params(labelsize=15,length=3)
     ax.legend(loc='upper right',prop={'size':15},ncol=1,frameon=False)
     f.savefig(path+'StellarMassVsOrbitalDistanceVsT90.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'StellarMassVsOrbitalDistanceVsT90.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/StellarMassVsOrbitalDistanceVsT90.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def QuenchedFractionVsOrbitalDistance(host,sats,rest,rad,path=''):
@@ -548,7 +548,7 @@ def QuenchedFractionVsOrbitalDistance(host,sats,rest,rad,path=''):
     ax.plot([10**6,10**12],[.5,.5],c='k',linestyle=':',linewidth=.7)
     ax.plot([10**6,10**12],[1,1],c='k',linestyle=':',linewidth=.7)
     f.savefig(path+'QuenchFractionVsOrbitalDistance.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'QuenchFractionVsOrbitalDistance.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/QuenchFractionVsOrbitalDistance.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
@@ -595,7 +595,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
                 c +=1
             r +=1
     f.savefig(path+'StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
@@ -642,7 +642,7 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
                 c +=1
             r +=1
     f.savefig(path+'StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def EnvironmentDistribution(host,rest,rad,path=''):
@@ -670,7 +670,7 @@ def EnvironmentDistribution(host,rest,rad,path=''):
     ax.set_ylabel('N')
     ax.legend(loc='upper right',frameon=False)
     f.savefig(path+'EnvironmentalDistribution.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'EnvironmentalDistribution.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/EnvironmentalDistribution.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def SpecificFrequncyStellarMass(host,rest,rad,path=''):
@@ -691,7 +691,7 @@ def SpecificFrequncyStellarMass(host,rest,rad,path=''):
     ax.set_ylabel(r'S$_{N}$',fontsize=15)
     ax.legend(loc='upper left')
     f.savefig(path+'SpecificFrequencyMass.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
-    f.savefig(path+'SpecificFrequencyMass.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(path+'pdf/SpecificFrequencyMass.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def SpecificFrequncyDistance(host,rest,rad,path=''):
@@ -717,7 +717,7 @@ def SpecificFrequncyDistance(host,rest,rad,path=''):
     ax.set_ylabel(r'S$_{N}$',fontsize=15)
     ax.legend(loc='upper left')
     f.savefig(path+'SpecificFrequencyEnvironment.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
-    f.savefig(path+'SpecificFrequencyEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(path+'pdf/SpecificFrequencyEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
@@ -773,7 +773,7 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
     ax.set_ylabel(r'S$_{N}$',fontsize=15)
     ax.legend(loc='upper left')
     f.savefig(path+'BinnedSpecificFrequencyMass.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
-    f.savefig(path+'BinnedSpecificFrequencyMass.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(path+'pdf/BinnedSpecificFrequencyMass.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
@@ -845,7 +845,7 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
     ax.set_ylabel(r'S$_{N}$',fontsize=15)
     ax.legend(loc='upper left')
     f.savefig(path+'BinnedSpecificFrequencyEnvironment.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
-    f.savefig(path+'BinnedSpecificFrequencyEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(path+'pdf/BinnedSpecificFrequencyEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def T90VsT50(host,sats,rest,rad,path=''):
@@ -906,7 +906,7 @@ def T90VsT50(host,sats,rest,rad,path=''):
     ax[1].tick_params(labelsize=15,direction='in',length=5,top=True)
     f.subplots_adjust(hspace=0)
     f.savefig(path+'T90vsT50.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
-    f.savefig(path+'T90VsT50.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(path+'pdf/T90VsT50.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def QuenchedFractionVsEnvironment(host,sats,rest,rad,path=''):
@@ -940,7 +940,7 @@ def QuenchedFractionVsEnvironment(host,sats,rest,rad,path=''):
     ax.set_ylabel('Quenched Fraction')
     ax.legend(loc='upper right',frameon=False)
     f.savefig(path+'QuenchedFractionVsEnvironment.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'QuenchedFractionVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/QuenchedFractionVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def SAGA_Nsat_Comparison(host,rest,rad,path=''):
@@ -981,5 +981,5 @@ def SAGA_Nsat_Comparison(host,rest,rad,path=''):
     ax.tick_params(which='major',labelsize=20,length=10)
     ax.tick_params(which='minor',length=5)
     f.savefig(path+'SAGA_Nsat_Comparison.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
-    f.savefig(path+'SAGA_Nsat_Comparison.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/SAGA_Nsat_Comparison.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
