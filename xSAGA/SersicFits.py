@@ -22,12 +22,12 @@ for d in defs:
     for r in rads:
         mw = pickle.load(open(f'{datafilepath}MilkyWay.{d}.{r}.pickle','rb'))
         sat = pickle.load(open(f'{datafilepath}Satellite.{d}.{r}.pickle','rb'))
-        for h in mw:
-            if int(h) not in halo_ids:
-                halo_ids.append(int(h))
-        for h in sat:
-            if int(h) not in halo_ids:
-                halo_ids.append(int(h))
+        for haloid in mw:
+            if int(haloid) not in halo_ids:
+                halo_ids.append(int(haloid))
+        for haloid in sat:
+            if int(haloid) not in halo_ids:
+                halo_ids.append(int(haloid))
 halo_ids.sort()
 print('Halo list generated')
 
@@ -45,7 +45,7 @@ progress = pymp.shared.array((1,),dtype=int)
 with pymp.Parallel(10) as pl:
     for i in pl.xrange(len(halo_ids)):
         current = {'rbins':[],'sb,r':[],'par':[np.nan,np.nan,np.nan]}
-        halo = h[halo_ids[i]]
+        halo = h.load_copy(halo_ids[i])
         halo.physical_units()
         profile = False
         try:
@@ -57,7 +57,7 @@ with pymp.Parallel(10) as pl:
             raw = p['sb,r']
             profile = True
         except:
-            err = 1
+            profile = False
         if profile:
             try:
                 smooth = np.nanmean(np.pad(raw.astype(float),(0,3-raw.size%3),mode='constant',constant_values=np.nan).reshape(-1,3),axis=1)
@@ -72,7 +72,7 @@ with pymp.Parallel(10) as pl:
                     y = np.delete(y,np.where(np.isnan(y)==True))
                 r0 = x[int(len(x)/2)]
                 m0 = np.mean(y[:3])
-                par,ign = curve_fit(sersic,x,y,p0=(m0,r0,1),bounds=([10,0,0.5],[40,100,16.5]))
+                par,ign = curve_fit(sersic,x,y,p0=(m0,r0,1))#,bounds=([10,0,0.5],[40,100,16.5]))
                 current['par'] = par
             except:
                 err=1
