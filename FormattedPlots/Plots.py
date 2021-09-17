@@ -581,6 +581,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     c = ax.pcolor(y,x,C,cmap='viridis',norm=norm)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=13)
+    #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
     cbar.set_label('Average Number of Satellites',fontsize=15)
     Size = True
     if Size:
@@ -591,7 +592,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
                 a = (x[c+1]+x[c])/2
                 b = (y[r+1]+y[r])/2
                 if C[c][r] > -1:
-                    ax.text(b-.04,a-.2,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)))
+                    ax.text(b-.03,a-.2,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)))
                 c +=1
             r +=1
     f.savefig(path+'StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
@@ -638,7 +639,7 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
                 a = (x[c+1]+x[c])/2
                 b = (y[r+1]+y[r])/2
                 if C[c][r] > -1:
-                    ax.text(b-.04,a-.2,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)))
+                    ax.text(b-.03,a-.2,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)))
                 c +=1
             r +=1
     f.savefig(path+'StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
@@ -722,7 +723,7 @@ def SpecificFrequncyDistance(host,rest,rad,path=''):
 
 def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
     xr = np.arange(10,11.2,.05)
-    x1 , y1 , e1= [[],[],[]]
+    x1,y1,e1,e1u,e1l= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
         yc = []
@@ -731,11 +732,14 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
                 yc.append(SnM(len(host[h]['Satellites']),host[h]['Mstar']))
         if len(yc) > 0:
             y1.append(np.mean(yc))
+            #y1.append(np.median(yc))
             x1.append(np.mean([xr[i],xr[i+1]]))
             e1.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e1u.append(np.percentile(yc,75))
+            e1l.append(np.percentile(yc,25))
         i += 1
     xr = np.arange(10,11.2,.1)
-    x2 , y2 , e2= [[],[],[]]
+    x2,y2,e2,e2u,e2l= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
         yc = []
@@ -744,11 +748,14 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
                 yc.append(SnM(len(host[h]['Satellites']),host[h]['Mstar']))
         if len(yc) > 0:
             y2.append(np.mean(yc))
+            #y2.append(np.median(yc))
             x2.append(np.mean([xr[i],xr[i+1]]))
             e2.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e2u.append(np.percentile(yc,75))
+            e2l.append(np.percentile(yc,25))
         i += 1
     xr = np.arange(10,11.2,.25)
-    x3 , y3 , e3= [[],[],[]]
+    x3,y3,e3,e3l,e3u= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
         yc = []
@@ -757,17 +764,23 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
                 yc.append(SnM(len(host[h]['Satellites']),host[h]['Mstar']))
         if len(yc) > 0:
             y3.append(np.mean(yc))
+            #y3.append(np.median(yc))
             x3.append(np.mean([xr[i],xr[i+1]]))
             e3.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e3u.append(np.percentile(yc,75))
+            e3l.append(np.percentile(yc,25))
         i += 1
     f,ax = plt.subplots(1,1,figsize=(8,6))
     ax.set_ylim([-.5,18])
     ax.scatter(x1,y1,c='k',label=r'$\Delta$Log[M$_{*}$] = .05')
     ax.errorbar(x1,y1,yerr=e1,c='k')
+    #ax.errorbar(x1,y1,yerr=[e1l,e1u],c='k')
     ax.scatter(x2,y2,c='b',label=r'$\Delta$Log[M$_{*}$] = .20')
     ax.errorbar(x2,y2,yerr=e2,c='b')
+    #ax.errorbar(x2,y2,yerr=[e2l,e2u],c='b')
     ax.scatter(x3,y3,c='r',label=r'$\Delta$Log[M$_{*}$] = .25')
     ax.errorbar(x3,y3,yerr=e3,c='r')
+    #ax.errorbar(x3,y3,yerr=[e3l,e3u],c='r')
     ax.tick_params(labelsize=13, length=5)
     ax.set_xlabel(r'Log[M$_{*}$]',fontsize=15)
     ax.set_ylabel(r'S$_{N}$',fontsize=15)
@@ -778,7 +791,7 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
 
 def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
     xr = np.arange(0,10,.25)
-    x1 , y1 , e1= [[],[],[]]
+    x1,y1,e1,e1u,e1l= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
         yc = []
@@ -787,11 +800,14 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
                 yc.append(SnD(len(host[h]['Satellites']),host[h]['Closest'][0]))
         if len(yc) > 0:
             y1.append(np.mean(yc))
+            #y1.append(np.median(yc))
             x1.append(np.mean([xr[i],xr[i+1]]))
             e1.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e1u.append(np.percentile(yc,75))
+            e1l.append(np.percentile(yc,25))
         i += 1
     xr = np.arange(0,10,.5)
-    x2 , y2 , e2= [[],[],[]]
+    x2,y2,e2,e2u,e2l= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
         yc = []
@@ -800,11 +816,14 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
                 yc.append(SnD(len(host[h]['Satellites']),host[h]['Closest'][0]))
         if len(yc) > 0:
             y2.append(np.mean(yc))
+            #y2.append(np.median(yc))
             x2.append(np.mean([xr[i],xr[i+1]]))
             e2.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e2u.append(np.percentile(yc,75))
+            e2l.append(np.percentile(yc,25))
         i += 1
     xr = np.arange(0,10,1)
-    x3 , y3 , e3= [[],[],[]]
+    x3,y3,e3,e3u,e3l= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
         yc = []
@@ -813,14 +832,18 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
                 yc.append(SnD(len(host[h]['Satellites']),host[h]['Closest'][0]))
         if len(yc) > 0:
             y3.append(np.mean(yc))
+            #y3.append(np.median(yc))
             x3.append(np.mean([xr[i],xr[i+1]]))
             e3.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e3u.append(np.percentile(yc,75))
+            e3l.append(np.percentile(yc,25))
         i += 1
     M = 18
     f,ax = plt.subplots(1,1,figsize=(8,6))
     ax.set_ylim([-.5,M+1])
     ax.scatter(x1,y1,c='k',label=r'$\Delta$D = .25Mpc')
     ax.errorbar(x1,y1,yerr=e1,c='k')
+    #ax.errorbar(x1,y1,yerr=[e1l,e1u],c='k')
     for i in np.arange(len(y1)):
         if y1[i] > M +1:
             pass
@@ -828,6 +851,7 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
             #ax.text(x1[i]-.25,M-.6,str(round(y1[i],2)),fontsize=12)
     ax.scatter(x2,y2,c='b',label=r'$\Delta$D = .50Mpc')
     ax.errorbar(x2,y2,yerr=e2,c='b')
+    #ax.errorbar(x2,y2,yerr=[e2l,e2u],c='b')
     for i in np.arange(len(y2)):
         if y2[i] > M+1:
             pass
@@ -835,6 +859,7 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
             #ax.text(x2[i]-.25,M-.6,str(round(y2[i],2)),fontsize=12)
     ax.scatter(x3,y3,c='r',label=r'$\Delta$D = 1.0Mpc')
     ax.errorbar(x3,y3,yerr=e3,c='r')
+    #ax.errorbar(x3,y3,yerr=[e3l,e3u],c='r')
     for i in np.arange(len(y3)):
         if y3[i] > M+1:
             pass
