@@ -52,6 +52,7 @@ if not args.all:
     #T90VsT50(MW,S,rest,rad,output_path)
     QuenchedFractionVsEnvironment(MW,S,rest,rad,output_path)
     SAGA_Nsat_Comparison(MW,rest,rad,output_path)
+    SMHM(MW,S,rest,rad,output_path)
 else:
     progress = ['|',' ',' ',' ',' ',' ',' ',' ',' ','|']
     i = 1
@@ -89,6 +90,7 @@ else:
             #T90VsT50(MW,S,rest,rad,output_path)
             QuenchedFractionVsEnvironment(MW,S,rest,rad,output_path)
             SAGA_Nsat_Comparison(MW,rest,rad,output_path)
+            SMHM(MW,S,rest,rad,output_path)
             progress[i] = u'\u2588'
             i+=1
             if i > (len(radii)+len(restrictions)):

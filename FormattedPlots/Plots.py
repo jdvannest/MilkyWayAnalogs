@@ -1020,3 +1020,27 @@ def SAGA_Nsat_Comparison(host,rest,rad,path=''):
     f.savefig(path+'SAGA_Nsat_Comparison.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
     f.savefig(path+'pdf/SAGA_Nsat_Comparison.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
+
+def SMHM(host,sats,rest,rad,path=''):
+    mv_mw,ms_mw,mv_sat,ms_sat = [[],[],[],[]]
+    for mw in host:
+        mv_mw.append(host[mw]['Mvir']/0.8)
+        ms_mw.append(.6*host[mw]['Mstar'])
+    for sat in sats:
+        mv_sat.append(sats[sat]['Mvir']/0.8)
+        ms_sat.append(.6*sats[sat]['Mstar'])
+    
+    f,ax = plt.subplots(1,1,figsize=(8,8))
+    ax.semilogx()
+    ax.semilogy()
+    ax.set_xlim([10**9,2*10**13])
+    ax.set_ylim([10**-5,1])
+    ax.tick_params(labelsize=15,length=5)
+    ax.set_xlabel(r'M$_{vir}$ [M$_\odot$]',fontsize=25)
+    ax.set_ylabel(r'M$_*$/M$_{vir}$',fontsize=25)
+    ax.scatter(mv_sat,np.array(ms_sat)/np.array(mv_sat),c='r',label='Satellites')
+    ax.scatter(mv_mw,np.array(ms_mw)/np.array(mv_mw),c='k',label='MW Anaolgs')
+    ax.legend(loc='upper right',prop={'size':15})
+    f.savefig(path+'SMHM.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/SMHM.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
+    plt.close()
