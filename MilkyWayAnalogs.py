@@ -74,8 +74,9 @@ print('Searching for Milky Way Analogs...')
 if args.definition == '1':
     criteria = mvir
     ##previous (lb,ub) values: (5e11,3e12),(1e12,4e12)
-    lower_bound = 1e12  
-    upper_bound = 4e12
+    ##                          1.08e12 +/- 15% from https://arxiv.org/abs/2111.09327                          
+    lower_bound = 0.85*1.08e12  
+    upper_bound = 1.15*1.08e12
 else:
     criteria = mstar
     ##previous (lb,ub) values: (10**10.2,10**10.9)
