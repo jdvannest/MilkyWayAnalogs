@@ -1,6 +1,7 @@
 import matplotlib.pylab as plt
 import numpy as np
 import matplotlib.cm
+import matplotlib as mpl
 import statistics
 import xlrd
 import pickle
@@ -586,15 +587,17 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
             c += 1
         r += 1
     f,ax = plt.subplots(1,1)
-    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=15)
-    ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir}$ $>$ 5*10$^{11}$) [Mpc]',fontsize=15)
-    ax.tick_params(which='major',labelsize=13, length=5)
-    norm = plt.Normalize(-1,int(np.amax(C))+1)
+    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
+    ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
+    ax.tick_params(which='major',labelsize=15, length=5)
+    #norm = plt.Normalize(-1,int(np.amax(C))+1)
+    norm = mpl.colors.BoundaryNorm(np.arange(0,int(np.amax(C)+2)), mpl.cm.viridis.N, extend='min')
     c = ax.pcolor(y,x,C,cmap='viridis',norm=norm)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=13)
+    cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average Number of Satellites',fontsize=15)
+    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_ticks(np.arange(0,int(np.amax(C)+2)))
     Size = True
     if Size:
         r = 0
@@ -604,9 +607,11 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
                 a = (x[c+1]+x[c])/2
                 b = (y[r+1]+y[r])/2
                 if C[c][r] > -1:
-                    ax.text(b-.03,a-.2,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)))
+                    ax.text(b-.086,a-.5,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
                 c +=1
             r +=1
+    ax.set_xticks(np.linspace(10,11.4,8))
+    ax.grid(True,which='major',color='k',linewidth=2)
     f.savefig(path+'StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
     f.savefig(path+'pdf/StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
@@ -634,14 +639,16 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
             c += 1
         r += 1
     f,ax = plt.subplots(1,1)
-    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=15)
-    ax.set_ylabel('Distance to closest Milky Way\nor Larger Halo [Mpc]',fontsize=15)
-    ax.tick_params(which='major',labelsize=13, length=5)
-    norm = plt.Normalize(-1,int(np.amax(C))+1)
+    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
+    ax.set_ylabel('Distance to closest Milky Way\nor Larger Halo [Mpc]',fontsize=20)
+    ax.tick_params(which='major',labelsize=15, length=5)
+    #norm = plt.Normalize(-1,int(np.amax(C))+1)
+    norm = mpl.colors.BoundaryNorm(np.arange(0,int(np.amax(C)+2)), mpl.cm.viridis.N, extend='min')
     c = ax.pcolor(y,x,C,cmap='viridis',norm=norm)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=13)
-    cbar.set_label('Average Number of Satellites',fontsize=15)
+    cbar.ax.tick_params(labelsize=15)
+    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_ticks(np.arange(0,int(np.amax(C)+2)))
     Size = True
     if Size:
         r = 0
@@ -651,9 +658,11 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
                 a = (x[c+1]+x[c])/2
                 b = (y[r+1]+y[r])/2
                 if C[c][r] > -1:
-                    ax.text(b-.03,a-.2,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)))
+                    ax.text(b-.086,a-.5,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
                 c +=1
             r +=1
+    ax.set_xticks(np.linspace(10,11.4,8))
+    ax.grid(True,which='major',color='k',linewidth=2)
     f.savefig(path+'StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
     f.savefig(path+'pdf/StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
