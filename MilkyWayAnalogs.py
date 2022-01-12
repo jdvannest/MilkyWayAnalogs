@@ -235,30 +235,3 @@ out = open(output_path + f'LargeHalos.pickle','wb')
 pickle.dump(LargeHalos,out)
 out.close()
 myprint('Data Files Written',clear=True)
-
-#Update Log File
-print('Updating Log File...')
-now = datetime.datetime.now()
-try:
-    with open(output_path + 'SAGA.log.txt','r') as log:
-        l = log.readlines()
-except:
-    l = ['Criteria\tMW\tSatellites\tMaxCount\tLastRun','1','2','3','4','1_300','2_300','3_300','4_300']
-
-satcount = []
-for mw in MilkyWays:
-    satcount.append(len(MilkyWays[mw]['Satellites']))
-
-line = int(args.definition)
-if args.radius == '300':
-    line += 4
-    R = '_300'
-else:
-    R = ''
-l[line] = (f'{args.definition}{R}\t{len(MilkyWays)}\t{len(Satellites)}\t'
-            +f'{max(satcount)}\t{now.hour}:{now.minute}:{now.second}-'
-            +f'{now.month}/{now.day}/{now.year}\n')
-log = open(output_path + 'SAGA.log.txt','w')
-log.writelines(l)
-log.close()
-myprint('Log File Updated',clear=True)
