@@ -755,7 +755,7 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
             y1.append(np.mean(yc))
             #y1.append(np.median(yc))
             x1.append(np.mean([xr[i],xr[i+1]]))
-            e1.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e1.append(np.std(yc)/np.sqrt(len(yc)))
             e1u.append(np.percentile(yc,75))
             e1l.append(np.percentile(yc,25))
         i += 1
@@ -771,7 +771,7 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
             y2.append(np.mean(yc))
             #y2.append(np.median(yc))
             x2.append(np.mean([xr[i],xr[i+1]]))
-            e2.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e2.append(np.std(yc)/np.sqrt(len(yc)))
             e2u.append(np.percentile(yc,75))
             e2l.append(np.percentile(yc,25))
         i += 1
@@ -787,7 +787,7 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
             y3.append(np.mean(yc))
             #y3.append(np.median(yc))
             x3.append(np.mean([xr[i],xr[i+1]]))
-            e3.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e3.append(np.std(yc)/np.sqrt(len(yc)))
             e3u.append(np.percentile(yc,75))
             e3l.append(np.percentile(yc,25))
         i += 1
@@ -804,7 +804,7 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
     #ax.errorbar(x3,y3,yerr=[e3l,e3u],c='r')
     ax.tick_params(labelsize=15, length=5)
     ax.set_xlabel(r'Log[M$_{*}$]',fontsize=20)
-    ax.set_ylabel(r'S$_{N}$',fontsize=20)
+    ax.set_ylabel(r'S$_{N,mass}$',fontsize=20)
     ax.legend(loc='upper left',prop={'size':15})
     f.savefig(path+'BinnedSpecificFrequencyMass.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
     f.savefig(path+'pdf/BinnedSpecificFrequencyMass.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
@@ -823,7 +823,7 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
             y1.append(np.mean(yc))
             #y1.append(np.median(yc))
             x1.append(np.mean([xr[i],xr[i+1]]))
-            e1.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e1.append(np.std(yc)/np.sqrt(len(yc)))
             e1u.append(np.percentile(yc,75))
             e1l.append(np.percentile(yc,25))
         i += 1
@@ -839,7 +839,7 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
             y2.append(np.mean(yc))
             #y2.append(np.median(yc))
             x2.append(np.mean([xr[i],xr[i+1]]))
-            e2.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e2.append(np.std(yc)/np.sqrt(len(yc)))
             e2u.append(np.percentile(yc,75))
             e2l.append(np.percentile(yc,25))
         i += 1
@@ -855,7 +855,7 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
             y3.append(np.mean(yc))
             #y3.append(np.median(yc))
             x3.append(np.mean([xr[i],xr[i+1]]))
-            e3.append(np.sqrt(np.mean(yc)/float(len(yc))))
+            e3.append(np.std(yc)/np.sqrt(len(yc)))
             e3u.append(np.percentile(yc,75))
             e3l.append(np.percentile(yc,25))
         i += 1
@@ -888,7 +888,7 @@ def BinnedSpecificFrequncyDistance(host,rest,rad,path=''):
             #ax.text(x3[i]-.25,M-.5,str(round(y3[i],2)),fontsize=12)
     ax.tick_params(labelsize=15, length=5)
     ax.set_xlabel(r'Distance to closest Large Halo (M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
-    ax.set_ylabel(r'S$_{N}$',fontsize=20)
+    ax.set_ylabel(r'S$_{N,env}$',fontsize=20)
     ax.legend(loc='upper left',prop={'size':15})
     f.savefig(path+'BinnedSpecificFrequencyEnvironment.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
     f.savefig(path+'pdf/BinnedSpecificFrequencyEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
