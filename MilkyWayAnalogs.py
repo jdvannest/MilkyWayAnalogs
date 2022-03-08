@@ -98,6 +98,8 @@ for i in np.arange(len(hnum)):
         MilkyWays[str(hnum[i])]['CumSFH'] = csfh[i]
         MilkyWays[str(hnum[i])]['SFR_250Myr'] = sfr[i]
         MilkyWays[str(hnum[i])]['Satellites'] = [] #Empty array for indexes of satellites of this MW
+        MilkyWays[str(hnum[i])]['EnvDen'] = 0 #Number of neighbors w/in 1Mpc where Mvir>1e11 Msol
+        MilkyWays[str(hnum[i])]['MvirPeak'] = max(rom[-1][hnum[i]].calculate_for_progenitors('Mvir')[0])
 myprint(f'{len(MilkyWays)} Milky Way Analogs Found',clear=True)
 
 #Remove any MW Analogs with overlapping Virial Radii
@@ -158,6 +160,7 @@ print(f'{len(MilkyWays)} Milky Way Analogs Considered')
 
 #Determine Closest MW+ and Satellites for Milky Way Analogs
 print(f'Finding Satellite Halos...')
+too_large_satellite = []
 for mw in MilkyWays:
     rad = 300 if args.radius=='300' else MilkyWays[mw]['Rvir']
     mw_plus_id,mw_plus_dist = [[],[]]
@@ -167,6 +170,7 @@ for mw in MilkyWays:
         else:   #Satellite Halos
             distance = MilkyWays[mw]['center'] - cen[i]
             wrap(distance)
+            #Check for satellite
             if np.linalg.norm(distance) < rad:
                 if str(hnum[i]) in Satellites:
                     sys.exit(f'Satellite {hnum[i]} has multiple hosts!!!')
@@ -186,12 +190,26 @@ for mw in MilkyWays:
                 Satellites[str(hnum[i])]['Orbit'] = [np.linalg.norm(distance),
                                         np.linalg.norm(distance)/MilkyWays[mw]['Rvir']]
                 MilkyWays[mw]['Satellites'].append(str(hnum[i]))
+                #Check if satellite is larger than MW
+                if mvir[i]>MilkyWays[mw]['Mvir']: too_large_satellite.append(mw)
+            #Check for nearest MW+
             if criteria[i] > lower_bound: # MW+ sized halos
                 mw_plus_dist.append(np.linalg.norm(distance))
                 mw_plus_id.append(str(hnum[i]))
+            #Check for EnvDen
+            if np.linalg.norm(distance)<1000 and mvir[i]>1e11:
+                MilkyWays[mw]['EnvDen']+=1
     MilkyWays[mw]['Closest_MW+'] = [min(mw_plus_dist),
                                     mw_plus_id[mw_plus_dist.index(min(mw_plus_dist))]]
 myprint(f'{len(Satellites)} Satellite Halos Found',clear=True)
+
+#Remove MWs with a too large satellite and their other satellites
+bad_sats = []
+for mw in too_large_satellite:
+    for sat in MilkyWays[mw]['Satellites']: bad_sats.append(sat)
+    del MilkyWays[mw]
+for sat in bad_sats: del Satellites[sat]
+print(f'Removed {len(too_large_satellite)} Milky Ways and {len(bad_sats)} Satellites due to overmassive satellite')
 
 #Determine Satellite Quenching
 for s in Satellites:
