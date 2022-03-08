@@ -433,6 +433,114 @@ def LargestSatelliteVsEnvironment(host,sats,rest,rad,path=''):
     f.savefig(path+'pdf/LargestSatelliteVsEnvironment.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
+def LargestSatelliteVsHostMass(host,sats,rest,rad,path=''):
+    x1,x2,y1,y2,Y1,Y2 = [[],[],[],[],[],[]]
+    for h in host:
+        if len(host[h]['Satellites']) > 0:
+            mass = 0
+            BigSat = False
+            for sat in host[h]['Satellites']:
+                if host[h]['Mvir'] > sats[str(sat)]['Mvir'] and sats[str(sat)]['Mvir'] > mass:
+                    mass = np.log10(sats[str(sat)]['Mvir'])
+                if np.log10(host[h]['Mvir']) < np.log10(sats[str(sat)]['Mvir']):
+                    BigSat = True
+            if mass > 0:
+                if BigSat:
+                    y2.append(mass)
+                    Y2.append(float(10**mass)/host[h]['Mvir'])
+                    x2.append(np.log10(host[h]['Mstar']))
+                else:
+                    y1.append(mass)
+                    Y1.append(float(10**mass)/host[h]['Mvir'])
+                    x1.append(np.log10(host[h]['Mstar']))
+
+    f,ax = plt.subplots(2,2,figsize=(13,10),gridspec_kw={'width_ratios':[4,1]})#,sharex=True)
+    plt.subplots_adjust(wspace=0,hspace=0)
+    ax[0][0].set_xticks
+    ax[0][1].set_xticks([10,20,30,40])
+    ax[1][1].set_xticks([10,20,30,40])
+    ax[0][0].set_ylim([9.4,11.2])
+    ax[0][1].set_ylim([9.4,11.2])
+    ax[1][0].set_ylim([-.01,.37])
+    ax[1][1].set_ylim([-.01,.37])
+    ax[0][0].set_xlim([10,11.2])
+    ax[1][0].set_xlim([10,11.2])
+    ax[0][1].set_xlim([0,40])
+    ax[1][1].set_xlim([0,40])
+    ax[0][0].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,right=True,labelright=False)
+    ax[1][0].tick_params(labelsize=20,direction='in',length=5,top=True,right=True,labelright=False)
+    ax[0][1].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
+    ax[1][1].tick_params(labelsize=20,direction='in',length=5,top=True,labelleft=False,left=False)
+    ax[0][0].set_ylabel(r'Log(M$_{vir}$) of\\Largest Satellite [M$_{\odot}$]',fontsize=30)
+    ax[0][0].scatter(x1,y1,c='k',label=r'All Satellites Smaller than M$_{vir,host}$')
+    ax[0][0].scatter(x2,y2,c='r',label=r'Contains Satellite Larger than M$_{vir,host}$')
+    ax[1][0].set_xlabel(r'Log(M$_{*,host}$)',fontsize=30)
+    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$ [M$_{\odot}$]',fontsize=30)
+    ax[1][0].scatter(x1,Y1,c='k',label=r'All Satellites Smaller than M$_{vir}$')
+    ax[1][0].scatter(x2,Y2,c='r',label=r'Contains Satellite Larger than M$_{vir}$')
+    ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
+    ax[0][1].hist(y1+y2,np.arange(9.4,11.4,.2),orientation='horizontal',facecolor='None',edgecolor='k')
+    ax[1][1].hist(Y1+Y2,np.arange(0,.4,.05),orientation='horizontal',facecolor='None',edgecolor='k')
+    ax[1][1].set_xlabel('N',fontsize=30)
+    f.savefig(path+'LargestSatelliteVsHostMass.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/LargestSatelliteVsHostMass.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+def LargestSatelliteStellarVsHostMass(host,sats,rest,rad,path=''):
+    x1,x2,y1,y2,Y1,Y2 = [[],[],[],[],[],[]]
+    for h in host:
+        if len(host[h]['Satellites']) > 0:
+            mass = 0
+            BigSat = False
+            for sat in host[h]['Satellites']:
+                if host[h]['Mvir'] > sats[str(sat)]['Mvir'] and sats[str(sat)]['Mstar'] > mass:
+                    mass = np.log10(sats[str(sat)]['Mstar'])
+                if np.log10(host[h]['Mvir']) < np.log10(sats[str(sat)]['Mvir']):
+                    BigSat = True
+            if mass > 0:
+                if BigSat:
+                    y2.append(mass)
+                    Y2.append(float(10**mass)/host[h]['Mstar'])
+                    x2.append(np.log10(host[h]['Mstar']))
+                else:
+                    y1.append(mass)
+                    Y1.append(float(10**mass)/host[h]['Mstar'])
+                    x1.append(np.log10(host[h]['Mstar']))
+
+    f,ax = plt.subplots(2,2,figsize=(13,10),gridspec_kw={'width_ratios':[4,1]})#,sharex=True)
+    plt.subplots_adjust(wspace=0,hspace=0)
+    ax[0][0].set_xticks
+    ax[0][1].set_xticks([10,20,30,40])
+    ax[1][1].set_xticks([10,20,30,40])
+    ax[0][0].set_ylim([7,11])
+    ax[0][1].set_ylim([7,11])
+    ax[1][0].semilogy()
+    ax[1][0].set_ylim([2e-4,7e-1])
+    ax[1][1].set_ylim([2e-4,7e-1])
+    ax[1][1].semilogy()
+    ax[0][0].set_xlim([10,11.2])
+    ax[1][0].set_xlim([10,11.2])
+    ax[0][1].set_xlim([0,40])
+    ax[1][1].set_xlim([0,40])
+    ax[0][0].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,right=True,labelright=False)
+    ax[1][0].tick_params(labelsize=20,direction='in',length=5,top=True,right=True,labelright=False)
+    ax[0][1].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
+    ax[1][1].tick_params(labelsize=20,direction='in',length=5,top=True,labelleft=False,left=False)
+    ax[0][0].set_ylabel(r'Log(M$_{*}$) of\\Largest Satellite [M$_{\odot}$]',fontsize=30)
+    ax[0][0].scatter(x1,y1,c='k',label=r'All Satellites Smaller than M$_{vir,host}$')
+    ax[0][0].scatter(x2,y2,c='r',label=r'Contains Satellite Larger than M$_{vir,host}$')
+    ax[1][0].set_xlabel(r'Log(M$_{*,host}$)',fontsize=30)
+    ax[1][0].set_ylabel(r'M$_{*,sat}$ / M$_{*,host}$',fontsize=30)
+    ax[1][0].scatter(x1,Y1,c='k',label=r'All Satellites Smaller than M$_{vir}$')
+    ax[1][0].scatter(x2,Y2,c='r',label=r'Contains Satellite Larger than M$_{vir}$')
+    ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
+    ax[0][1].hist(y1+y2,np.logspace(-3.69897,-.1549,7),orientation='horizontal',facecolor='None',edgecolor='k')
+    ax[1][1].hist(Y1+Y2,np.logspace(-3.69897,-.1549,7),orientation='horizontal',facecolor='None',edgecolor='k')
+    ax[1][1].set_xlabel('N',fontsize=30)
+    f.savefig(path+'LargestSatelliteStellarVsHostMass.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/LargestSatelliteStellarVsHostMass.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
 def SatelliteCountVsStellarMassVsEnvironment(host,rest,rad,path=''):
     x,y,c = [[],[],[]]
     for h in host:
@@ -592,7 +700,10 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
     norm = mpl.colors.BoundaryNorm(np.arange(0,int(np.amax(C)+2)), mpl.cm.viridis.N, extend='min')
-    c = ax.pcolor(y,x,C,cmap='viridis',norm=norm)
+    C = np.ma.masked_where(C < 0, C)
+    cmap = mpl.cm.get_cmap('viridis')#.copy()
+    cmap.set_bad(color='k')
+    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
@@ -644,7 +755,10 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
     norm = mpl.colors.BoundaryNorm(np.arange(0,int(np.amax(C)+2)), mpl.cm.viridis.N, extend='min')
-    c = ax.pcolor(y,x,C,cmap='viridis',norm=norm)
+    C = np.ma.masked_where(C < 0, C)
+    cmap = mpl.cm.get_cmap('viridis')#.copy()
+    cmap.set_bad(color='k')
+    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     cbar.set_label('Average Number of Satellites',fontsize=20)
