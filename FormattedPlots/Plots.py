@@ -699,7 +699,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,int(np.amax(C)+2)), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(0,8), mpl.cm.viridis.N, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -708,7 +708,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
     cbar.set_label('Average Number of Satellites',fontsize=20)
-    cbar.set_ticks(np.arange(0,int(np.amax(C)+2)))
+    cbar.set_ticks(np.arange(0,8))
     Size = True
     if Size:
         r = 0
