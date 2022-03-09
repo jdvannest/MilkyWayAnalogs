@@ -99,7 +99,7 @@ for i in np.arange(len(hnum)):
         MilkyWays[str(hnum[i])]['SFR_250Myr'] = sfr[i]
         MilkyWays[str(hnum[i])]['Satellites'] = [] #Empty array for indexes of satellites of this MW
         MilkyWays[str(hnum[i])]['EnvDen'] = 0 #Number of neighbors w/in 1Mpc where Mvir>1e11 Msol
-        MilkyWays[str(hnum[i])]['MvirPeak'] = max(rom[-1][hnum[i]].calculate_for_progenitors('Mvir')[0])
+        MilkyWays[str(hnum[i])]['MvirPeak'] = max(rom[-1][int(hnum[i])].calculate_for_progenitors('Mvir')[0])
 myprint(f'{len(MilkyWays)} Milky Way Analogs Found',clear=True)
 
 #Remove any MW Analogs with overlapping Virial Radii
@@ -191,7 +191,7 @@ for mw in MilkyWays:
                                         np.linalg.norm(distance)/MilkyWays[mw]['Rvir']]
                 MilkyWays[mw]['Satellites'].append(str(hnum[i]))
                 #Check if satellite is larger than MW
-                if mvir[i]>MilkyWays[mw]['Mvir']: too_large_satellite.append(mw)
+                if mvir[i]>MilkyWays[mw]['Mvir'] and mw not in too_large_satellite: too_large_satellite.append(mw)
             #Check for nearest MW+
             if criteria[i] > lower_bound: # MW+ sized halos
                 mw_plus_dist.append(np.linalg.norm(distance))
