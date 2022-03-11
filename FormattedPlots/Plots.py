@@ -5,7 +5,10 @@ import matplotlib as mpl
 import statistics
 import xlrd
 import pickle
+from matplotlib import colors
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLocator, ScalarFormatter)
+
+pastel = colors.ListedColormap(['orchid','plum','mediumpurple','lavender','lightsteelblue','paleturquoise','aquamarine','lightgreen','greenyellow','yellow'])
 
 def wrap(relpos,scale=1,boxsize=25e3):
 #author: Michael Tremmel
@@ -760,7 +763,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
-    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm)
+    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
@@ -815,7 +818,7 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
-    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm)
+    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     cbar.set_label('Average Number of Satellites',fontsize=20)
@@ -869,7 +872,7 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,path=
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
-    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm)
+    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
