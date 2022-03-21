@@ -1,5 +1,5 @@
 #Code written by Jordan Van Nest, 08/2020
-import pickle, sys, argparse, os, datetime
+import pickle, sys, argparse, os
 import numpy as np 
 
 output_path="DataFiles/"
@@ -7,13 +7,14 @@ output_path="DataFiles/"
 parser = argparse.ArgumentParser(description="Searches Romulus25 for Milky Way Analogs"
                                 +" and identifies their Satellite halos."+
                                 " Outputs pickle files in run directory.", 
-                                usage="SAGA_Data.py -d 1/2/3 -r sim/300")
+                                usage="SAGA_Data.py -d 1 -r sim")
 parser.add_argument("-d", "--definition", help="Definition for Milky Way Analog\n"+
                                                 "1: By General Virial Mass Restricition\n"+
                                                 "2: By Stellar Mass Restriction from K-band Magnitude\n"+
                                                 "3: Method 2 + Environmental Restrictions (SAGAI)\n"+
-                                                "4: Method 2 + Environmental Restrictions (SAGAII)"
-                                                ,choices=['1','2','3','4'],required=True)
+                                                "4: Method 2 + Environmental Restrictions (SAGAII)\n"+
+                                                "5,6,7: 2,3,4 but with explicit K-band Mag"
+                                                ,choices=['1','2','3','4','5','6','7'],required=True)
 parser.add_argument("-r", "--radius", help="Radius for definition satellites\n"+
                                             "sim: The true virial radii from the simulations\n"+
                                             "300: The SAGA value of 300 kpc"
@@ -54,10 +55,11 @@ hnum, cen, mvir, rvir, vmag, rmag, kmag, bmag, mstar, csfh, sfr = rom[-1].calcul
                                 'AB_V','AB_R','AB_K','AB_B','Mstar','CumSFH','SFR_encl_250Myr')
 myprint('Database Loaded',clear=True)
 
-#Initialize Data output Dictionaries
+#Initialize Data output Dictionaries and LogFile
 MilkyWays = {} 
 Satellites = {} 
 LargeHalos = {} 
+TextLog = ['Initial Milky Way Sample:\n']
 
 #Find Large Halos (Mvir > 5e11)
 print('Searching for Large Halos...')
@@ -77,12 +79,17 @@ if args.definition == '1':
     ##                          1.08e12 +/- 15% from https://arxiv.org/abs/2111.09327                          
     lower_bound = 1e11 
     upper_bound = 1e14
+elif args.definition in ['5','6','7']:
+    criteria = kmag
+    lower_bound = -24.6
+    upper_bound = -23
 else:
     criteria = mstar
     ##previous (lb,ub) values: (10**10.2,10**10.9)
     lower_bound = 10**10 #if args.definition == '4' else 10**10.2
     upper_bound = 10**11 #if args.definition == '4' else 10**10.9
 
+original = []
 for i in np.arange(len(hnum)):
     if lower_bound < criteria[i] < upper_bound:
         MilkyWays[str(hnum[i])] = {}
@@ -100,7 +107,13 @@ for i in np.arange(len(hnum)):
         MilkyWays[str(hnum[i])]['Satellites'] = [] #Empty array for indexes of satellites of this MW
         MilkyWays[str(hnum[i])]['EnvDen'] = 0 #Number of neighbors w/in 1Mpc where Mvir>1e11 Msol
         MilkyWays[str(hnum[i])]['MvirPeak'] = max(rom[-1][int(hnum[i])].calculate_for_progenitors('Mvir')[0])
+        original.append(str(hnum[i]))
 myprint(f'{len(MilkyWays)} Milky Way Analogs Found',clear=True)
+
+#Writie original list to Text Log
+original.sort()
+TextLog.append('\t'+', '.join(original)+'\n')
+TextLog.append('Removed Overlapping Pairs:\n')
 
 #Remove any MW Analogs with overlapping Virial Radii
 overlapping = []
@@ -114,28 +127,32 @@ for mw1 in MilkyWays:
                     overlapping.append(mw1)
                 if mw2 not in overlapping:
                     overlapping.append(mw2)
+                TextLog.append(f'\t{mw1} - {mw2}\n')
 for mw in overlapping:
     del MilkyWays[mw]
 print(f'\t{len(overlapping)} Milky Ways removed due to overlapping Rvir')#: {overlapping}')
 
 #Apply environmental criteria if applicable
-if args.definition in ['3','4']:
+if args.definition in ['3','4','6','7']:
+    TextLog.append('Removed due to K-Mag neighbor (MW - Neigbor):\n')
     # No K < K_MW+1 within 700kpc (from John W.) : SAGAI sec 2.2
     # No halo with K < K_MW-1.6 within 700kpc (from John W.) : SAGAII sec 2.1.2
     remove = []
     for mw in MilkyWays:
         for i in np.arange(len(hnum)):
             if not mw == str(hnum[i]):
-                if kmag[i] < ( (MilkyWays[mw]['Kmag'] - 1.6) if args.definition=='4' else (MilkyWays[mw]['Kmag'] + 1) ):
+                if kmag[i] < ( (MilkyWays[mw]['Kmag'] - 1.6) if args.definition in ['4','7'] else (MilkyWays[mw]['Kmag'] + 1) ):
                     distance = cen[i] - MilkyWays[mw]['center']
                     wrap(distance)
                     if np.linalg.norm(distance) < 700:
                         if mw not in remove:
                             remove.append(mw)
+                            TextLog.append(f'\t{mw} - {hnum[i]}\n')
     for mw in remove:
         del MilkyWays[mw]
     print(f'\t{len(remove)} Milky Ways removed to due Kband Neigbor Restrictions')
-    if args.definition == '3':    
+    if args.definition in ['3','6']:
+        TextLog.append('Removed due to massive neighbor (MW - Neigbor):\n')
         # No Mvir > 5*10^12 within 2 Rvir (Rvir of massive) : SAGAI sec 2.2
         MassiveHalos = {}
         for i in np.arange(len(hnum)):
@@ -151,6 +168,7 @@ if args.definition in ['3','4']:
                 if np.linalg.norm(distance) < (2*MassiveHalos[mh]['Rvir']):
                     if mw not in remove:
                         remove.append(mw)
+                        TextLog.append(f'\t{mw} - {mh}\n')
         for mw in remove:
             del MilkyWays[mw]
         print(f'\t{len(remove)} Milky Ways removed to due Massive Neigbor Restrictions')
@@ -204,10 +222,12 @@ for mw in MilkyWays:
 myprint(f'{len(Satellites)} Satellite Halos Found',clear=True)
 
 #Remove MWs with a too large satellite and their other satellites
+TextLog.append('Removed due to massive satellite (MW - Neigbor):\n')
 bad_sats = []
 for mw in too_large_satellite:
     for sat in MilkyWays[mw]['Satellites']: bad_sats.append(sat)
     del MilkyWays[mw]
+    TextLog.append(f'\t{mw}\n')
 for sat in bad_sats: del Satellites[sat]
 print(f'Removed {len(too_large_satellite)} Milky Ways and {len(bad_sats)} Satellites due to overmassive satellite')
 
@@ -253,3 +273,9 @@ out = open(output_path + f'LargeHalos.pickle','wb')
 pickle.dump(LargeHalos,out)
 out.close()
 myprint('Data Files Written',clear=True)
+#Output Text Log
+from datetime import datetime
+done = datetime.now()
+out = open(output_path+f'Logs/TextLog.{args.definition}.{args.radius}.txt','w')
+out.writelines(['Last Run:\n',f'\t{done[1]}-{done[2]}-{done[0]}, {done[3]}:{done[4]}:{done[5]} CT\n']+TextLog)
+out.close()
