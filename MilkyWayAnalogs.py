@@ -277,5 +277,5 @@ myprint('Data Files Written',clear=True)
 from datetime import datetime
 done = datetime.now()
 out = open(output_path+f'Logs/TextLog.{args.definition}.{args.radius}.txt','w')
-out.writelines(['Last Run:\n',f'\t{done[1]}-{done[2]}-{done[0]}, {done[3]}:{done[4]}:{done[5]} CT\n']+TextLog)
+out.writelines(['Last Run:\n',f'\t{done.month}-{done.day}-{done.year}, {done.hour}:{done.minute}:{done.second} CT\n']+TextLog)
 out.close()

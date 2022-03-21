@@ -1,0 +1,7 @@
+Last Run:
+	3-21-2022, 13:41:53 CT
+Initial Milky Way Sample:
+	12, 13, 14, 15, 16, 2, 20, 21, 3, 4, 5, 6, 7, 8, 9
+Removed Overlapping Pairs:
+Removed due to K-Mag neighbor (MW - Neigbor):
+Removed due to massive satellite (MW - Neigbor):
