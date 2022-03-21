@@ -733,7 +733,7 @@ def QuenchedFractionVsOrbitalDistance(host,sats,rest,rad,path=''):
     plt.close()
 
 def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
-    y = np.linspace(10,11.4,8)
+    y = np.arange(8.8,11.8,.2)
     x = np.arange(0,12,2)
     C = np.zeros((len(x),len(y)))
     N = np.zeros((len(x),len(y)))
@@ -754,7 +754,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
             N[c][r] = len(d)
             c += 1
         r += 1
-    f,ax = plt.subplots(1,1)
+    f,ax = plt.subplots(1,1,figsize=(14,6))
     ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
     ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
@@ -781,14 +781,14 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
                     ax.text(b-.086,a-.5,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
                 c +=1
             r +=1
-    ax.set_xticks(np.linspace(10,11.4,8))
+    ax.set_xticks(y)
     ax.grid(True,which='major',color='k',linewidth=2)
     f.savefig(path+'StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
     f.savefig(path+'pdf/StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
-    y = np.linspace(10,11.4,8)
+    y = np.arange(8.8,11.8,.2)
     x = np.arange(0,12,2)
     C = np.zeros((len(x),len(y)))
     N = np.zeros((len(x),len(y)))
@@ -809,7 +809,7 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
             N[c][r] = len(d)
             c += 1
         r += 1
-    f,ax = plt.subplots(1,1)
+    f,ax = plt.subplots(1,1,figsize=(14,6))
     ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
     ax.set_ylabel('Distance to closest Milky Way\nor Larger Halo [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
@@ -835,15 +835,15 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
                     ax.text(b-.086,a-.5,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
                 c +=1
             r +=1
-    ax.set_xticks(np.linspace(10,11.4,8))
+    ax.set_xticks(y)
     ax.grid(True,which='major',color='k',linewidth=2)
     f.savefig(path+'StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
     f.savefig(path+'pdf/StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,path=''):
-    y = np.linspace(10,11.4,8)
-    x = np.arange(-.5,7.5,1)
+    y = np.arange(8.8,11.8,.2)
+    x = np.arange(-.5,8.5,1)
     C = np.zeros((len(x),len(y)))
     N = np.zeros((len(x),len(y)))
     SD = np.zeros((len(x),len(y)))
@@ -863,7 +863,7 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,path=
             N[c][r] = len(d)
             c += 1
         r += 1
-    f,ax = plt.subplots(1,1)
+    f,ax = plt.subplots(1,1,figsize=(14,6))
     ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
     ax.set_ylabel(r'N$_L(<$1 Mpc)',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
@@ -890,7 +890,7 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,path=
                     ax.text(b-.086,a-.35,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
                 c +=1
             r +=1
-    ax.set_xticks(np.linspace(10,11.4,8))
+    ax.set_xticks(y)
     for i in y:
         ax.axvline(i,c='k',linewidth=2)
     for i in x:
@@ -1362,4 +1362,117 @@ def SMHMPeak(host,sats,rest,rad,path=''):
     ax.legend(loc='upper right',prop={'size':15})
     f.savefig(path+'SMHMPeak.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
     f.savefig(path+'pdf/SMHMPeak.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+def VirialMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
+    y = np.arange(11,13.2,.2)
+    x = np.arange(0,12,2)
+    C = np.zeros((len(x),len(y)))
+    N = np.zeros((len(x),len(y)))
+    SD = np.zeros((len(x),len(y)))
+    r = 0
+    while r < len(y)-1:
+        c = 0
+        while c < len(x)-1:
+            d = []
+            for h in host:
+                if y[r+1] > np.log10(host[h]['Mvir']) > y[r] and x[c+1] > host[h]['Closest'][0]/1000 > x[c]:
+                    d.append(len(host[h]['Satellites']))
+            if len(d) > 0:
+                C[c][r] = np.mean(d)
+                SD[c][r] = np.std(d)
+            else:
+                C[c][r]=-1
+            N[c][r] = len(d)
+            c += 1
+        r += 1
+    f,ax = plt.subplots(1,1,figsize=(10,6))
+    ax.set_xlabel(r'Log(M$_{vir}$) [M$_{\odot}$]',fontsize=20)
+    ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
+    ax.tick_params(which='major',labelsize=15, length=5)
+    #norm = plt.Normalize(-1,int(np.amax(C))+1)
+    norm = mpl.colors.BoundaryNorm(np.arange(0,8), mpl.cm.viridis.N, extend='min')
+    C = np.ma.masked_where(C < 0, C)
+    cmap = mpl.cm.get_cmap('viridis')#.copy()
+    cmap.set_bad(color='k')
+    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
+    cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
+    cbar.ax.tick_params(labelsize=15)
+    #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
+    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_ticks(np.arange(0,8))
+    Size = True
+    if Size:
+        r = 0
+        while r < len(y)-1:
+            c = 0
+            while c < len(x)-1:
+                a = (x[c+1]+x[c])/2
+                b = (y[r+1]+y[r])/2
+                if C[c][r] > -1:
+                    ax.text(b-.086,a-.5,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
+                c +=1
+            r +=1
+    ax.set_xticks(y)
+    ax.grid(True,which='major',color='k',linewidth=2)
+    f.savefig(path+'VirialMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/VirialMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+def VirialMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,path=''):
+    y = np.arange(11,13.2,.2)
+    x = np.arange(-.5,8.5,1)
+    C = np.zeros((len(x),len(y)))
+    N = np.zeros((len(x),len(y)))
+    SD = np.zeros((len(x),len(y)))
+    r = 0
+    while r < len(y)-1:
+        c = 0
+        while c < len(x)-1:
+            d = []
+            for h in host:
+                if y[r+1] > np.log10(host[h]['Mvir']) > y[r] and x[c+1] > host[h]['EnvDen'] > x[c]:
+                    d.append(len(host[h]['Satellites']))
+            if len(d) > 0:
+                C[c][r] = np.mean(d)
+                SD[c][r] = np.std(d)
+            else:
+                C[c][r]=-1
+            N[c][r] = len(d)
+            c += 1
+        r += 1
+    f,ax = plt.subplots(1,1,figsize=(10,6))
+    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
+    ax.set_ylabel(r'N$_L(<$1 Mpc)',fontsize=20)
+    ax.tick_params(which='major',labelsize=15, length=5)
+    #norm = plt.Normalize(-1,int(np.amax(C))+1)
+    norm = mpl.colors.BoundaryNorm(np.arange(0,10), mpl.cm.viridis.N, extend='min')
+    C = np.ma.masked_where(C < 0, C)
+    cmap = mpl.cm.get_cmap('viridis')#.copy()
+    cmap.set_bad(color='k')
+    c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
+    cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
+    cbar.ax.tick_params(labelsize=15)
+    #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
+    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_ticks(np.arange(0,10))
+    Size = True
+    if Size:
+        r = 0
+        while r < len(y)-1:
+            c = 0
+            while c < len(x)-1:
+                a = (x[c+1]+x[c])/2
+                b = (y[r+1]+y[r])/2
+                if C[c][r] > -1:
+                    ax.text(b-.086,a-.35,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
+                c +=1
+            r +=1
+    ax.set_xticks(y)
+    for i in y:
+        ax.axvline(i,c='k',linewidth=2)
+    for i in x:
+        ax.plot([min(y),max(y)],[i,i],c='k',linewidth=2)
+    f.savefig(path+'VirialMassVsEnvironmentalDensityVsAverageSatelliteCount.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=.1)
+    f.savefig(path+'pdf/VirialMassVsEnvironmentalDensityVsAverageSatelliteCount.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
