@@ -222,7 +222,7 @@ for mw in MilkyWays:
 myprint(f'{len(Satellites)} Satellite Halos Found',clear=True)
 
 #Remove MWs with a too large satellite and their other satellites
-TextLog.append('Removed due to massive satellite (MW - Neigbor):\n')
+TextLog.append('Removed due to massive satellite:\n')
 bad_sats = []
 for mw in too_large_satellite:
     for sat in MilkyWays[mw]['Satellites']: bad_sats.append(sat)

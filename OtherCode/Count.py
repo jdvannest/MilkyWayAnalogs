@@ -2,10 +2,11 @@ import pickle
 
 file_path = '../DataFiles/'
 
-defs,rads = [[1,2,3,4],['sim','300']]
+defs,rads = [[1,2,3,4,5,6,7],['sim','300']]
 
 print('def\tr\tN_mw\tN_sat\tmax(N)\td_min')
 for r in rads:
+    print('----------------------------------------------------------')
     for d in defs:
         mw = pickle.load(open(f'{file_path}MilkyWay.{d}.{r}.pickle','rb'))
         sat = pickle.load(open(f'{file_path}Satellite.{d}.{r}.pickle','rb'))
