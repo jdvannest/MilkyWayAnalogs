@@ -49,6 +49,7 @@ if not args.all:
     StellarMassVsMWpEnvironmentVsAverageSatelliteCount(MW,rest,rad,output_path)
     StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(MW,rest,rad,output_path)
     VirialMassVsEnvironmentVsAverageSatelliteCount(MW,rest,rad,output_path)
+    VirialMassVsEnvironmentalDensityVsAverageSatelliteCount(MW,rest,rad,output_path)
     EnvironmentDistribution(MW,rest,rad,output_path)
     SpecificFrequncyStellarMass(MW,rest,rad,output_path)
     SpecificFrequncyDistance(MW,rest,rad,output_path)
