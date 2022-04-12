@@ -77,7 +77,7 @@ if args.definition == '1':
     criteria = mvir
     ##previous (lb,ub) values: (1e11,1e12.6),(5e11,3e12),(1e12,4e12)
     ##                          1.08e12 +/- 15% from https://arxiv.org/abs/2111.09327                          
-    lower_bound = 1e11 
+    lower_bound = 10**11.5
     upper_bound = 10**12.6
 elif args.definition in ['5','6','7']:
     criteria = kmag
