@@ -55,6 +55,9 @@ hnum, cen, mvir, rvir, vmag, rmag, kmag, bmag, mstar, csfh, sfr = rom[-1].calcul
                                 'AB_V','AB_R','AB_K','AB_B','Mstar','CumSFH','SFR_encl_250Myr')
 myprint('Database Loaded',clear=True)
 
+#Apply photometric correction to stellar mass
+mstar = mstar*.6
+
 #Initialize Data output Dictionaries and LogFile
 MilkyWays = {} 
 Satellites = {} 
@@ -113,6 +116,7 @@ myprint(f'{len(MilkyWays)} Milky Way Analogs Found',clear=True)
 #Writie original list to Text Log
 original.sort()
 TextLog.append('\t'+', '.join(original)+'\n')
+TextLog.append(f'\tTotal: {len(original)}\n')
 TextLog.append('Removed Overlapping Pairs:\n')
 
 #Remove any MW Analogs with overlapping Virial Radii
@@ -131,6 +135,7 @@ for mw1 in MilkyWays:
 for mw in overlapping:
     del MilkyWays[mw]
 print(f'\t{len(overlapping)} Milky Ways removed due to overlapping Rvir')#: {overlapping}')
+TextLog.append(f'\tTotal: {len(overlapping)}\n')
 
 #Apply environmental criteria if applicable
 if args.definition in ['3','4','6','7']:
