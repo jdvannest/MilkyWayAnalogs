@@ -56,7 +56,7 @@ hnum, cen, mvir, rvir, vmag, rmag, kmag, bmag, mstar, csfh, sfr = rom[-1].calcul
 myprint('Database Loaded',clear=True)
 
 #Apply photometric correction to stellar mass
-mstar = mstar*.6
+mstar = mstar*.5
 
 #Initialize Data output Dictionaries and LogFile
 MilkyWays = {} 
