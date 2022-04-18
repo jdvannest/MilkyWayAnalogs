@@ -18,7 +18,7 @@ for mw in M2:
 
 f,ax = plt.subplots(1,1,figsize=(6,6))
 ax.set_xlim([10,13])
-ax.set_ylim([9.6,11.2])#[8.8,11.2])
+ax.set_ylim([9.4,11.2])#[8.8,11.2])
 ax.plot([10,13],[10,10],c='k',linestyle='--',alpha=.5)
 ax.plot([10,13],[11,11],c='k',linestyle='--',alpha=.5)
 ax.axvline(11.5,c='k',linestyle='--',alpha=.5)
