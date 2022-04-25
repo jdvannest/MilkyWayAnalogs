@@ -57,6 +57,11 @@ myprint('Database Loaded',clear=True)
 
 #Apply photometric correction to stellar mass
 mstar = mstar*.5
+#Convert Magnitudes from AB to Vega: https://www.astronomy.ohio-state.edu/martini.10/usefuldata.html
+vmag = vmag - 0.02
+rmag = rmag - 0.21
+kmag = kmag - 1.85
+bmag = bmag + 0.09
 
 #Initialize Data output Dictionaries and LogFile
 MilkyWays = {} 
