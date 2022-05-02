@@ -41,8 +41,6 @@ def PLOT(S,MW,LH,rest,rad,output_path):
     # BinnedSpecificFrequncyEnvironmentalDensity(MW,rest,rad,output_path)
     # SAGA_Nsat_Comparison(MW,rest,rad,output_path)
     # SMHM(MW,S,rest,rad,output_path)
-    # SMHMPeak(MW,S,rest,rad,output_path)
-
 
 if not args.all:
     looping = True 

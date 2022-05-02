@@ -2,8 +2,6 @@
 import pickle, sys, argparse, os
 import numpy as np 
 
-output_path="DataFiles/"
-
 parser = argparse.ArgumentParser(description="Searches Romulus25 for Milky Way Analogs"
                                 +" and identifies their Satellite halos."+
                                 " Outputs pickle files in run directory.", 
@@ -13,13 +11,19 @@ parser.add_argument("-d", "--definition", help="Definition for Milky Way Analog\
                                                 "2: By Stellar Mass Restriction from K-band Magnitude\n"+
                                                 "3: Method 2 + Environmental Restrictions (SAGAI)\n"+
                                                 "4: Method 2 + Environmental Restrictions (SAGAII)\n"+
-                                                "5,6,7: 2,3,4 but with explicit K-band Mag"
-                                                ,choices=['1','2','3','4','5','6','7'],required=True)
+                                                "5,6,7: 2,3,4 but with explicit K-band Mag",
+                                                choices=['1','2','3','4','5','6','7'],required=True)
 parser.add_argument("-r", "--radius", help="Radius for definition satellites\n"+
                                             "sim: The true virial radii from the simulations\n"+
-                                            "300: The SAGA value of 300 kpc"
-                                            ,choices=['sim','300'],required=True)
+                                            "300: The SAGA value of 300 kpc",
+                                            choices=['sim','300'],required=True)
+parser.add_argument("-o", "--overlapping", help="Include Overlapping Analogs",
+                                           action='store_true')
 args = parser.parse_args()
+
+#Define output variables
+output_path="DataFiles/"
+overlap = 'Yov' if args.overlapping else 'Nov'
 
 #This function clears the previous line printed in the terminal before printing
 #when the 'clear' flag is set to True
@@ -40,9 +44,9 @@ def wrap(relpos,scale=1,boxsize=25e3):
     bphys = boxsize*scale
     bad = np.where(np.abs(relpos) > bphys/2.)
     if type(bphys) == np.ndarray:
-        relpos[bad] = -1.0 * (relpos[bad] / np.abs(relpos[bad])) * np.abs(bphys[bad] - np.abs(relpos[bad]))
+        relpos[bad] = -1.0*(relpos[bad]/np.abs(relpos[bad]))*np.abs(bphys[bad]-np.abs(relpos[bad]))
     else:
-        relpos[bad] = -1.0 * (relpos[bad]/np.abs(relpos[bad])) * np.abs(bphys - np.abs(relpos[bad]))
+        relpos[bad] = -1.0*(relpos[bad]/np.abs(relpos[bad]))*np.abs(bphys-np.abs(relpos[bad]))
     return
 
 #Load in Romulus25 and the desired halo properties
@@ -82,20 +86,14 @@ myprint(f'{len(LargeHalos)} Large Halos Found',clear=True)
 #Find Milky Way Analogs
 print('Searching for Milky Way Analogs...')
 if args.definition == '1':
-    criteria = mvir
-    ##previous (lb,ub) values: (1e11.5,1e12.5),(1e11,1e12.6),(5e11,3e12),(1e12,4e12)
-    ##                          1.08e12 +/- 15% from https://arxiv.org/abs/2111.09327                          
-    lower_bound = 10**11.5
-    upper_bound = 10**12.5
-elif args.definition in ['5','6','7']:
-    criteria = kmag
-    lower_bound = -24.6
-    upper_bound = -23
+    #previous (lb,ub) values: (1e11.5,1e12.5),(1e11,1e12.6),(5e11,3e12),(1e12,4e12)
+    #                         1.08e12 +/- 15% from https://arxiv.org/abs/2111.09327   
+    criteria,lower_bound,upper_bound = mvir,10**11.5,10**12.5
+elif args.definition in ['2','3','4']:
+    #previous (lb,ub) values: (10**10.2,10**10.9)
+    criteria,lower_bound,upper_bound = mstar,1e10,1e11
 else:
-    criteria = mstar
-    ##previous (lb,ub) values: (10**10.2,10**10.9)
-    lower_bound = 10**10 #if args.definition == '4' else 10**10.2
-    upper_bound = 10**11 #if args.definition == '4' else 10**10.9
+    criteria,lower_bound,upper_bound = kmag,-24.6,-23
 
 original = []
 for i in np.arange(len(hnum)):
@@ -114,7 +112,7 @@ for i in np.arange(len(hnum)):
         MilkyWays[str(hnum[i])]['SFR_250Myr'] = sfr[i]
         MilkyWays[str(hnum[i])]['Satellites'] = [] #Empty array for indexes of satellites of this MW
         MilkyWays[str(hnum[i])]['EnvDen'] = 0 #Number of neighbors w/in 1Mpc where Mvir>1e11 Msol
-        MilkyWays[str(hnum[i])]['MvirPeak'] = max(rom[-1][int(hnum[i])].calculate_for_progenitors('Mvir')[0])
+        #MilkyWays[str(hnum[i])]['MvirPeak'] = max(rom[-1][int(hnum[i])].calculate_for_progenitors('Mvir')[0])
         original.append(str(hnum[i]))
 myprint(f'{len(MilkyWays)} Milky Way Analogs Found',clear=True)
 
@@ -124,23 +122,24 @@ TextLog.append('\t'+', '.join(original)+'\n')
 TextLog.append(f'\tTotal: {len(original)}\n')
 TextLog.append('Removed Overlapping Pairs:\n')
 
-#Remove any MW Analogs with overlapping Virial Radii
-overlapping = []
-for mw1 in MilkyWays:
-    for mw2 in MilkyWays:
-        if not mw1 == mw2:
-            distance = MilkyWays[mw1]['center'] - MilkyWays[mw2]['center']
-            wrap(distance)
-            if np.linalg.norm(distance) < ( (MilkyWays[mw1]['Rvir']+MilkyWays[mw1]['Rvir']) if args.radius=='sim' else 600):
-                if mw1 not in overlapping:
-                    overlapping.append(mw1)
-                if mw2 not in overlapping:
-                    overlapping.append(mw2)
-                TextLog.append(f'\t{mw1} - {mw2}\n')
-for mw in overlapping:
-    del MilkyWays[mw]
-print(f'\t{len(overlapping)} Milky Ways removed due to overlapping Rvir')#: {overlapping}')
-TextLog.append(f'\tTotal: {len(overlapping)}\n')
+#Remove any MW Analogs with overlapping Virial Radii if desired
+if not args.overlapping:
+    overlapping = []
+    for mw1 in MilkyWays:
+        for mw2 in MilkyWays:
+            if not mw1 == mw2:
+                distance = MilkyWays[mw1]['center'] - MilkyWays[mw2]['center']
+                wrap(distance)
+                if np.linalg.norm(distance) < ( (MilkyWays[mw1]['Rvir']+MilkyWays[mw1]['Rvir']) if args.radius=='sim' else 600):
+                    if mw1 not in overlapping:
+                        overlapping.append(mw1)
+                    if mw2 not in overlapping:
+                        overlapping.append(mw2)
+                    TextLog.append(f'\t{mw1} - {mw2}\n')
+    for mw in overlapping:
+        del MilkyWays[mw]
+    print(f'\t{len(overlapping)} Milky Ways removed due to overlapping Rvir')#: {overlapping}')
+    TextLog.append(f'\tTotal: {len(overlapping)}\n')
 
 #Apply environmental criteria if applicable
 if args.definition in ['3','4','6','7']:
@@ -188,10 +187,9 @@ print(f'{len(MilkyWays)} Milky Way Analogs Considered')
 
 #Determine Closest MW+ and Satellites for Milky Way Analogs
 print(f'Finding Satellite Halos...')
-too_large_satellite = []
 for mw in MilkyWays:
     rad = 300 if args.radius=='300' else MilkyWays[mw]['Rvir']
-    mw_plus_id,mw_plus_dist = [[],[]]
+    mw_plus_id,mw_plus_dist,neighbors = [[],[],[]]
     for i in np.arange(len(hnum)):
         if mstar[i] < 1e7 or rmag[i] > -10.8 or str(hnum[i])==mw:
             pass #Outside Rom25 resolution limit or outside SAGA detection limit
@@ -200,38 +198,65 @@ for mw in MilkyWays:
             wrap(distance)
             #Check for satellite
             if np.linalg.norm(distance) < rad:
-                if str(hnum[i]) in Satellites:
-                    sys.exit(f'Satellite {hnum[i]} has multiple hosts!!!')
-                Satellites[str(hnum[i])] = {}
-                Satellites[str(hnum[i])]['Mvir'] = mvir[i]
-                Satellites[str(hnum[i])]['Rvir'] = rvir[i]
-                Satellites[str(hnum[i])]['Vmag'] = vmag[i]
-                Satellites[str(hnum[i])]['Kmag'] = kmag[i]
-                Satellites[str(hnum[i])]['Bmag'] = bmag[i]
-                Satellites[str(hnum[i])]['Rmag'] = rmag[i]
-                Satellites[str(hnum[i])]['Gmag'] = gband(bmag[i],vmag[i])
-                Satellites[str(hnum[i])]['Mstar'] = mstar[i]
-                Satellites[str(hnum[i])]['center'] = cen[i]
-                Satellites[str(hnum[i])]['CumSFH'] = csfh[i]
-                Satellites[str(hnum[i])]['SFR_250Myr'] = sfr[i]
-                Satellites[str(hnum[i])]['Host'] = mw
-                Satellites[str(hnum[i])]['Orbit'] = [np.linalg.norm(distance),
-                                        np.linalg.norm(distance)/MilkyWays[mw]['Rvir']]
-                MilkyWays[mw]['Satellites'].append(str(hnum[i]))
-                #Check if satellite is larger than MW
-                if mvir[i]>MilkyWays[mw]['Mvir'] and mw not in too_large_satellite: too_large_satellite.append(mw)
-            #Check for nearest MW+
+                if str(hnum[i]) not in Satellites:
+                    Satellites[str(hnum[i])] = {}
+                    Satellites[str(hnum[i])]['Mvir'] = mvir[i]
+                    Satellites[str(hnum[i])]['Rvir'] = rvir[i]
+                    Satellites[str(hnum[i])]['Vmag'] = vmag[i]
+                    Satellites[str(hnum[i])]['Kmag'] = kmag[i]
+                    Satellites[str(hnum[i])]['Bmag'] = bmag[i]
+                    Satellites[str(hnum[i])]['Rmag'] = rmag[i]
+                    Satellites[str(hnum[i])]['Gmag'] = gband(bmag[i],vmag[i])
+                    Satellites[str(hnum[i])]['Mstar'] = mstar[i]
+                    Satellites[str(hnum[i])]['center'] = cen[i]
+                    Satellites[str(hnum[i])]['CumSFH'] = csfh[i]
+                    Satellites[str(hnum[i])]['SFR_250Myr'] = sfr[i]
+                    Satellites[str(hnum[i])]['Host'] = mw
+                    Satellites[str(hnum[i])]['Orbit'] = [np.linalg.norm(distance),
+                                                         np.linalg.norm(distance)/MilkyWays[mw]['Rvir']]
+                    Satellites[str(hnum[i])]['AlternateHosts'] = []
+                    MilkyWays[mw]['Satellites'].append(str(hnum[i]))
+                else:
+                    if args.overlapping:
+                        #See if new host is old massive, and update host if so
+                        if MilkyWays[mw]['Mstar'] > MilkyWays[Satellites[str(hnum[i])]['Host']]['Mstar']:
+                            #Remove satellite from previous host, and make previous host an alternate
+                            Satellites[str(hnum[i])]['AlternateHosts'].append(Satellites[str(hnum[i])]['Host'])
+                            MilkyWays[Satellites[str(hnum[i])]['Host']]['Satellites'].remove(str(hnum[i]))
+                            #Update satellite with new host info, and add satellite to host
+                            Satellites[str(hnum[i])]['Host'] = mw
+                            Satellites[str(hnum[i])]['Orbit'] = [np.linalg.norm(distance),
+                                                                 np.linalg.norm(distance)/MilkyWays[mw]['Rvir']]
+                            MilkyWays[mw]['Satellites'].append(str(hnum[i]))
+                        else:
+                            Satellites[str(hnum[i])]['AlternateHosts'].append(mw)
+                    else:
+                        sys.exit(f'Satellite {hnum[i]} has multiple hosts!!!')
+            #Check for distances for nearest MW+
             if criteria[i] > lower_bound: # MW+ sized halos
                 mw_plus_dist.append(np.linalg.norm(distance))
                 mw_plus_id.append(str(hnum[i]))
             #Check for EnvDen
             if np.linalg.norm(distance)<1000 and mvir[i]>1e11:
                 MilkyWays[mw]['EnvDen']+=1
+        #Find distances to galaxies with M*>1e9 for 10th nearest neighbor
+        if mstar[i]>1e9:
+            distance = MilkyWays[mw]['center'] - cen[i]
+            wrap(distance)
+            neighbors.append(distance)
+    #Determine closest MW+
     MilkyWays[mw]['Closest_MW+'] = [min(mw_plus_dist),
                                     mw_plus_id[mw_plus_dist.index(min(mw_plus_dist))]]
+    #Determine distance to 10th nearest neighbor
+    neighbors.sort()
+    MilkyWays[mw]['10thNeighbor'] = neighbors[9]
 myprint(f'{len(Satellites)} Satellite Halos Found',clear=True)
 
 #Remove MWs with a too large satellite and their other satellites
+too_large_satellite = []
+for mw in MilkyWays:
+    for sat in MilkyWays[mw]['Satellites']:
+        if Satellites[sat]['Mvir']>MilkyWays[mw]['Mvir'] and mw not in too_large_satellite: too_large_satellite.append(mw)
 TextLog.append('Removed due to massive satellite:\n')
 bad_sats = []
 for mw in too_large_satellite:
@@ -243,7 +268,7 @@ print(f'Removed {len(too_large_satellite)} Milky Ways and {len(bad_sats)} Satell
 
 #Determine Satellite Quenching
 for s in Satellites:
-    ######## if t_at_sffrac(satfile[h]['CumSFH'],.99) < 11:
+    #if t_at_sffrac(satfile[h]['CumSFH'],.99) < 11:
     if float(Satellites[s]['SFR_250Myr'][-1])/float(Satellites[s]['Mstar']) < 1e-11:   
         Satellites[s]['Quenched'] = True
     else:
@@ -273,19 +298,20 @@ myprint('Closest Large Halos Found',clear=True)
 
 #Output Data Files
 print('Creating Data Files...')
-out = open(output_path + f'MilkyWay.{args.definition}.{args.radius}.pickle','wb')
+out = open(output_path + f'MilkyWay.{args.definition}.{args.radius}.{overlap}.pickle','wb')
 pickle.dump(MilkyWays,out)
 out.close()
-out = open(output_path + f'Satellite.{args.definition}.{args.radius}.pickle','wb')
+out = open(output_path + f'Satellite.{args.definition}.{args.radius}.{overlap}.pickle','wb')
 pickle.dump(Satellites,out)
 out.close()
 out = open(output_path + f'LargeHalos.pickle','wb')
 pickle.dump(LargeHalos,out)
 out.close()
 myprint('Data Files Written',clear=True)
+
 #Output Text Log
 from datetime import datetime
 done = datetime.now()
-out = open(output_path+f'Logs/TextLog.{args.definition}.{args.radius}.txt','w')
+out = open(output_path+f'Logs/TextLog.{args.definition}.{args.radius}.{overlap}.txt','w')
 out.writelines(['Last Run:\n',f'\t{done.month}-{done.day}-{done.year}, {done.hour}:{done.minute}:{done.second} CT\n']+TextLog)
 out.close()
