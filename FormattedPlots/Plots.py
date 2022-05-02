@@ -818,7 +818,7 @@ def QuenchedFractionVsHostStellarMass(host,sats,rest,rad,path=''):
     plt.close()
 
 def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
-    y = np.arange(9.4,11.21,.2)
+    y = np.arange(9.4,11.01,.2)
     x = np.arange(0,12,2)
     C = np.zeros((len(x),len(y)))
     N = np.zeros((len(x),len(y)))
@@ -844,7 +844,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,11), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(0,8), mpl.cm.viridis.N, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -873,7 +873,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     plt.close()
 
 def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
-    y = np.arange(9.4,11.6,.2)
+    y = np.arange(9.4,11.01,.2)
     x = np.arange(0,12,2)
     C = np.zeros((len(x),len(y)))
     N = np.zeros((len(x),len(y)))
@@ -894,7 +894,7 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
             N[c][r] = len(d)
             c += 1
         r += 1
-    f,ax = plt.subplots(1,1,figsize=(14,6))
+    f,ax = plt.subplots(1,1,figsize=(8,4))
     ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
     ax.set_ylabel('Distance to closest Milky Way\nor Larger Halo [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
@@ -927,7 +927,7 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,path=''):
     plt.close()
 
 def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,path=''):
-    y = np.arange(9.4,11.21,.2)
+    y = np.arange(9.4,11.01,.2)
     x = np.arange(-.5,7.5,1)
     C = np.zeros((len(x),len(y)))
     N = np.zeros((len(x),len(y)))
@@ -953,7 +953,7 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,path=
     ax.set_ylabel(r'N$_L(<$1 Mpc)',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,11), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(0,8), mpl.cm.viridis.N, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -1135,7 +1135,7 @@ def BinnedSpecificFrequncyStellarMass(host,rest,rad,path=''):
             e3l.append(np.percentile(yc,25))
         i += 1
     f,ax = plt.subplots(1,1,figsize=(8,6))
-    ax.set_ylim([-.5,18])
+    ax.set_ylim([-.5,15])
     ax.scatter(x1,y1,c='k',label=r'$\Delta$Log[M$_{*}$] = .05')
     ax.errorbar(x1,y1,yerr=e1,c='k')
     #ax.errorbar(x1,y1,yerr=[e1l,e1u],c='k')
@@ -1263,67 +1263,6 @@ def BinnedSpecificFrequncyEnvironmentalDensity(host,rest,rad,path=''):
     ax.legend(loc='upper left',prop={'size':15})
     f.savefig(path+'BinnedSpecificFrequencyEnvironmentalDensity.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
     f.savefig(path+'pdf/BinnedSpecificFrequencyEnvironmentalDensity.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
-    plt.close()
-
-def T90VsT50(host,sats,rest,rad,path=''):
-    
-    t90mw,t90m31 = [[],[]]
-    t50mw,t50m31 = [[],[]]
-    rmw,rm31 = [[np.NaN],[np.NaN]]
-    mvmw,mvm31 = [[np.NaN],[np.NaN]]
-    for s in sats:
-        if sats[s]['Vmag'] > -13.5:
-            if host[sats[s]['Host']]['Mstar'] > 10**10.55:
-                t90m31.append(13.4-t_at_sffrac(sats[s]['CumSFH'],.9))
-                t50m31.append(13.4-t_at_sffrac(sats[s]['CumSFH'],.5))
-                rm31.append(sats[s]['Rvir'])
-                mvm31.append(sats[s]['Vmag'])
-            else:
-                t90mw.append(13.4-t_at_sffrac(sats[s]['CumSFH'],.9))
-                t50mw.append(13.4-t_at_sffrac(sats[s]['CumSFH'],.5))
-                rmw.append(sats[s]['Rvir'])
-                mvmw.append(sats[s]['Vmag'])
-    try:
-        MAX = np.nanmax([np.nanmax(rm31),np.nanmax(rmw)])
-    except:
-        MAX = 500
-    Rm31 = [0]*len(rm31)
-    for i in np.arange(len(rm31)):
-        Rm31[i] = (3+17*(rm31[i]/MAX))**2
-    Rmw = [0]*len(rmw)
-    for i in np.arange(len(rmw)):
-        Rmw[i] = (3+17*(rmw[i]/MAX))**2
-    
-    f,ax = plt.subplots(2,1,figsize=(6,13),sharex=True)
-    ax[0].grid(c='.5',alpha=.5,linewidth=.7)
-    ax[0].set_axisbelow(True)
-    ax[1].grid(c='.5',alpha=.5,linewidth=.7)
-    ax[1].set_axisbelow(True)
-    ax[1].scatter(4,12,edgecolor='k',facecolor='.5',s=(3+17*(500/MAX))*2)
-    ax[1].text(3.5,12.2,'500pc',fontsize=15)
-    ax[0].plot([13.4-0,13.4-6.7],[13.4-0,13.4-13.4],c='k',zorder=0)
-    ax[1].plot([13.4-0,13.4-6.7],[13.4-0,13.4-13.4],c='k',zorder=0)
-    try:
-        norm = plt.Normalize(np.nanmin([np.nanmin(mvmw),np.nanmin(mvm31)]),np.nanmax([np.nanmax(mvmw),np.nanmax(mvm31)]))
-    except:
-        norm = plt.Normalize(0,1)
-    del mvmw[0], mvm31[0], rmw[0], rm31[0]
-    p = ax[0].scatter(t50m31,t90m31,s=Rm31,c=mvm31,cmap='plasma_r',norm=norm)
-    cbar = f.colorbar(p,cax=f.add_axes([.93,.11,.075,.77]))
-    ax[1].scatter(t50mw,t90mw,s=Rmw,c=mvmw,cmap='plasma_r',norm=norm)
-    ax[1].set_xlabel(r'$\tau_{50}$ [Gyr ago]',fontsize=20)
-    ax[0].set_xlim([13.4,0])
-    ax[0].set_ylabel(r'$\tau_{90}$ [Gyr ago]',fontsize=20)
-    ax[0].yaxis.set_label_coords(-0.08,0)
-    ax[0].set_ylim([13.4,0])
-    ax[1].set_ylim([13.4,0])
-    cbar.set_label(r'M$_{V}$',fontsize=20)
-    cbar.ax.tick_params(labelsize=15,length=5)
-    ax[0].tick_params(labelsize=15,direction='in',length=5)
-    ax[1].tick_params(labelsize=15,direction='in',length=5,top=True)
-    f.subplots_adjust(hspace=0)
-    f.savefig(path+'T90vsT50.'+rest+'.'+rad+'.png',bbox_inches='tight',pad_inches=0.1)
-    f.savefig(path+'pdf/T90VsT50.'+rest+'.'+rad+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def QuenchedFractionVsEnvironment(host,sats,rest,rad,path=''):

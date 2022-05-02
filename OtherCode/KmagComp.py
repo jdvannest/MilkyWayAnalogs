@@ -14,7 +14,7 @@ for m in k:
     km2.append(k[m]['Kmag'])
 for m in st:
     mv1.append(np.log10(st[m]['Mvir']))
-    km1.append(st[m]['Kmag']-1.85)
+    km1.append(st[m]['Kmag'])
 
 ux,uy,lx,ly = [[],[],[],[]]
 with open('KmagSAGABounds.csv') as f:
