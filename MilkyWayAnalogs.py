@@ -243,7 +243,7 @@ for mw in MilkyWays:
         if mstar[i]>1e9:
             distance = MilkyWays[mw]['center'] - cen[i]
             wrap(distance)
-            neighbors.append(distance)
+            neighbors.append(np.linalg.norm(distance))
     #Determine closest MW+
     MilkyWays[mw]['Closest_MW+'] = [min(mw_plus_dist),
                                     mw_plus_id[mw_plus_dist.index(min(mw_plus_dist))]]
