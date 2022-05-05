@@ -1,4 +1,5 @@
 import pickle, os
+import numpy as np
 
 def Plot(file,halo,rad,x,y,z):
     file.append(f"x{halo},y{halo},z{halo} = Sphere({rad},[{x},{y},{z}])\n")
@@ -10,11 +11,13 @@ for n in [(d,r) for  d in [1,2,3,4,5,6,7] for r in ['sim','300']]:
     sat = pickle.load(open(f'../../DataFiles/Satellite.{n[0]}.{n[1]}.Yov.pickle','rb'))
     #os.system(f'rm Plots.{n[0]}.{n[1]}/*')
 
-    hosts,TextLog = [],['Host\tSat\tAlt\n']
+    hosts,TextLog = [],['Host-Sat-Alt\tClosest\n']
 
     for s in sat:
         if len(sat[s]['AlternateHosts'])>0:
-            TextLog.append(f"{sat[s]['Host']} - {s} - {sat[s]['AlternateHosts'][0]}\n")
+            cenh,cens,cena = mw[sat[s]['Host']]['center'] , sat[s]['center'] , mw[sat[s]['AlternateHosts'][0]]['center']
+            closest = 'Yes' if np.linalg.norm(cenh-cens)<np.linalg.norm(cena-cens) else 'No'
+            TextLog.append(f"{sat[s]['Host']} - {s} - {sat[s]['AlternateHosts'][0]}\t{closest}\n")
             hosts.append([sat[s]['Host'],sat[s]['AlternateHosts'][0],s])
     
     if len(TextLog)>1:

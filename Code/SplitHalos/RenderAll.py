@@ -22,7 +22,7 @@ for d in [1,2,3,4,5,6,7]:
 
             for s in systems:
                 for line in SatList:
-                    l = line.split(' - ')
+                    l = line.split('\t')[0].split(' - ')
                     if l[0] == s[0]: s.append(l[1])
 
             for s in systems:
