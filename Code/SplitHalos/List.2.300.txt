@@ -1,5 +1,4 @@
 Host-Sat-Alt	Closest
 62 - 216 - 139	No
 17 - 3113 - 110	Yes
-30 - 54 - 87	No
 15 - 591 - 40	Yes

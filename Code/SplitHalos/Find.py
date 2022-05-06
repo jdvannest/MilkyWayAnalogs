@@ -9,7 +9,7 @@ def Plot(file,halo,rad,x,y,z):
 for n in [(d,r) for  d in [1,2,3,4,5,6,7] for r in ['sim','300']]:
     mw = pickle.load(open(f'../../DataFiles/MilkyWay.{n[0]}.{n[1]}.Yov.pickle','rb'))
     sat = pickle.load(open(f'../../DataFiles/Satellite.{n[0]}.{n[1]}.Yov.pickle','rb'))
-    #os.system(f'rm Plots.{n[0]}.{n[1]}/*')
+    os.system(f'rm Plots.{n[0]}.{n[1]}/View.*')
 
     hosts,TextLog = [],['Host-Sat-Alt\tClosest\n']
 
