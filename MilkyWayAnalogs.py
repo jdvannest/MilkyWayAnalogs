@@ -258,9 +258,14 @@ too_large_satellite,mw_like_sats = [],[]
 for mw in MilkyWays:
     for sat in MilkyWays[mw]['Satellites']:
         if Satellites[sat]['Mvir']>MilkyWays[mw]['Mvir'] and mw not in too_large_satellite: too_large_satellite.append(mw)
-        if Satellites[sat][cname]>lower_bound:
-            mw_like_sats.append(sat)
-            MilkyWays[mw]['Satellites'].remove(sat)
+        if args.definition in ['5','6','7']:
+            if Satellites[sat][cname]<upper_bound:
+                mw_like_sats.append(sat)
+                MilkyWays[mw]['Satellites'].remove(sat)
+        else:
+            if Satellites[sat][cname]>lower_bound:
+                mw_like_sats.append(sat)
+                MilkyWays[mw]['Satellites'].remove(sat)
 TextLog.append('Removed due to massive satellite:\n')
 #Find and remove associated satellites
 bad_sats = []
@@ -273,9 +278,12 @@ for sat in bad_sats: del Satellites[sat]
 for sat in Satellites:
     for mw in too_large_satellite:
         if mw in Satellites[sat]['AlternateHosts']: Satellites[sat]['AlternateHosts'].remove(mw)
+TextLog.append('Removed MW-like satellites:\n')
 for sat in mw_like_sats:
     del Satellites[sat]
+    TextLog.append(f'\t{sat}\n')
 print(f'Removed {len(too_large_satellite)} Milky Ways and {len(bad_sats)} Satellites due to overmassive satellite')
+print(f'Remvoed {len(mw_like_sats)} Milky Way-like Satellites')
 
 #Determine Satellite Quenching
 for s in Satellites:
