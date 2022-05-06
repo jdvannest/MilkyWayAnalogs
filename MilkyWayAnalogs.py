@@ -88,12 +88,12 @@ print('Searching for Milky Way Analogs...')
 if args.definition == '1':
     #previous (lb,ub) values: (1e11.5,1e12.5),(1e11,1e12.6),(5e11,3e12),(1e12,4e12)
     #                         1.08e12 +/- 15% from https://arxiv.org/abs/2111.09327   
-    criteria,lower_bound,upper_bound = mvir,10**11.5,10**12.5
+    criteria,lower_bound,upper_bound,cname = mvir,10**11.5,10**12.5,'Mvir'
 elif args.definition in ['2','3','4']:
     #previous (lb,ub) values: (10**10.2,10**10.9)
-    criteria,lower_bound,upper_bound = mstar,1e10,1e11
+    criteria,lower_bound,upper_bound,cname = mstar,1e10,1e11,'Mstar'
 else:
-    criteria,lower_bound,upper_bound = kmag,-24.6,-23
+    criteria,lower_bound,upper_bound,cname = kmag,-24.6,-23,'Kmag'
 
 original = []
 for i in np.arange(len(hnum)):
@@ -253,10 +253,14 @@ for mw in MilkyWays:
 myprint(f'{len(Satellites)} Satellite Halos Found',clear=True)
 
 #Remove MWs with a too large satellite and their other satellites
-too_large_satellite = []
+#Remove satellites that are also in MW range
+too_large_satellite,mw_like_sats = [],[]
 for mw in MilkyWays:
     for sat in MilkyWays[mw]['Satellites']:
         if Satellites[sat]['Mvir']>MilkyWays[mw]['Mvir'] and mw not in too_large_satellite: too_large_satellite.append(mw)
+        if Satellites[sat][cname]>lower_bound:
+            mw_like_sats.append(sat)
+            MilkyWays[mw]['Satellites'].remove(sat)
 TextLog.append('Removed due to massive satellite:\n')
 #Find and remove associated satellites
 bad_sats = []
@@ -265,10 +269,12 @@ for mw in too_large_satellite:
     del MilkyWays[mw]
     TextLog.append(f'\t{mw}\n')
 for sat in bad_sats: del Satellites[sat]
-#Find sats with bad MW as an alternate
+#Find sats with bad MW as an alternate, remove mwlike sats
 for sat in Satellites:
     for mw in too_large_satellite:
         if mw in Satellites[sat]['AlternateHosts']: Satellites[sat]['AlternateHosts'].remove(mw)
+for sat in mw_like_sats:
+    del Satellites[sat]
 print(f'Removed {len(too_large_satellite)} Milky Ways and {len(bad_sats)} Satellites due to overmassive satellite')
 
 #Determine Satellite Quenching
