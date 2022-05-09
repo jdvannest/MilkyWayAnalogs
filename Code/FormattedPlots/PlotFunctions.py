@@ -939,7 +939,7 @@ def StellarMassVsEnvironmentVsQuenchFraction(host,sat,rest,rad,over,path=''):
         while c < len(x)-1:
             d = []
             for h in host:
-                if y[r+1] > np.log10(host[h]['Mstar']) > y[r] and x[c+1] > host[h]['Closest'][0]/1000 > x[c]:
+                if y[r+1] > np.log10(host[h]['Mstar']) > y[r] and x[c+1] > host[h]['Closest_MW+'][0]/1000 > x[c]:
                     t,q = 0,0
                     for s in host[h]['Satellites']:
                         if sat[s]['Mstar']>1e8:
@@ -1440,7 +1440,7 @@ def BinnedSpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
     while i < len(xr) -1:
         yc = []
         for h in host:
-            if xr[i] < host[h]['Closest'][0]/1000 < xr[i+1]:
+            if xr[i] < host[h]['10thNeighbor']/1000 < xr[i+1]:
                 yc.append(SnN(len(host[h]['Satellites']),host[h]['10thNeighbor']))
         if len(yc) > 0:
             y1.append(np.mean(yc))
@@ -1456,7 +1456,7 @@ def BinnedSpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
     while i < len(xr) -1:
         yc = []
         for h in host:
-            if xr[i] < host[h]['Closest'][0]/1000 < xr[i+1]:
+            if xr[i] < host[h]['10thNeighbor']/1000 < xr[i+1]:
                 yc.append(SnN(len(host[h]['Satellites']),host[h]['10thNeighbor']))
         if len(yc) > 0:
             y2.append(np.mean(yc))
@@ -1472,7 +1472,7 @@ def BinnedSpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
     while i < len(xr) -1:
         yc = []
         for h in host:
-            if xr[i] < host[h]['Closest'][0]/1000 < xr[i+1]:
+            if xr[i] < host[h]['10thNeighbor']/1000 < xr[i+1]:
                 yc.append(SnN(len(host[h]['Satellites']),host[h]['10thNeighbor']))
         if len(yc) > 0:
             y3.append(np.mean(yc))

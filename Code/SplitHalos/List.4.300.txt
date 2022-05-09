@@ -1,2 +1,2 @@
-Host-Sat-Alt	Closest
-15 - 591 - 40	Yes
+Host-Sat-Alt	Closest	T-Index
+15 - 591 - 40	Yes	Yes

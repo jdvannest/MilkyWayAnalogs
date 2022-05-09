@@ -1,4 +1,4 @@
-Host-Sat-Alt	Closest
-27 - 2688 - 61	Yes
-27 - 3481 - 61	No
-30 - 2219 - 87	No
+Host-Sat-Alt	Closest	T-Index
+27 - 2688 - 61	Yes	Yes
+27 - 3481 - 61	No	No
+30 - 2219 - 87	No	Yes

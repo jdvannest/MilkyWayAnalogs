@@ -10,14 +10,17 @@ for n in [(d,r) for  d in [1,2,3,4,5,6,7] for r in ['sim','300']]:
     mw = pickle.load(open(f'../../DataFiles/MilkyWay.{n[0]}.{n[1]}.Yov.pickle','rb'))
     sat = pickle.load(open(f'../../DataFiles/Satellite.{n[0]}.{n[1]}.Yov.pickle','rb'))
     os.system(f'rm Plots.{n[0]}.{n[1]}/View.*')
+    os.system(f'rm List.{n[0]},{n[1]}.txt')
 
-    hosts,TextLog = [],['Host-Sat-Alt\tClosest\n']
+    hosts,TextLog = [],['Host-Sat-Alt\tClosest\tT-Index\n']
 
     for s in sat:
         if len(sat[s]['AlternateHosts'])>0:
             cenh,cens,cena = mw[sat[s]['Host']]['center'] , sat[s]['center'] , mw[sat[s]['AlternateHosts'][0]]['center']
+            mh,ms,ma = mw[sat[s]['Host']]['Mvir'] , sat[s]['Mvir'] , mw[sat[s]['AlternateHosts'][0]]['Mvir']
             closest = 'Yes' if np.linalg.norm(cenh-cens)<np.linalg.norm(cena-cens) else 'No'
-            TextLog.append(f"{sat[s]['Host']} - {s} - {sat[s]['AlternateHosts'][0]}\t{closest}\n")
+            index = 'Yes' if (mh/np.linalg.norm(cenh-cens)**3)>(ma/np.linalg.norm(cena-cens)**3) else 'No'
+            TextLog.append(f"{sat[s]['Host']} - {s} - {sat[s]['AlternateHosts'][0]}\t{closest}\t{index}\n")
             hosts.append([sat[s]['Host'],sat[s]['AlternateHosts'][0],s])
     
     if len(TextLog)>1:

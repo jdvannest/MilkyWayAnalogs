@@ -17,7 +17,7 @@ for m in st:
     km1.append(st[m]['Kmag'])
 
 ux,uy,lx,ly = [[],[],[],[]]
-with open('KmagSAGABounds.csv') as f:
+with open('Data/KmagSAGABounds.csv') as f:
     lines = f.readlines()
 for line in lines:
     l = line.split(',')
