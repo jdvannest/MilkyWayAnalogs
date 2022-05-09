@@ -233,9 +233,14 @@ for mw in MilkyWays:
                     else:
                         sys.exit(f'Satellite {hnum[i]} has multiple hosts!!!')
             #Check for distances for nearest MW+
-            if criteria[i] > lower_bound: # MW+ sized halos
-                mw_plus_dist.append(np.linalg.norm(distance))
-                mw_plus_id.append(str(hnum[i]))
+            if args.definition in ['5','6','7']:
+                if criteria[i] < upper_bound: # MW+ sized halos
+                    mw_plus_dist.append(np.linalg.norm(distance))
+                    mw_plus_id.append(str(hnum[i]))
+            else:
+                if criteria[i] > lower_bound: # MW+ sized halos
+                    mw_plus_dist.append(np.linalg.norm(distance))
+                    mw_plus_id.append(str(hnum[i]))
             #Check for EnvDen
             if np.linalg.norm(distance)<1000 and mvir[i]>1e11:
                 MilkyWays[mw]['EnvDen']+=1
