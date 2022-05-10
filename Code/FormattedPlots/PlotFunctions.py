@@ -1282,7 +1282,7 @@ def SpecificFrequencyEnvironmentalDensity(host,rest,rad,over,path=''):
     plt.close()
 
 def BinnedSpecificFrequencyStellarMass(host,rest,rad,over,path=''):
-    xr = np.arange(10,11.2,.05)
+    xr = np.arange(9.4,11.2,.05)
     x1,y1,e1,e1u,e1l= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
@@ -1298,7 +1298,7 @@ def BinnedSpecificFrequencyStellarMass(host,rest,rad,over,path=''):
             e1u.append(np.percentile(yc,75))
             e1l.append(np.percentile(yc,25))
         i += 1
-    xr = np.arange(10,11.2,.1)
+    xr = np.arange(9.4,11.2,.1)
     x2,y2,e2,e2u,e2l= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
@@ -1314,7 +1314,7 @@ def BinnedSpecificFrequencyStellarMass(host,rest,rad,over,path=''):
             e2u.append(np.percentile(yc,75))
             e2l.append(np.percentile(yc,25))
         i += 1
-    xr = np.arange(10,11.2,.25)
+    xr = np.arange(9.25,11.2,.25)
     x3,y3,e3,e3l,e3u= [[],[],[],[],[]]
     i = 0
     while i < len(xr) -1:
