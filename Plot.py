@@ -27,7 +27,8 @@ def PLOT(S,MW,LH,rest,rad,over,output_path):
     # QuenchedFractionVsStellarMass(MW,S,rest,rad,over,output_path)
     # QuenchedFractionVsOrbitalDistance(MW,S,rest,rad,over,output_path)
     # QuenchedFractionVsHostStellarMass(MW,S,rest,rad,over,output_path)
-    # QuenchedFractionVsEnvironment(MW,S,rest,rad,over,output_path)
+    QuenchedFractionVsEnvironment(MW,S,rest,rad,over,output_path)
+    # QuenchedFractionHistograms(MW,S,rest,rad,over,output_path)
     # StellarMassVsEnvironmentVsAverageSatelliteCount(MW,rest,rad,over,output_path)
     # StellarMassVsEnvironmentVsQuenchFraction(MW,S,rest,rad,over,output_path)
     # StellarMassVsMWpEnvironmentVsAverageSatelliteCount(MW,rest,rad,over,output_path)
@@ -41,12 +42,13 @@ def PLOT(S,MW,LH,rest,rad,over,output_path):
     # SpecificFrequencyDistance(MW,rest,rad,over,output_path)
     # SpecificFrequencyNeighborEnvironment(MW,rest,rad,over,output_path)
     # SpecificFrequencyEnvironmentalDensity(MW,rest,rad,over,output_path)
-    BinnedSpecificFrequencyStellarMass(MW,rest,rad,over,output_path)
+    # BinnedSpecificFrequencyStellarMass(MW,rest,rad,over,output_path)
     # BinnedSpecificFrequencyDistance(MW,rest,rad,over,output_path)
     # BinnedSpecificFrequencyNeighborEnvironment(MW,rest,rad,over,output_path)
     # BinnedSpecificFrequencyEnvironmentalDensity(MW,rest,rad,over,output_path)
     # SAGA_Nsat_Comparison(MW,rest,rad,over,output_path)
     # SMHM(MW,S,rest,rad,over,output_path)
+    # NsatVsLargestSatelliteMass(MW,S,rest,rad,over,output_path)
 
 if not args.all:
     looping = True 
