@@ -10,6 +10,17 @@ args = parser.parse_args()
 datafile_path = "DataFiles/"
 output_path = "Plots/"
 
+#Function for pulling in specified criteria to plot
+def Query(prompt='',options=[]):
+    looping = True
+    while looping:
+        response = str(input(prompt))
+        if rest in options:
+                looping = False
+        else:
+            print('Invalid')
+    return(response)
+
 #Comment out Plots to ignore
 def PLOT(S,MW,LH,rest,rad,over,output_path):
     # SatelliteCountHistogram(MW,rest,rad,over,output_path)
@@ -19,15 +30,15 @@ def PLOT(S,MW,LH,rest,rad,over,output_path):
     # LargestSatelliteDistribution(MW,S,rest,rad,over,output_path)
     # LargestSatelliteVsEnvironment(MW,S,rest,rad,over,output_path)
     # LargestSatelliteVsNeighborEnvironment(MW,S,rest,rad,over,output_path)
-    # LargestSatelliteVsEnvironmentalDensity(MW,S,rest,rad,over,output_path)
     # LargestSatelliteVsHostMass(MW,S,rest,rad,over,output_path)
+    # LargestSatelliteVsEnvironmentalDensity(MW,S,rest,rad,over,output_path)
     # LargestSatelliteStellarVsHostMass(MW,S,rest,rad,over,output_path)
     # SatelliteCountVsStellarMassVsEnvironment(MW,rest,rad,over,output_path)
     # StellarMassVsOrbitalDistanceVsT90(MW,S,LH,rest,rad,over,output_path)
     # QuenchedFractionVsStellarMass(MW,S,rest,rad,over,output_path)
     # QuenchedFractionVsOrbitalDistance(MW,S,rest,rad,over,output_path)
     # QuenchedFractionVsHostStellarMass(MW,S,rest,rad,over,output_path)
-    QuenchedFractionVsEnvironment(MW,S,rest,rad,over,output_path)
+    # QuenchedFractionVsEnvironment(MW,S,rest,rad,over,output_path)
     # QuenchedFractionHistograms(MW,S,rest,rad,over,output_path)
     # StellarMassVsEnvironmentVsAverageSatelliteCount(MW,rest,rad,over,output_path)
     # StellarMassVsEnvironmentVsQuenchFraction(MW,S,rest,rad,over,output_path)
@@ -48,30 +59,13 @@ def PLOT(S,MW,LH,rest,rad,over,output_path):
     # BinnedSpecificFrequencyEnvironmentalDensity(MW,rest,rad,over,output_path)
     # SAGA_Nsat_Comparison(MW,rest,rad,over,output_path)
     # SMHM(MW,S,rest,rad,over,output_path)
-    # NsatVsLargestSatelliteMass(MW,S,rest,rad,over,output_path)
+    NsatVsLargestSatelliteMass(MW,S,rest,rad,over,output_path)
+    NsatVsLargestSatelliteMagnitude(MW,S,rest,rad,over,output_path)
 
 if not args.all:
-    looping = True 
-    while looping:
-        rest = str(input('Milky Way Restricion (1,2,3,4,5,6,7): '))
-        if rest in ['1','2','3','4','5','6','7']:
-            looping = False
-        else:
-            print('Invalid')
-    looping = True 
-    while looping:
-        rad = str(input('Milky Way Radius (sim,300): '))
-        if rad in ['300','sim']:
-            looping = False
-        else:
-            print('Invalid')
-    looping = True 
-    while looping:
-        over = str(input('Allow Overlapping Analogs? (Yov,Nov): '))
-        if over in ['Yov','Nov']:
-            looping = False
-        else:
-            print('Invalid')
+    rest = Query('Milky Way Restricion (1,2,3,4,5,6,7): ',['1','2','3','4','5','6','7'])
+    rad = Query('Milky Way Radius (sim,300): ',['300','sim'])
+    over = Query('Allow Overlapping Analogs? (Yov,Nov): ',['Yov','Nov'])
     S = pickle.load(open(f'{datafile_path}Satellite.{rest}.{rad}.{over}.pickle','rb'))
     MW = pickle.load(open(f'{datafile_path}MilkyWay.{rest}.{rad}.{over}.pickle','rb'))
     LH = pickle.load(open(f'{datafile_path}LargeHalos.pickle','rb'))

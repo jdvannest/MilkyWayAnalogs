@@ -50,24 +50,6 @@ def SnN(Nsat,N):
     #Calculates specific frequency of Nsat normalized to 10th neighbor distance
     return(Nsat*10**((N/1000 - 4)))
 
-def Quenching(satfile):
-    Satellites = pickle.load(open(satfile,'rb'))
-    for h in Satellites:
-        if float(Satellites[h]['SFR_250Myr'][len(Satellites[h]['SFR_250Myr'])-1])/float(Satellites[h]['Mstar']) < 10**-11: ########3 if t_at_sffrac(Satellites[h]['CumSFH'],.99) < 11:   
-            Satellites[h]['Quenched'] = True
-        else:
-            Satellites[h]['Quenched'] = False
-    pickle.dump(Satellites,open(satfile,'wb'))
-
-def Orbit(satfile,hostfile):
-    Satellites = pickle.load(open(satfile,'rb'))
-    MW = pickle.load(open(hostfile,'rb'))
-    for halo in Satellites:
-        rel = Satellites[halo]['center'] - MW[Satellites[halo]['Host']]['center']
-        wrap(rel,scale=1,boxsize=25e3)
-        Satellites[halo]['Orbit'] = [np.linalg.norm(rel),np.linalg.norm(rel)/MW[Satellites[halo]['Host']]['Rvir']]
-    pickle.dump(Satellites,open(satfile,'wb'))
-
 def SatelliteCountHistogram(host,rest,rad,over,path=''):
     '''
     Takes a dictionary output from satallite generation
@@ -86,10 +68,11 @@ def SatelliteCountHistogram(host,rest,rad,over,path=''):
     ax.set_xlim([-.5,max(y)+1.5])
     ax.xaxis.set_major_locator(MultipleLocator(1))
     ax.hist(y,x,align='mid',color='k')
-    ax.set_xlabel(r'N$_{sat}$',fontsize=15)
-    ax.set_ylabel('Number of Hosts',fontsize=15)
-    f.savefig(path+'SatelliteCountHistogram'+'.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/SatelliteCountHistogram'+'.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax.set_xlabel(r'N$_{sat}$',fontsize=20)
+    ax.set_ylabel('Number of Hosts',fontsize=20)
+    ax.tick_params(labelsize=15)
+    f.savefig(f'{path}SatelliteCountHistogram.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SatelliteCountHistogram'+'.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
@@ -240,12 +223,12 @@ def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
     ax.plot([-1,0],[-1,0],color='0.5',alpha=.5,label='Romulus25')
     ax.set_xlim([-12,-25])
     ax.set_ylim([0,12])
-    ax.set_xlabel(r'M$_{V}$ [Mag]',fontsize=20)
-    ax.set_ylabel(r'N ($<$M$_{V}$)',fontsize=20)
+    ax.set_xlabel(r'V [Mag]',fontsize=20)
+    ax.set_ylabel(r'N (M$_{V} < $V)',fontsize=20)
     ax.tick_params(labelsize=15,length=5)
     ax.legend(loc='upper right',prop={'size':17})
-    f.savefig(path+'LuminosityFunction'+'.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/LuminosityFunction'+'.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}LuminosityFunction.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/LuminosityFunction'+'.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def MassFunction(host,sats,rest,rad,over,path=''):
@@ -358,14 +341,14 @@ def MassFunction(host,sats,rest,rad,over,path=''):
     ax.plot(x,h242y,label='Sonia',linestyle='--',color='r')
     ax.plot(x,h329y,label='Elena',linestyle='--',color='brown')
     ax.plot([-1,0],[-1,0],color='0.5',alpha=.5,label='Rom25')
-    ax.set_xlabel(r'Log(M$_{star}$) [M$_{\odot}$]',fontsize=15)
-    ax.set_ylabel('N',fontsize=15)
-    ax.tick_params(labelsize=12,length=5)
+    ax.set_xlabel('M',fontsize=20)
+    ax.set_ylabel(r'N (Log[M$_*$/M$_\odot$]$>$M)',fontsize=20)
+    ax.tick_params(labelsize=15,length=5)
     ax.set_ylim([0,12])
     ax.set_xlim([7,11])
-    ax.legend(loc='upper right',prop={'size':12})
-    f.savefig(path+'MassFunction'+'.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/MassFunction'+'.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax.legend(loc='upper right',prop={'size':17})
+    f.savefig(f'{path}MassFunction.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/MassFunction'+'.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def NsatVsEnvironment(host,rest,rad,over,path=''):
@@ -382,16 +365,16 @@ def NsatVsEnvironment(host,rest,rad,over,path=''):
     f,ax = plt.subplots(1,1)
     ax.set_xlim([-1,max(x)+1])
     ax.set_ylim([-.5, max(y)+1])
-    ax.set_xlabel(r'Normalized distance to closest Large Halo'+'\n'+r'(M$_{vir}$ $>$ 5*10$^{11}$) [R/R$_{vir}$]',fontsize=15)
-    ax.set_ylabel(r'N$_{sat}$',fontsize=15)
-    ax.tick_params(direction='in',labelsize=12,length=5)
+    ax.set_xlabel(r'D$_{LH}$/R$_{vir}$',fontsize=20)
+    ax.set_ylabel(r'N$_{sat}$',fontsize=20)
+    ax.tick_params(direction='in',labelsize=15,length=5)
     ax.scatter(x,y,c='k')
-    f.savefig(path+'NsatVsEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/NsatVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}NsatVsEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/NsatVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def LargestSatelliteDistribution(host,sats,rest,rad,over,path=''):
-    x = np.arange(9,14,.1)
+    x = np.arange(9,12,.1)
     y = []
     for h in host:
         mass = 0
@@ -400,14 +383,14 @@ def LargestSatelliteDistribution(host,sats,rest,rad,over,path=''):
                 mass = np.log10(sats[str(sat)]['Mvir'])
         y.append(mass)
     f,ax = plt.subplots(1,1)
-    ax.set_xlabel(r'Log(M$_{vir}$) of Largest Satellite [M$_{\odot}$])',fontsize=15)
-    ax.set_ylabel('N',fontsize=15)
-    ax.tick_params(labelsize=12,length=5)
-    ax.set_xlim([9,14])
-    ax.set_ylim([0,10])
-    ax.hist(y,x)
-    f.savefig(path+'LargestSatelliteDistribution.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/LargestSatelliteDistribution.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax.set_xlabel(r'Log(M$_{vir}$/M$_\odot$) of Largest Satellite',fontsize=20)
+    ax.set_ylabel('N',fontsize=20)
+    ax.tick_params(labelsize=15,length=5)
+    ax.set_xlim([9,12])
+    #ax.set_ylim([0,10])
+    ax.hist(y,x,color='k')
+    f.savefig(f'{path}LargestSatelliteDistribution.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/LargestSatelliteDistribution.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def LargestSatelliteVsEnvironment(host,sats,rest,rad,over,path=''):
@@ -444,23 +427,23 @@ def LargestSatelliteVsEnvironment(host,sats,rest,rad,over,path=''):
     ax[1][0].set_xlim([0,41])
     ax[0][1].set_xlim([0,40])
     ax[1][1].set_xlim([0,40])
-    ax[0][0].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,right=True,labelright=False)
-    ax[1][0].tick_params(labelsize=20,direction='in',length=5,top=True,right=True,labelright=False)
-    ax[0][1].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
-    ax[1][1].tick_params(labelsize=20,direction='in',length=5,top=True,labelleft=False,left=False)
-    ax[0][0].set_ylabel(r'Log(M$_{vir}$) of\\Largest Satellite',fontsize=30)
+    ax[0][0].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,right=True,labelright=False)
+    ax[1][0].tick_params(labelsize=25,direction='in',length=5,top=True,right=True,labelright=False)
+    ax[0][1].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
+    ax[1][1].tick_params(labelsize=25,direction='in',length=5,top=True,labelleft=False,left=False)
+    ax[0][0].set_ylabel(r'Log(M$_{vir}$/M$_\odot$) of\\Largest Satellite',fontsize=35)
     ax[0][0].scatter(x1,y1,c='k')#,label=r'All Satellites Smaller than M$_{vir,host}$')
     ax[0][0].scatter(x2,y2,c='r')#,label=r'Contains Satellite Larger than M$_{vir,host}$')
-    ax[1][0].set_xlabel(r'Distance to closest Large Halo [R/R$_{vir}$]',fontsize=30)
-    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$',fontsize=30)
+    ax[1][0].set_xlabel(r'D$_{LH}$/R$_{vir}$',fontsize=35)
+    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$',fontsize=35)
     ax[1][0].scatter(x1,Y1,c='k',label=r'All Satellites Smaller than M$_{vir}$')
     ax[1][0].scatter(x2,Y2,c='r',label=r'Contains Satellite Larger than M$_{vir}$')
     #ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
     ax[0][1].hist(y1+y2,np.arange(9.4,11.4,.2),orientation='horizontal',facecolor='None',edgecolor='k')
     ax[1][1].hist(Y1+Y2,np.arange(0,.4,.05),orientation='horizontal',facecolor='None',edgecolor='k')
-    ax[1][1].set_xlabel('N',fontsize=30)
-    f.savefig(path+'LargestSatelliteVsEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/LargestSatelliteVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax[1][1].set_xlabel('N',fontsize=35)
+    f.savefig(f'{path}LargestSatelliteVsEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/LargestSatelliteVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def LargestSatelliteVsNeighborEnvironment(host,sats,rest,rad,over,path=''):
@@ -497,23 +480,23 @@ def LargestSatelliteVsNeighborEnvironment(host,sats,rest,rad,over,path=''):
     ax[1][0].set_xlim([0,41])
     ax[0][1].set_xlim([0,40])
     ax[1][1].set_xlim([0,40])
-    ax[0][0].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,right=True,labelright=False)
-    ax[1][0].tick_params(labelsize=20,direction='in',length=5,top=True,right=True,labelright=False)
-    ax[0][1].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
-    ax[1][1].tick_params(labelsize=20,direction='in',length=5,top=True,labelleft=False,left=False)
-    ax[0][0].set_ylabel(r'Log(M$_{vir}$) of\\Largest Satellite',fontsize=30)
+    ax[0][0].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,right=True,labelright=False)
+    ax[1][0].tick_params(labelsize=25,direction='in',length=5,top=True,right=True,labelright=False)
+    ax[0][1].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
+    ax[1][1].tick_params(labelsize=25,direction='in',length=5,top=True,labelleft=False,left=False)
+    ax[0][0].set_ylabel(r'Log(M$_{vir}$/M$_\odot$) of\\Largest Satellite',fontsize=35)
     ax[0][0].scatter(x1,y1,c='k')#,label=r'All Satellites Smaller than M$_{vir,host}$')
     ax[0][0].scatter(x2,y2,c='r')#,label=r'Contains Satellite Larger than M$_{vir,host}$')
-    ax[1][0].set_xlabel(r'Distance to 10$^{th}$ Neighbor [R/R$_{vir}$]',fontsize=30)
-    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$',fontsize=30)
+    ax[1][0].set_xlabel(r'D$_{10}$/R$_{vir}$',fontsize=35)
+    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$',fontsize=35)
     ax[1][0].scatter(x1,Y1,c='k',label=r'All Satellites Smaller than M$_{vir}$')
     ax[1][0].scatter(x2,Y2,c='r',label=r'Contains Satellite Larger than M$_{vir}$')
     #ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
     ax[0][1].hist(y1+y2,np.arange(9.4,11.4,.2),orientation='horizontal',facecolor='None',edgecolor='k')
     ax[1][1].hist(Y1+Y2,np.arange(0,.4,.05),orientation='horizontal',facecolor='None',edgecolor='k')
-    ax[1][1].set_xlabel('N',fontsize=30)
-    f.savefig(path+'LargestSatelliteVsNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/LargestSatelliteVsNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax[1][1].set_xlabel('N',fontsize=35)
+    f.savefig(f'{path}LargestSatelliteVsNeighborEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/LargestSatelliteVsNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def LargestSatelliteVsHostMass(host,sats,rest,rad,over,path=''):
@@ -550,23 +533,23 @@ def LargestSatelliteVsHostMass(host,sats,rest,rad,over,path=''):
     ax[1][0].set_xlim([10,11.2])
     ax[0][1].set_xlim([0,40])
     ax[1][1].set_xlim([0,40])
-    ax[0][0].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,right=True,labelright=False)
-    ax[1][0].tick_params(labelsize=20,direction='in',length=5,top=True,right=True,labelright=False)
-    ax[0][1].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
-    ax[1][1].tick_params(labelsize=20,direction='in',length=5,top=True,labelleft=False,left=False)
-    ax[0][0].set_ylabel(r'Log(M$_{vir}$) of\\Largest Satellite [M$_{\odot}$]',fontsize=30)
+    ax[0][0].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,right=True,labelright=False)
+    ax[1][0].tick_params(labelsize=25,direction='in',length=5,top=True,right=True,labelright=False)
+    ax[0][1].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
+    ax[1][1].tick_params(labelsize=25,direction='in',length=5,top=True,labelleft=False,left=False)
+    ax[0][0].set_ylabel(r'Log(M$_{vir}$/M$_\odot$) of\\Largest Satellite',fontsize=35)
     ax[0][0].scatter(x1,y1,c='k',label=r'All Satellites Smaller than M$_{vir,host}$')
     ax[0][0].scatter(x2,y2,c='r',label=r'Contains Satellite Larger than M$_{vir,host}$')
-    ax[1][0].set_xlabel(r'Log(M$_{*,host}$)',fontsize=30)
-    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$ [M$_{\odot}$]',fontsize=30)
+    ax[1][0].set_xlabel(r'Log(M$_{*,host}$/M$_\odot$)',fontsize=35)
+    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$',fontsize=35)
     ax[1][0].scatter(x1,Y1,c='k',label=r'All Satellites Smaller than M$_{vir}$')
     ax[1][0].scatter(x2,Y2,c='r',label=r'Contains Satellite Larger than M$_{vir}$')
-    ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
+    #ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
     ax[0][1].hist(y1+y2,np.arange(9.4,11.4,.2),orientation='horizontal',facecolor='None',edgecolor='k')
     ax[1][1].hist(Y1+Y2,np.arange(0,.4,.05),orientation='horizontal',facecolor='None',edgecolor='k')
-    ax[1][1].set_xlabel('N',fontsize=30)
-    f.savefig(path+'LargestSatelliteVsHostMass.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/LargestSatelliteVsHostMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax[1][1].set_xlabel('N',fontsize=35)
+    f.savefig(f'{path}LargestSatelliteVsHostMass.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/LargestSatelliteVsHostMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def LargestSatelliteVsEnvironmentalDensity(host,sats,rest,rad,over,path=''):
@@ -603,23 +586,23 @@ def LargestSatelliteVsEnvironmentalDensity(host,sats,rest,rad,over,path=''):
     ax[1][0].set_xlim([-.5,7])
     ax[0][1].set_xlim([0,40])
     ax[1][1].set_xlim([0,40])
-    ax[0][0].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,right=True,labelright=False)
-    ax[1][0].tick_params(labelsize=20,direction='in',length=5,top=True,right=True,labelright=False)
-    ax[0][1].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
-    ax[1][1].tick_params(labelsize=20,direction='in',length=5,top=True,labelleft=False,left=False)
-    ax[0][0].set_ylabel(r'Log(M$_{vir}$) of\\Largest Satellite [M$_{\odot}$]',fontsize=30)
+    ax[0][0].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,right=True,labelright=False)
+    ax[1][0].tick_params(labelsize=25,direction='in',length=5,top=True,right=True,labelright=False)
+    ax[0][1].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
+    ax[1][1].tick_params(labelsize=25,direction='in',length=5,top=True,labelleft=False,left=False)
+    ax[0][0].set_ylabel(r'Log(M$_{vir}$/M$_\odot$) of\\Largest Satellite',fontsize=35)
     ax[0][0].scatter(x1,y1,c='k')#,label=r'All Satellites Smaller than M$_{vir,host}$')
     ax[0][0].scatter(x2,y2,c='r')#,label=r'Contains Satellite Larger than M$_{vir,host}$')
-    ax[1][0].set_xlabel(r'N$_L(<$1 Mpc)',fontsize=30)
-    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$ [M$_{\odot}$]',fontsize=30)
+    ax[1][0].set_xlabel(r'N$_L(<$1 Mpc)',fontsize=35)
+    ax[1][0].set_ylabel(r'M$_{sat}$ / M$_{host}$',fontsize=35)
     ax[1][0].scatter(x1,Y1,c='k',label=r'All Satellites Smaller than M$_{vir}$')
     ax[1][0].scatter(x2,Y2,c='r',label=r'Contains Satellite Larger than M$_{vir}$')
     #ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
     ax[0][1].hist(y1+y2,np.arange(9.4,11.4,.2),orientation='horizontal',facecolor='None',edgecolor='k')
     ax[1][1].hist(Y1+Y2,np.arange(0,.4,.05),orientation='horizontal',facecolor='None',edgecolor='k')
-    ax[1][1].set_xlabel('N',fontsize=30)
-    f.savefig(path+'LargestSatelliteVsEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/LargestSatelliteVsEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax[1][1].set_xlabel('N',fontsize=35)
+    f.savefig(f'{path}LargestSatelliteVsEnvironmentalDensity.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/LargestSatelliteVsEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def LargestSatelliteStellarVsHostMass(host,sats,rest,rad,over,path=''):
@@ -658,23 +641,23 @@ def LargestSatelliteStellarVsHostMass(host,sats,rest,rad,over,path=''):
     ax[1][0].set_xlim([10,11.2])
     ax[0][1].set_xlim([0,40])
     ax[1][1].set_xlim([0,40])
-    ax[0][0].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,right=True,labelright=False)
-    ax[1][0].tick_params(labelsize=20,direction='in',length=5,top=True,right=True,labelright=False)
-    ax[0][1].tick_params(labelsize=20,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
-    ax[1][1].tick_params(labelsize=20,direction='in',length=5,top=True,labelleft=False,left=False)
-    ax[0][0].set_ylabel(r'Log(M$_{*}$) of\\Largest Satellite [M$_{\odot}$]',fontsize=30)
+    ax[0][0].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,right=True,labelright=False)
+    ax[1][0].tick_params(labelsize=25,direction='in',length=5,top=True,right=True,labelright=False)
+    ax[0][1].tick_params(labelsize=25,direction='in',length=5,labelbottom=False,labelleft=False,left=False)
+    ax[1][1].tick_params(labelsize=25,direction='in',length=5,top=True,labelleft=False,left=False)
+    ax[0][0].set_ylabel(r'Log(M$_{*}$/M$_\odot$) of\\Largest Satellite',fontsize=35)
     ax[0][0].scatter(x1,y1,c='k',label=r'All Satellites Smaller than M$_{vir,host}$')
     ax[0][0].scatter(x2,y2,c='r',label=r'Contains Satellite Larger than M$_{vir,host}$')
-    ax[1][0].set_xlabel(r'Log(M$_{*,host}$)',fontsize=30)
-    ax[1][0].set_ylabel(r'M$_{*,sat}$ / M$_{*,host}$',fontsize=30)
+    ax[1][0].set_xlabel(r'Log(M$_{*,host}$/M$_\odot$)',fontsize=35)
+    ax[1][0].set_ylabel(r'M$_{*,sat}$ / M$_{*,host}$',fontsize=35)
     ax[1][0].scatter(x1,Y1,c='k',label=r'All Satellites Smaller than M$_{vir}$')
     ax[1][0].scatter(x2,Y2,c='r',label=r'Contains Satellite Larger than M$_{vir}$')
-    ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
-    ax[0][1].hist(y1+y2,np.logspace(-3.69897,-.1549,7),orientation='horizontal',facecolor='None',edgecolor='k')
+    #ax[0][0].legend(loc='upper right',prop={'size':18},frameon=True)
+    ax[0][1].hist(y1+y2,np.arange(7,11,.5),orientation='horizontal',facecolor='None',edgecolor='k')
     ax[1][1].hist(Y1+Y2,np.logspace(-3.69897,-.1549,7),orientation='horizontal',facecolor='None',edgecolor='k')
-    ax[1][1].set_xlabel('N',fontsize=30)
-    f.savefig(path+'LargestSatelliteStellarVsHostMass.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/LargestSatelliteStellarVsHostMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax[1][1].set_xlabel('N',fontsize=35)
+    f.savefig(f'{path}LargestSatelliteStellarVsHostMass.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/LargestSatelliteStellarVsHostMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def SatelliteCountVsStellarMassVsEnvironment(host,rest,rad,over,path=''):
@@ -702,8 +685,8 @@ def SatelliteCountVsStellarMassVsEnvironment(host,rest,rad,over,path=''):
         line += 1
 
     f,ax = plt.subplots(1,1,figsize=(8,6))
-    ax.set_xlabel(r'Log(M$_{*,host}$) [M$_{\odot}$]',fontsize=20)
-    ax.set_ylabel(r'N$_{sats}$',fontsize=20)
+    ax.set_xlabel(r'Log(M$_{*,host}$/M$_{\odot}$)',fontsize=25)
+    ax.set_ylabel(r'N$_{sat}$',fontsize=25)
     ax.xaxis.set_major_locator(MultipleLocator(.5))
     ax.tick_params(which='major',labelsize=15,direction='in', length=6, width=1,top=True,right=True)
     ax.xaxis.set_minor_locator(MultipleLocator(.1))
@@ -717,11 +700,11 @@ def SatelliteCountVsStellarMassVsEnvironment(host,rest,rad,over,path=''):
     ax.scatter(wk.cell_value(8,0),wk.cell_value(8,2),marker='*',c='orange',s=13**2,label='MW')
     ax.scatter(wk.cell_value(9,0),wk.cell_value(9,2),marker='*',c='purple',s=13**2,label='M31')
     cbar = f.colorbar(p,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=15)
-    cbar.set_label(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir}$ $>$ 5*10$^{11}$) [Mpc]',fontsize=20)
-    ax.legend(loc='upper left',bbox_to_anchor=(-.03,1.01),prop={'size':14},frameon=False)
-    f.savefig(path+'SatelliteCountVsStellarMassVsEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/SatelliteCountVsStellarMassVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    cbar.ax.tick_params(labelsize=18)
+    cbar.set_label(r'D$_{LH}$ [Mpc]',fontsize=25)
+    ax.legend(loc='upper left',bbox_to_anchor=(-.03,1.01),prop={'size':18},frameon=False)
+    f.savefig(f'{path}SatelliteCountVsStellarMassVsEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/SatelliteCountVsStellarMassVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def StellarMassVsOrbitalDistanceVsT90(host,sats,BB,rest,rad,over,path=''):
@@ -749,23 +732,23 @@ def StellarMassVsOrbitalDistanceVsT90(host,sats,BB,rest,rad,over,path=''):
     while a < len(s[1]):
         S[1].append((4+(s[1][a]/M)*10)**2)
         a += 1
-    f, ax = plt.subplots(1,1,figsize=(10,8))
+    f, ax = plt.subplots(1,1,figsize=(8,6))
     ax.set_xlim([0,400])
     ax.set_ylim([6.9,10.6])
     ax.scatter(0,0,s=8**2,marker='D',edgecolor='.5',facecolor='None',label='Quenched')
     ax.scatter(0,0,s=10**2,edgecolor='.5',facecolor='None',label='Star Forming')
     ax.tick_params(labelsize=15,direction='in', length=5, width=1,top=True,right=True)
     ax.set_xlabel(r'Distance to Host [kpc]',fontsize=25)
-    ax.set_ylabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=25)
+    ax.set_ylabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=25)
     norm = plt.Normalize(3,13)
     p = ax.scatter(x[0],y[0],c=c[0],cmap='viridis',s=S[0],norm=norm,marker='D',edgecolor='.5',linewidth=.5)
     ax.scatter(x[1],y[1],c=c[1],cmap='viridis',s=S[1],norm=norm,edgecolor='.5',linewidth=.5)
     cbar = f.colorbar(p,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.set_label(r'$\tau_{90}$ [Gyr]',fontsize=25)
-    cbar.ax.tick_params(labelsize=15,length=3)
-    ax.legend(loc='upper right',prop={'size':15},ncol=1,frameon=False)
-    f.savefig(path+'StellarMassVsOrbitalDistanceVsT90.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/StellarMassVsOrbitalDistanceVsT90.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    cbar.ax.tick_params(labelsize=18,length=3)
+    ax.legend(loc='upper right',prop={'size':18},ncol=1,frameon=False)
+    f.savefig(f'{path}StellarMassVsOrbitalDistanceVsT90.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/StellarMassVsOrbitalDistanceVsT90.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def QuenchedFractionVsStellarMass(host,sats,rest,rad,over,path=''):
@@ -789,62 +772,58 @@ def QuenchedFractionVsStellarMass(host,sats,rest,rad,over,path=''):
         dx.append(r[i+1]-r[i])
         i += 1
     f,ax=plt.subplots(1,1)
-    ax.set_xlabel(r'M$_{star}$ [M$_{\odot}$]',fontsize=15)
-    ax.set_ylabel('Quenched Fraction',fontsize=15)
+    ax.set_xlabel(r'M$_{star}$ [M$_{\odot}$]',fontsize=20)
+    ax.set_ylabel('Quenched Fraction',fontsize=20)
     ax.set_ylim([0,1.05])
     ax.set_xlim([10**7,10**11.1])
     ax.semilogx()
-    ax.tick_params(which='major',labelsize=12,direction='in', length=5, width=1,top=True)
+    ax.tick_params(which='major',labelsize=15,direction='in', length=5, width=1,top=True)
     ax.tick_params(which='minor',labelsize=5,direction='in', length=3, width=1,top=True)
     ax3 =ax.twinx()
     ax3.bar(x,T,width=dx,color='.5',alpha=.5)
     ax3.set_ylim([0,30])
-    ax3.set_ylabel('Sample Size',fontsize=15)
-    ax3.tick_params(which='major',labelsize=12,direction='in', length=5)
+    ax3.set_ylabel('Sample Size',fontsize=20)
+    ax3.tick_params(which='major',labelsize=15,direction='in', length=5)
     ax.plot(x,y,c='k')
     ax.plot([10**6,10**12],[.5,.5],c='k',linestyle=':',linewidth=.7)
     ax.plot([10**6,10**12],[1,1],c='k',linestyle=':',linewidth=.7)
-    f.savefig(path+'QuenchFractionVsStellarMass.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/QuenchFractionVsStellarMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}QuenchFractionVsStellarMass.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/QuenchFractionVsStellarMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def QuenchedFractionVsOrbitalDistance(host,sats,rest,rad,over,path=''):
     r = np.linspace(0,1,num=11)
     x,dx,y,T = [[],[],[],[]]
-    i = 0
-    while i < len(r)-1:
-        t = 0
-        q = 0
+    for i in np.arange(len(r)-1):
+        t,q = 0,0
         for h in sats:
-            if r[i+1] > sats[h]['Orbit'][1] > r[i]:
-                t += 1
-                if sats[h]['Quenched']:
-                    q += 1
-        if t > 0:
-            y.append(float(q)/float(t))
-        else:
-            y.append(0)
-        T.append(t)
-        x.append((r[i+1]+r[i])/2.)
+            o = sats[h]['Orbit'][1] if rad=='sim' else sats[h]['Orbit'][0]/300
+            if sats[h]['Mstar']>1e8 and r[i]<o<r[i+1]:
+                t+=1
+                if sats[h]['Quenched']: q+=1
+        ynew = np.nan if t==0 else q/t
+        y.append(ynew)
+        x.append((r[i+1]-r[i])/2+r[i])
         dx.append(r[i+1]-r[i])
-        i += 1
+        T.append(t)
+
     f,ax=plt.subplots(1,1)
-    ax.set_xlabel(r'Orbital Distance [R$_{vir}$]',fontsize=15)
-    ax.set_ylabel('Quenched Fraction',fontsize=15)
+    ax.set_xlabel(r'Orbital Distance [R$_{vir}$]',fontsize=20)
+    ax.set_ylabel('Quenched Fraction',fontsize=20)
     ax.set_ylim([0,1.05])
     ax.set_xlim([0,1])
-    ax.tick_params(which='major',labelsize=12,direction='in', length=5, width=1,top=True)
+    ax.tick_params(which='major',labelsize=15,direction='in', length=5, width=1,top=True)
     ax.tick_params(which='minor',labelsize=5,direction='in', length=3, width=1,top=True)
     ax3 =ax.twinx()
     ax3.bar(x,T,width=dx,color='.5',alpha=.5)
-    ax3.set_ylim([0,30])
-    ax3.set_ylabel('Sample Size',fontsize=15)
-    ax3.tick_params(which='major',labelsize=12,direction='in', length=5)
+    ax3.set_ylim([0,25])
+    ax3.set_ylabel('Sample Size',fontsize=20)
+    ax3.tick_params(which='major',labelsize=15,direction='in', length=5)
     ax.plot(x,y,c='k')
     ax.plot([0,1],[.5,.5],c='k',linestyle=':',linewidth=.7)
     ax.plot([0,1],[1,1],c='k',linestyle=':',linewidth=.7)
-    f.savefig(path+'QuenchFractionVsOrbitalDistance.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/QuenchFractionVsOrbitalDistance.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}QuenchFractionVsOrbitalDistance.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/QuenchFractionVsOrbitalDistance.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def QuenchedFractionVsHostStellarMass(host,sats,rest,rad,over,path=''):
@@ -858,18 +837,18 @@ def QuenchedFractionVsHostStellarMass(host,sats,rest,rad,over,path=''):
                 if sats[s]['Quenched']: q+=1
             qf.append(q/t)
     f,ax=plt.subplots(1,1)
-    ax.set_xlabel(r'M$_{star}$ [M$_{\odot}$]',fontsize=15)
-    ax.set_ylabel('Quenched Fraction',fontsize=15)
+    ax.set_xlabel(r'M$_{star}$ [M$_{\odot}$]',fontsize=20)
+    ax.set_ylabel('Quenched Fraction',fontsize=20)
     ax.set_ylim([0,1.05])
     ax.set_xlim([10**9.6,10**11.2])
     ax.semilogx()
-    ax.tick_params(which='major',labelsize=12,direction='in', length=5, width=1,top=True)
+    ax.tick_params(which='major',labelsize=15,direction='in', length=5, width=1,top=True)
     ax.tick_params(which='minor',labelsize=5,direction='in', length=3, width=1,top=True)
     ax.scatter(mstar,qf,c='k')
     ax.plot([10**9.6,10**11.2],[.5,.5],c='k',linestyle=':',linewidth=.7)
     ax.plot([10**9.6,10**11.2],[1,1],c='k',linestyle=':',linewidth=.7)
-    f.savefig(path+'QuenchFractionVsHostStellarMass.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/QuenchFractionVsHostStellarMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}QuenchFractionVsHostStellarMass.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/QuenchFractionVsHostStellarMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
@@ -895,11 +874,11 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,4))
-    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
-    ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
+    ax.set_ylabel(r'D$_{LH}$ [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,8), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(-.5,9.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -907,7 +886,7 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_label(r'Average N$_{sat}$',fontsize=20)
     cbar.set_ticks(np.arange(0,11))
     Size = True
     if Size:
@@ -923,8 +902,8 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
             r +=1
     ax.set_xticks(y)
     ax.grid(True,which='major',color='k',linewidth=2)
-    f.savefig(path+'StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}StellarMassVsEnvironmentVsAverageSatelliteCount.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/StellarMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsEnvironmentVsQuenchFraction(host,sat,rest,rad,over,path=''):
@@ -955,8 +934,8 @@ def StellarMassVsEnvironmentVsQuenchFraction(host,sat,rest,rad,over,path=''):
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,4))
-    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
-    ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
+    ax.set_ylabel(r'D$_{LH}$ [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
     norm = plt.Normalize(0,1)
     #norm = mpl.colors.BoundaryNorm([0,1], mpl.cm.viridis.N, extend='min')
@@ -967,7 +946,7 @@ def StellarMassVsEnvironmentVsQuenchFraction(host,sat,rest,rad,over,path=''):
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Quench Fraction',fontsize=20)
+    cbar.set_label('Average f$_Q$',fontsize=20)
     #cbar.set_ticks(np.arange(0,1))
     Size = True
     if Size:
@@ -983,8 +962,8 @@ def StellarMassVsEnvironmentVsQuenchFraction(host,sat,rest,rad,over,path=''):
             r +=1
     ax.set_xticks(y)
     ax.grid(True,which='major',color='k',linewidth=2)
-    f.savefig(path+'StellarMassVsEnvironmentVsQuenchFraction.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/StellarMassVsEnvironmentVsQuenchFraction.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}StellarMassVsEnvironmentVsQuenchFraction.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/StellarMassVsEnvironmentVsQuenchFraction.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
@@ -1009,12 +988,12 @@ def StellarMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,p
             N[c][r] = len(d)
             c += 1
         r += 1
-    f,ax = plt.subplots(1,1,figsize=(8,4))
-    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
-    ax.set_ylabel(r'Distance to 10$^{th}$ Neighbor [Mpc]',fontsize=20)
+    f,ax = plt.subplots(1,1,figsize=(8,3.5))
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
+    ax.set_ylabel(r'D$_{10}$ [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,11), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(-.5,10.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -1022,7 +1001,7 @@ def StellarMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,p
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=20)
     cbar.set_ticks(np.arange(0,14))
     Size = True
     if Size:
@@ -1038,8 +1017,8 @@ def StellarMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,p
             r +=1
     ax.set_xticks(y)
     ax.grid(True,which='major',color='k',linewidth=2)
-    f.savefig(path+'StellarMassVsNeighborEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/StellarMassVsNeighborEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}StellarMassVsNeighborEnvironmentVsAverageSatelliteCount.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/StellarMassVsNeighborEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
@@ -1065,18 +1044,18 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path='
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,4))
-    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
-    ax.set_ylabel('Distance to closest Milky Way\nor Larger Halo [Mpc]',fontsize=20)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
+    ax.set_ylabel('D$_{MW+}$ [Mpc]',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,int(np.amax(C)+2)), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(-.5,int(np.amax(C)+2)-.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
     c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
-    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=20)
     cbar.set_ticks(np.arange(0,int(np.amax(C)+2)))
     Size = True
     if Size:
@@ -1092,8 +1071,8 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path='
             r +=1
     ax.set_xticks(y)
     ax.grid(True,which='major',color='k',linewidth=2)
-    f.savefig(path+'StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}StellarMassVsMWpEnvironmentVsAverageSatelliteCount.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/StellarMassVsMWpEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,path=''):
@@ -1119,11 +1098,11 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,5))
-    ax.set_xlabel(r'Log(M$_{*}$) [M$_{\odot}$]',fontsize=20)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
     ax.set_ylabel(r'N$_L(<$1 Mpc)',fontsize=20)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,8), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(-.5,9.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -1131,7 +1110,7 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=20)
     cbar.set_ticks(np.arange(0,11))
     Size = True
     if Size:
@@ -1150,8 +1129,8 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,
         ax.axvline(i,c='k',linewidth=2)
     for i in x:
         ax.plot([min(y),max(y)],[i,i],c='k',linewidth=2)
-    f.savefig(path+'StellarMassVsEnvironmentalDensityVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/StellarMassVsEnvironmentalDensityVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}StellarMassVsEnvironmentalDensityVsAverageSatelliteCount.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/StellarMassVsEnvironmentalDensityVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def EnvironmentDistribution(host,rest,rad,over,path=''):
@@ -1172,14 +1151,15 @@ def EnvironmentDistribution(host,rest,rad,over,path=''):
     f,ax = plt.subplots(1,1)
     ax.set_xlim([0,10])
     ax.set_ylim([0,top])
-    ax.hist(y,x,color='.5',label='Distance to MW\nor Larger Halo')
-    ax.hist(Y,x,edgecolor='k',fc=(0,0,0,0),label='Distance to Large Halo\n'+r'(M$_{vir}$ $>$ 5*10$^{11}$)')
+    ax.hist(y,x,color='.5',label='D$_{MW+}$')
+    ax.hist(Y,x,edgecolor='k',fc=(0,0,0,0),label='D$_{LH}$')
     ax.axvline(.767,linestyle=':',label='MW to M31',color='k')
-    ax.set_xlabel('Distance [Mpc]')
-    ax.set_ylabel('N')
-    ax.legend(loc='upper right',frameon=False)
-    f.savefig(path+'EnvironmentalDistribution.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/EnvironmentalDistribution.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax.set_xlabel('Distance [Mpc]',fontsize=20)
+    ax.set_ylabel('N',fontsize=20)
+    ax.tick_params(labelsize=15)
+    ax.legend(loc='upper right',frameon=False,prop={'size':15})
+    f.savefig(f'{path}EnvironmentalDistribution.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/EnvironmentalDistribution.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def SpecificFrequencyStellarMass(host,rest,rad,over,path=''):
@@ -1191,16 +1171,16 @@ def SpecificFrequencyStellarMass(host,rest,rad,over,path=''):
         else:
             x.append(np.log10(host[h]['Mstar']))
             y.append(SnM(len(host[h]['Satellites']),host[h]['Mstar']))
-    f,ax = plt.subplots(1,1,figsize=(8,6))
+    f,ax = plt.subplots(1,1)
     ax.scatter(x0,y0,c='0.5',label='No Satellites')
     ax.scatter(x,y,c='k')
     ax.set_ylim([-.5,25])
-    ax.tick_params(labelsize=13, length=5)
-    ax.set_xlabel(r'Log[M$_{*}$]',fontsize=15)
-    ax.set_ylabel(r'S$_{N}$',fontsize=15)
-    ax.legend(loc='upper left')
-    f.savefig(path+'SpecificFrequencyMass.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/SpecificFrequencyMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    ax.tick_params(labelsize=15, length=5)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_\odot$)',fontsize=20)
+    ax.set_ylabel(r'S$_{N}$',fontsize=20)
+    ax.legend(loc='upper left',prop={'size':15})
+    f.savefig(f'{path}SpecificFrequencyMass.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/SpecificFrequencyMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def SpecificFrequencyDistance(host,rest,rad,over,path=''):
@@ -1213,7 +1193,7 @@ def SpecificFrequencyDistance(host,rest,rad,over,path=''):
             x.append(host[h]['Closest'][0]/1000)
             y.append(SnD(len(host[h]['Satellites']),host[h]['Closest'][0]))
 
-    f,ax = plt.subplots(1,1,figsize=(8,6))
+    f,ax = plt.subplots(1,1)
     ax.scatter(x0,y0,c='0.5',label='No Satellites')
     ax.scatter(x,y,c='k')
     for i in np.arange(len(y)):
@@ -1222,11 +1202,12 @@ def SpecificFrequencyDistance(host,rest,rad,over,path=''):
             ax.text(x[i]-.6,22.5,str(round(y[i],2)),fontsize=12,horizontalalignment='center')
     ax.set_ylim([-.5,25])
     ax.tick_params(labelsize=13, length=5)
-    ax.set_xlabel(r'Distance to closest Large Halo (M$_{vir}$ $>$ 5*10$^{11}$) [Mpc]',fontsize=15)
-    ax.set_ylabel(r'S$_{N}$',fontsize=15)
-    ax.legend(loc='upper left')
-    f.savefig(path+'SpecificFrequencyEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/SpecificFrequencyEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    ax.set_xlabel(r'D$_{LH}$ [Mpc]',fontsize=20)
+    ax.set_ylabel(r'S$_{N}$',fontsize=20)
+    ax.tick_params(labelsize=15)
+    ax.legend(loc='upper left',prop={'size':15})
+    f.savefig(f'{path}SpecificFrequencyEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/SpecificFrequencyEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def SpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
@@ -1239,7 +1220,7 @@ def SpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
             x.append(host[h]['Closest'][0]/1000)
             y.append(SnN(len(host[h]['Satellites']),host[h]['10thNeighbor']))
 
-    f,ax = plt.subplots(1,1,figsize=(8,6))
+    f,ax = plt.subplots(1,1)
     ax.scatter(x0,y0,c='0.5',label='No Satellites')
     ax.scatter(x,y,c='k')
     for i in np.arange(len(y)):
@@ -1247,12 +1228,12 @@ def SpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
             ax.text(x[i],23.5,'|\n|')
             ax.text(x[i]-.6,22.5,str(round(y[i],2)),fontsize=12,horizontalalignment='center')
     ax.set_ylim([-.5,25])
-    ax.tick_params(labelsize=13, length=5)
-    ax.set_xlabel(r'Distance to 10$^{th}$ Neighbor [Mpc]',fontsize=15)
-    ax.set_ylabel(r'S$_{N}$',fontsize=15)
-    ax.legend(loc='upper left')
-    f.savefig(path+'SpecificFrequencyNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/SpecificFrequencyNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    ax.tick_params(labelsize=15, length=5)
+    ax.set_xlabel(r'D$_{10}$ [Mpc]',fontsize=20)
+    ax.set_ylabel(r'S$_{N}$',fontsize=20)
+    ax.legend(loc='upper left',prop={'size':15})
+    f.savefig(f'{path}SpecificFrequencyNeighborEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/SpecificFrequencyNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def SpecificFrequencyEnvironmentalDensity(host,rest,rad,over,path=''):
@@ -1265,7 +1246,7 @@ def SpecificFrequencyEnvironmentalDensity(host,rest,rad,over,path=''):
             x.append(host[h]['EnvDen'])
             y.append(SnE(len(host[h]['Satellites']),host[h]['EnvDen']))
 
-    f,ax = plt.subplots(1,1,figsize=(8,6))
+    f,ax = plt.subplots(1,1)
     ax.scatter(x0,y0,c='0.5',label='No Satellites')
     ax.scatter(x,y,c='k')
     for i in np.arange(len(y)):
@@ -1273,12 +1254,12 @@ def SpecificFrequencyEnvironmentalDensity(host,rest,rad,over,path=''):
             ax.text(x[i],23.5,'|\n|')
             ax.text(x[i]-.6,22.5,str(round(y[i],2)),fontsize=12,horizontalalignment='center')
     #ax.set_ylim([-.5,25])
-    ax.tick_params(labelsize=13, length=5)
-    ax.set_xlabel(r'N$_L(<$1 Mpc)',fontsize=15)
-    ax.set_ylabel(r'S$_{N}$',fontsize=15)
-    ax.legend(loc='upper left')
-    f.savefig(path+'SpecificFrequencyEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/SpecificFrequencyEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    ax.tick_params(labelsize=15, length=5)
+    ax.set_xlabel(r'N$_L(<$1 Mpc)',fontsize=20)
+    ax.set_ylabel(r'S$_{N}$',fontsize=20)
+    ax.legend(loc='upper left',prop={'size':15})
+    f.savefig(f'{path}SpecificFrequencyEnvironmentalDensity.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/SpecificFrequencyEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def BinnedSpecificFrequencyStellarMass(host,rest,rad,over,path=''):
@@ -1330,7 +1311,7 @@ def BinnedSpecificFrequencyStellarMass(host,rest,rad,over,path=''):
             e3u.append(np.percentile(yc,75))
             e3l.append(np.percentile(yc,25))
         i += 1
-    f,ax = plt.subplots(1,1,figsize=(8,6))
+    f,ax = plt.subplots(1,1)
     ax.set_ylim([-.5,15])
     ax.scatter(x1,y1,c='k',label=r'$\Delta$Log[M$_{*}$] = .05')
     ax.errorbar(x1,y1,yerr=e1,c='k')
@@ -1342,11 +1323,11 @@ def BinnedSpecificFrequencyStellarMass(host,rest,rad,over,path=''):
     ax.errorbar(x3,y3,yerr=e3,c='r')
     #ax.errorbar(x3,y3,yerr=[e3l,e3u],c='r')
     ax.tick_params(labelsize=15, length=5)
-    ax.set_xlabel(r'Log[M$_{*}$]',fontsize=20)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_\odot$)',fontsize=20)
     ax.set_ylabel(r'S$_{N,mass}$',fontsize=20)
     ax.legend(loc='upper left',prop={'size':15})
-    f.savefig(path+'BinnedSpecificFrequencyMass.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/BinnedSpecificFrequencyMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(f'{path}BinnedSpecificFrequencyMass.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/BinnedSpecificFrequencyMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def BinnedSpecificFrequencyDistance(host,rest,rad,over,path=''):
@@ -1399,8 +1380,8 @@ def BinnedSpecificFrequencyDistance(host,rest,rad,over,path=''):
             e3l.append(np.percentile(yc,25))
         i += 1
     M = 18
-    f,ax = plt.subplots(1,1,figsize=(8,6))
-    ax.set_ylim([-.5,M+1])
+    f,ax = plt.subplots(1,1)
+    ax.set_ylim([-.5,15])
     ax.scatter(x1,y1,c='k',label=r'$\Delta$D = .25Mpc')
     ax.errorbar(x1,y1,yerr=e1,c='k')
     #ax.errorbar(x1,y1,yerr=[e1l,e1u],c='k')
@@ -1426,11 +1407,11 @@ def BinnedSpecificFrequencyDistance(host,rest,rad,over,path=''):
             #ax.text(x3[i],M,'|\n|')
             #ax.text(x3[i]-.25,M-.5,str(round(y3[i],2)),fontsize=12)
     ax.tick_params(labelsize=15, length=5)
-    ax.set_xlabel(r'Distance to closest Large Halo (M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
+    ax.set_xlabel(r'D$_{LH}$ [Mpc]',fontsize=20)
     ax.set_ylabel(r'S$_{N,env}$',fontsize=20)
     ax.legend(loc='upper left',prop={'size':15})
-    f.savefig(path+'BinnedSpecificFrequencyEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/BinnedSpecificFrequencyEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(f'{path}BinnedSpecificFrequencyEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/BinnedSpecificFrequencyEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def BinnedSpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
@@ -1483,7 +1464,7 @@ def BinnedSpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
             e3l.append(np.percentile(yc,25))
         i += 1
     M = 18
-    f,ax = plt.subplots(1,1,figsize=(8,6))
+    f,ax = plt.subplots(1,1)
     ax.set_ylim([-.5,M+1])
     ax.scatter(x1,y1,c='k',label=r'$\Delta$D = .25Mpc')
     ax.errorbar(x1,y1,yerr=e1,c='k')
@@ -1510,11 +1491,11 @@ def BinnedSpecificFrequencyNeighborEnvironment(host,rest,rad,over,path=''):
             #ax.text(x3[i],M,'|\n|')
             #ax.text(x3[i]-.25,M-.5,str(round(y3[i],2)),fontsize=12)
     ax.tick_params(labelsize=15, length=5)
-    ax.set_xlabel(r'Distance to 10$^{th}$ Neighbor [Mpc]',fontsize=20)
+    ax.set_xlabel(r'D$_{10}$ [Mpc]',fontsize=20)
     ax.set_ylabel(r'S$_{N,env}$',fontsize=20)
     ax.legend(loc='upper left',prop={'size':15})
-    f.savefig(path+'BinnedSpecificFrequencyNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/BinnedSpecificFrequencyNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(f'{path}BinnedSpecificFrequencyNeighborEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/BinnedSpecificFrequencyNeighborEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def BinnedSpecificFrequencyEnvironmentalDensity(host,rest,rad,over,path=''):
@@ -1534,15 +1515,15 @@ def BinnedSpecificFrequencyEnvironmentalDensity(host,rest,rad,over,path=''):
             e1u.append(np.percentile(yc,75))
             e1l.append(np.percentile(yc,25))
         i += 1
-    f,ax = plt.subplots(1,1,figsize=(8,6))
+    f,ax = plt.subplots(1,1)
     ax.scatter(x1,y1,c='k',label=r'$\Delta$D = .25Mpc')
     ax.errorbar(x1,y1,yerr=e1,c='k')
     ax.tick_params(labelsize=15, length=5)
     ax.set_xlabel(r'N$_L(<$1 Mpc)',fontsize=20)
     ax.set_ylabel(r'S$_{N,env}$',fontsize=20)
     ax.legend(loc='upper left',prop={'size':15})
-    f.savefig(path+'BinnedSpecificFrequencyEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=0.1)
-    #f.savefig(path+'pdf/BinnedSpecificFrequencyEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
+    f.savefig(f'{path}BinnedSpecificFrequencyEnvironmentalDensity.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=0.1)
+    #f.savefig(f'{path}pdf/BinnedSpecificFrequencyEnvironmentalDensity.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=0.1)
     plt.close()
 
 def QuenchedFractionVsEnvironment(host,sats,rest,rad,over,path=''):
@@ -1564,11 +1545,12 @@ def QuenchedFractionVsEnvironment(host,sats,rest,rad,over,path=''):
             else:
                 qfar.append(float(q)/float(t))
     
-    f,ax = plt.subplots(1,1,figsize=(8,6))
-    ax.set_xlabel('Distance [Mpc]',fontsize=15)
-    ax.set_ylabel('Quenched Fraction',fontsize=15)
+    f,ax = plt.subplots(1,1)
+    ax.set_xlabel(r'D$_{MW+}$ [Mpc]',fontsize=20)
+    ax.set_ylabel('Quenched Fraction',fontsize=20)
+    ax.tick_params(labelsize=15)
     ax.set_xlim([.06,5])
-    ax.set_ylim([-.03,1.03])
+    ax.set_ylim([-.2,1.03])
     ax.plot([-1,11],[1,1],c='.5',linestyle=':')
     ax.plot([-1,11],[0,0],c='.5',linestyle=':')
     ax.axvline(.767,linestyle='--',label='MW - M31',color='.5',zorder=1)
@@ -1576,15 +1558,15 @@ def QuenchedFractionVsEnvironment(host,sats,rest,rad,over,path=''):
     norm = mpl.colors.BoundaryNorm(np.arange(.5,max(tots)+1.5), mpl.cm.viridis.N)
     p = ax.scatter(env,qf,s=7**2,c=tots,cmap='viridis',norm=norm,zorder=5)
     cbar = f.colorbar(p,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.set_label(r'N$_{sat}$',fontsize=15)
+    cbar.set_label(r'N$_{sat}$',fontsize=20)
     cbar.set_ticks(np.arange(1,max(tots)+1))
     ax.plot([0,1],[np.mean(qclose),np.mean(qclose)],c='b',label='Pairs',zorder=6)
     ax.plot([1,5],[np.mean(qfar),np.mean(qfar)],c='r',label='Isolated',zorder=6)
     ax.plot([1,1],[np.mean(qclose),np.mean(qfar)],c='k',zorder=6)
-    ax.legend(loc='upper right',prop={'size':12})
+    ax.legend(loc='lower left',ncol=3,prop={'size':15})
     ax.semilogx()
-    f.savefig(path+'QuenchedFractionVsEnvironment.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/QuenchedFractionVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}QuenchedFractionVsEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/QuenchedFractionVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def QuenchedFractionHistograms(host,sats,rest,rad,over,path=''):
@@ -1604,16 +1586,17 @@ def QuenchedFractionHistograms(host,sats,rest,rad,over,path=''):
                 qfar.append(float(q)/float(t))
 
     qf_bins = np.linspace(0,1,11)
-    f,ax = plt.subplots(1,1,figsize=(8,6))
-    ax.set_xlabel(r'f$_Q$',fontsize=15)
-    ax.set_ylabel('N',fontsize=15)
+    f,ax = plt.subplots(1,1)
+    ax.set_xlabel(r'f$_Q$',fontsize=20)
+    ax.set_ylabel('N',fontsize=20)
+    ax.tick_params(labelsize=15)
     ax.set_xlim([0,1])
     ax.hist(qf,qf_bins,histtype='step',linewidth=2,color='k',label='Total')
     ax.hist(qclose,qf_bins,histtype='step',linewidth=2,color='b',label='Pairs')
     ax.hist(qfar,qf_bins,histtype='step',linewidth=2,color='r',label='Isolated')
-    ax.legend(loc='upper right',prop={'size':12})
-    f.savefig(path+'QuenchedFractionHistograms.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/QuenchedFractionHistograms.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    ax.legend(loc='upper right',prop={'size':15})
+    f.savefig(f'{path}QuenchedFractionHistograms.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/QuenchedFractionHistograms.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def SAGA_Nsat_Comparison(host,rest,rad,over,path=''):
@@ -1646,15 +1629,15 @@ def SAGA_Nsat_Comparison(host,rest,rad,over,path=''):
     ax.scatter(x,datan,c='k',marker='*',s=15**2,label='SAGA (Observed)')
     ax.set_xlim([-.5,max(x)+1])
     ax.set_ylim([0,M+0.05])
-    ax.set_xlabel(r'$N_{sat}$',fontsize=25)
-    ax.set_ylabel(r'$N_{Host}$ (Normalized)',fontsize=25)
+    ax.set_xlabel(r'$N_{sat}$',fontsize=35)
+    ax.set_ylabel(r'$N_{Host}$ (Normalized)',fontsize=35)
     ax.legend(loc='upper right',prop={'size':20})
     ax.xaxis.set_minor_locator(MultipleLocator(.5))
     ax.xaxis.set_major_locator(MultipleLocator(2))
-    ax.tick_params(which='major',labelsize=20,length=10)
+    ax.tick_params(which='major',labelsize=25,length=10)
     ax.tick_params(which='minor',length=5)
-    f.savefig(path+'SAGA_Nsat_Comparison.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/SAGA_Nsat_Comparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}SAGA_Nsat_Comparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGA_Nsat_Comparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def SMHM(host,sats,rest,rad,over,path=''):
@@ -1666,19 +1649,19 @@ def SMHM(host,sats,rest,rad,over,path=''):
         mv_sat.append(sats[sat]['Mvir']/0.8)
         ms_sat.append(.6*sats[sat]['Mstar'])
     
-    f,ax = plt.subplots(1,1,figsize=(8,8))
+    f,ax = plt.subplots(1,1)
     ax.semilogx()
     ax.semilogy()
     ax.set_xlim([10**9,2*10**13])
     ax.set_ylim([10**-5,1])
     ax.tick_params(labelsize=15,length=5)
-    ax.set_xlabel(r'M$_{vir}$ [M$_\odot$]',fontsize=25)
-    ax.set_ylabel(r'M$_*$/M$_{vir}$',fontsize=25)
+    ax.set_xlabel(r'M$_{vir}$ [M$_\odot$]',fontsize=20)
+    ax.set_ylabel(r'M$_*$/M$_{vir}$',fontsize=20)
     ax.scatter(mv_sat,np.array(ms_sat)/np.array(mv_sat),c='r',label='Satellites')
     ax.scatter(mv_mw,np.array(ms_mw)/np.array(mv_mw),c='k',label='MW Anaolgs')
     ax.legend(loc='upper right',prop={'size':15})
-    f.savefig(path+'SMHM.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/SMHM.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}SMHM.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SMHM.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def SMHMPeak(host,sats,rest,rad,over,path=''):
@@ -1690,19 +1673,19 @@ def SMHMPeak(host,sats,rest,rad,over,path=''):
     #    mv_sat.append(sats[sat]['MvirPeak']/0.8)
     #    ms_sat.append(.6*sats[sat]['Mstar'])
     
-    f,ax = plt.subplots(1,1,figsize=(8,8))
+    f,ax = plt.subplots(1,1)
     ax.semilogx()
     ax.semilogy()
     ax.set_xlim([10**9,2*10**13])
     ax.set_ylim([10**-5,1])
     ax.tick_params(labelsize=15,length=5)
-    ax.set_xlabel(r'M$_{vir,peak}$ [M$_\odot$]',fontsize=25)
-    ax.set_ylabel(r'M$_{*,z0}$/M$_{vir,peak}$',fontsize=25)
+    ax.set_xlabel(r'M$_{vir,peak}$ [M$_\odot$]',fontsize=20)
+    ax.set_ylabel(r'M$_{*,z0}$/M$_{vir,peak}$',fontsize=20)
     #ax.scatter(mv_sat,np.array(ms_sat)/np.array(mv_sat),c='r',label='Satellites')
     ax.scatter(mv_mw,np.array(ms_mw)/np.array(mv_mw),c='k',label='MW Anaolgs')
     ax.legend(loc='upper right',prop={'size':15})
-    f.savefig(path+'SMHMPeak.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/SMHMPeak.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}SMHMPeak.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SMHMPeak.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def VirialMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
@@ -1728,11 +1711,11 @@ def VirialMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(10,4))
-    ax.set_xlabel(r'Log(M$_{vir}$) [M$_{\odot}$]',fontsize=20)
-    ax.set_ylabel(r'Distance to closest Large Halo'+'\n'+r'(M$_{vir} > 5\times10^{11}$M$_\odot$) [Mpc]',fontsize=20)
+    ax.set_xlabel(r'Log(M$_{vir}$/M$_{\odot}$)',fontsize=25)
+    ax.set_ylabel(r'D$_{LH}$ [Mpc]',fontsize=25)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,8), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(-.5,8.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -1740,7 +1723,7 @@ def VirialMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=25)
     cbar.set_ticks(np.arange(0,8))
     Size = True
     if Size:
@@ -1756,8 +1739,8 @@ def VirialMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
             r +=1
     ax.set_xticks(y)
     ax.grid(True,which='major',color='k',linewidth=2)
-    f.savefig(path+'VirialMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/VirialMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}VirialMassVsEnvironmentVsAverageSatelliteCount.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/VirialMassVsEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def VirialMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
@@ -1782,12 +1765,12 @@ def VirialMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,pa
             N[c][r] = len(d)
             c += 1
         r += 1
-    f,ax = plt.subplots(1,1,figsize=(10,4))
-    ax.set_xlabel(r'Log(M$_{vir}$) [M$_{\odot}$]',fontsize=20)
-    ax.set_ylabel(r'Distance to 10$^{th}$ Neighbor [Mpc]',fontsize=20)
+    f,ax = plt.subplots(1,1,figsize=(10,3.5))
+    ax.set_xlabel(r'Log(M$_{vir}$/M$_{\odot}$)',fontsize=25)
+    ax.set_ylabel(r'D$_{10}$ [Mpc]',fontsize=25)
     ax.tick_params(which='major',labelsize=15, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,15), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(-.5,9.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -1795,7 +1778,7 @@ def VirialMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,pa
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
     cbar.ax.tick_params(labelsize=15)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=25)
     cbar.set_ticks(np.arange(0,15))
     Size = True
     if Size:
@@ -1811,8 +1794,8 @@ def VirialMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,pa
             r +=1
     ax.set_xticks(y)
     ax.grid(True,which='major',color='k',linewidth=2)
-    f.savefig(path+'VirialMassVsNeighborEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/VirialMassVsNeighborEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}VirialMassVsNeighborEnvironmentVsAverageSatelliteCount.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/VirialMassVsNeighborEnvironmentVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def VirialMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,path=''):
@@ -1838,19 +1821,19 @@ def VirialMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,p
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(12,6))
-    ax.set_xlabel(r'Log(M$_{vir}$) [M$_{\odot}$]',fontsize=20)
-    ax.set_ylabel(r'N$_L(<$1 Mpc)',fontsize=20)
-    ax.tick_params(which='major',labelsize=15, length=5)
+    ax.set_xlabel(r'Log(M$_{vir}$/M$_{\odot}$)',fontsize=35)
+    ax.set_ylabel(r'N$_L(<$1 Mpc)',fontsize=35)
+    ax.tick_params(which='major',labelsize=20, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(0,10), mpl.cm.viridis.N, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(-.5,10.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
     c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=15)
+    cbar.ax.tick_params(labelsize=20)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average Number of Satellites',fontsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=35)
     cbar.set_ticks(np.arange(0,10))
     Size = True
     if Size:
@@ -1869,8 +1852,8 @@ def VirialMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,p
         ax.axvline(i,c='k',linewidth=2)
     for i in x:
         ax.plot([min(y),max(y)],[i,i],c='k',linewidth=2)
-    f.savefig(path+'VirialMassVsEnvironmentalDensityVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/VirialMassVsEnvironmentalDensityVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}VirialMassVsEnvironmentalDensityVsAverageSatelliteCount.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/VirialMassVsEnvironmentalDensityVsAverageSatelliteCount.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
 def NsatVsLargestSatelliteMass(host,sats,rest,rad,over,path=''):
@@ -1883,11 +1866,34 @@ def NsatVsLargestSatelliteMass(host,sats,rest,rad,over,path=''):
                 if sats[sat]['Mstar']>mass: mass = sats[sat]['Mstar']
             Mstar.append(np.log10(mass))
     
-    f,ax = plt.subplots(1,1,figsize=(8,8))
-    ax.set_xlabel(r'Log[M$_*$/M$_\odot$] of Largest Satellite',fontsize=15)
-    ax.set_ylabel(r'N$_{sat}$',fontsize=15)
+    f,ax = plt.subplots(1,1)
+    ax.set_xlabel(r'Log(M$_*$/M$_\odot$) of Largest Satellite',fontsize=20)
+    ax.set_ylabel(r'N$_{sat}$',fontsize=20)
+    ax.tick_params(labelsize=15)
     ax.set_xlim([7,11])
+    ax.set_ylim([0,14])
     ax.scatter(Mstar,Nsat,c='k')
-    f.savefig(path+'NsatVsLargestSatelliteMass.'+rest+'.'+rad+'.'+over+'.png',bbox_inches='tight',pad_inches=.1)
-    #f.savefig(path+'pdf/NsatVsLargestSatelliteMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'{path}NsatVsLargestSatelliteMass.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/NsatVsLargestSatelliteMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+def NsatVsLargestSatelliteMagnitude(host,sats,rest,rad,over,path=''):
+    Nsat,Mag = [],[]
+    for mw in host:
+        if len(host[mw]['Satellites'])>0:
+            Nsat.append(len(host[mw]['Satellites']))
+            mag = 0
+            for sat in host[mw]['Satellites']:
+                if sats[sat]['Kmag']<mag: mag = sats[sat]['Kmag']
+            Mag.append(mag)
+    
+    f,ax = plt.subplots(1,1)
+    ax.set_xlabel(r'M$_K$ of Largest Satellite',fontsize=20)
+    ax.set_ylabel(r'N$_{sat}$',fontsize=20)
+    ax.tick_params(labelsize=15)
+    #ax.set_xlim([7,11])
+    ax.set_ylim([0,14])
+    ax.scatter(Mag,Nsat,c='k')
+    f.savefig(f'{path}NsatVsLargestSatelliteMagnitude.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/NsatVsLargestSatelliteMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()

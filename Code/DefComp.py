@@ -37,10 +37,11 @@ for ov in ['Yov','Nov']:
     for i in [0,1]:
         ax[i].set_xlim([-20.75,-25.5])
         ax[i].tick_params(axis='y',direction='inout',length=7)
+        ax[i].tick_params(labelsize=15)
     ax[0].xaxis.set_ticklabels([])
     ax[1].tick_params(axis='x',direction='inout',length=7,top=True,labeltop=False)
-    ax[1].set_yticks(np.arange(9.5,11.25,.25))
-    ax[0].set_yticks(np.arange(11,13.25,.25))
+    ax[1].set_yticks(np.arange(9.5,11.25,.5))
+    ax[0].set_yticks(np.arange(11,13.25,.5))
 
     ax[0].axvline(-23,c='0.75',linestyle='--')
     ax[0].axvline(-24.6,c='0.75',linestyle='--')
@@ -52,8 +53,8 @@ for ov in ['Yov','Nov']:
     ax[1].plot([-20.75,-25.5],[11,11],c='0.75',linestyle='--')
 
     ax[1].set_xlabel(r'M$_{K}$',fontsize=20)
-    ax[1].set_ylabel(r'Log(M$_*$)',fontsize=20)
-    ax[0].set_ylabel(r'Log(M$_{vir}$)',fontsize=20)
+    ax[1].set_ylabel(r'Log(M$_*$/M$_\odot$)',fontsize=20)
+    ax[0].set_ylabel(r'Log(M$_{vir}$/M$_\odot$)',fontsize=20)
 
     #norm = plt.Normalize(0,6)
     #p = ax[1].scatter(mv2,ms2,s=7**2,c=c,cmap='viridis',label=r'M$_K$+Env. II')
@@ -82,10 +83,11 @@ for ov in ['Yov','Nov']:
     for i in [0,1]:
         ax[i].set_xlim([-20.75,-25.5])
         ax[i].tick_params(axis='y',direction='inout',length=7)
+        ax[i].tick_params(labelsize=15)
     ax[0].xaxis.set_ticklabels([])
     ax[1].tick_params(axis='x',direction='inout',length=7,top=True,labeltop=False)
-    ax[1].set_yticks(np.arange(9.5,11.25,.25))
-    ax[0].set_yticks(np.arange(11,13.25,.25))
+    ax[1].set_yticks(np.arange(9.5,11.25,.5))
+    ax[0].set_yticks(np.arange(11,13.25,.5))
 
     ax[0].axvline(-23,c='0.75',linestyle='--')
     ax[0].axvline(-24.6,c='0.75',linestyle='--')
@@ -97,8 +99,8 @@ for ov in ['Yov','Nov']:
     ax[1].plot([-20.75,-25.5],[11,11],c='0.75',linestyle='--')
 
     ax[1].set_xlabel(r'M$_{K}$',fontsize=20)
-    ax[1].set_ylabel(r'Log(M$_*$)',fontsize=20)
-    ax[0].set_ylabel(r'Log(M$_{vir}$)',fontsize=20)
+    ax[1].set_ylabel(r'Log(M$_*$/M$_\odot$)',fontsize=20)
+    ax[0].set_ylabel(r'Log(M$_{vir}$/M$_\odot$)',fontsize=20)
 
     ax[1].scatter(km3,ms3,c='b',s=3**2,label='SAGA II')
     ax[1].scatter(km2,ms2,edgecolor='r',facecolor='None',linewidth=1.5,s=4.5**2,label=r'M$_{*}$, R$_{vir}$')#$10^{10}<$Log(M$_{*}$)$<10^{11}$')

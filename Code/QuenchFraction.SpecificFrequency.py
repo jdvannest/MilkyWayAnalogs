@@ -9,9 +9,10 @@ def SnQ_E(Q,D):
 	#Calculates specific frequency of Quench Fraction normalized to Stellar Mass
 	return(Q*10**((D - 5)))
 
-f,ax=plt.subplots(1,1,figsize=(8,6))
-ax.set_xlabel(r'Log(M$_*$/M$_\odot$)',fontsize=17)
-ax.set_ylabel(r'S$_{f_q,mass}$',fontsize=17)
+f,ax=plt.subplots(1,1)
+ax.set_xlabel(r'Log(M$_*$/M$_\odot$)',fontsize=20)
+ax.set_ylabel(r'S$_{f_q,mass}$',fontsize=20)
+ax.set_ylim([-.05,2.5])
 ax.tick_params(labelsize=15)
 
 x_bins = np.arange(9.4,11.1,.1)
@@ -37,7 +38,7 @@ for i in [0,1,2]:
         else:
             y[j],yu[j],yl[j],ye[j] = np.NaN,np.NaN,np.NaN,np.NaN
     #ax.errorbar(x,y,yerr=[yl,yu],capsize=5,c=c[i],zorder=i)
-    ax.errorbar(x,y,yerr=ye,capsize=5,c=c[i],zorder=i)
+    ax.errorbar(x,y,yerr=ye,capsize=0,c=c[i],zorder=i)
     ax.plot(x,y,c=c[i],marker='.',ms=3**2,label=name[i],zorder=i)
 
 ax.legend(loc='upper left',prop={'size':15})
@@ -46,9 +47,10 @@ f.savefig('Data/BinnedSpecificFrequency.QuenchFraction.png',bbox_inches='tight',
 
 
 
-f,ax=plt.subplots(1,1,figsize=(8,6))
-ax.set_xlabel(r'Distance to Closest Milky Way or Larger [Mpc]',fontsize=17)
-ax.set_ylabel(r'S$_{f_q,env}$',fontsize=17)
+f,ax=plt.subplots(1,1)
+ax.set_xlabel(r'D$_{MW+}$ [Mpc]',fontsize=20)
+ax.set_ylabel(r'S$_{f_q,env}$',fontsize=20)
+ax.set_ylim([-.05,2.5])
 ax.tick_params(labelsize=15)
 
 x_bins = np.arange(0,11,.5)
@@ -74,7 +76,7 @@ for i in [0,1,2]:
         else:
             y[j],yu[j],yl[j],ye[j] = np.NaN,np.NaN,np.NaN,np.NaN
     #ax.errorbar(x,y,yerr=[yl,yu],capsize=5,c=c[i],zorder=i)
-    ax.errorbar(x,y,yerr=ye,capsize=5,c=c[i],zorder=i)
+    ax.errorbar(x,y,yerr=ye,capsize=0,c=c[i],zorder=i)
     ax.plot(x,y,c=c[i],marker='.',ms=3**2,label=name[i],zorder=i)
 
 ax.legend(loc='upper left',prop={'size':15})

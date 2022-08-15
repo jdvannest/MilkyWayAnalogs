@@ -2,9 +2,10 @@ import pickle
 import numpy as np 
 import matplotlib.pylab as plt
 
-f,ax = plt.subplots(1,1,figsize=(6,6))
-ax.set_ylabel(r'N$_{sat,vir}$ - N$_{sat,300}$',fontsize=15)
-ax.set_xlabel(r'Log(M$_{*}$)',fontsize=15)
+f,ax = plt.subplots(1,1)
+ax.set_ylabel(r'N$_{sat,vir}$ - N$_{sat,300}$',fontsize=20)
+ax.set_xlabel(r'Log(M$_{*}$)',fontsize=20)
+ax.tick_params(labelsize=15)
 ax.plot([9.5,11],[0,0],c='0.75',linestyle='--',zorder=0)
 ax.set_xlim([9.5,11])
 ax.set_ylim([-8,8])
@@ -43,9 +44,10 @@ for i in [1,2,7]:
     rvir = pickle.load(open(f'../DataFiles/MilkyWay.{i}.sim.Yov.pickle','rb'))
     r300 = pickle.load(open(f'../DataFiles/MilkyWay.{i}.300.Yov.pickle','rb'))
 
-    f,ax = plt.subplots(1,1,figsize=(6,6))
-    ax.set_ylabel(r'N$_{sat}$',fontsize=15)
-    ax.set_xlabel(r'Log(M$_{*}$)',fontsize=15)
+    f,ax = plt.subplots(1,1)
+    ax.set_ylabel(r'N$_{sat}$',fontsize=20)
+    ax.set_xlabel(r'Log(M$_{*}$)',fontsize=20)
+    ax.tick_params(labelsize=15)
     ax.set_xlim([9.5,11])
     ax.set_ylim([-.5,13.5])
     ax.scatter(-1,-1,c='r',marker='^',label=r'R$_{vir}$')
@@ -68,7 +70,7 @@ for i in [1,2,7]:
             elif a<b:
                 up+=1
         
-    ax.text(10.9,.5,(f'{round(up/tot*100,2)}'+r'$\%\uparrow$'),fontsize=15,horizontalalignment='right')
-    ax.text(10.9,0,f'{round(dn/tot*100,2)}'+r'$\%\downarrow$',fontsize=15,horizontalalignment='right')
+    ax.text(9.65,9.8,(f'{round(up/tot*100,2)}'+r'$\%\uparrow$'),fontsize=15,horizontalalignment='left')
+    ax.text(9.65,8.8,f'{round(dn/tot*100,2)}'+r'$\%\downarrow$',fontsize=15,horizontalalignment='left')
     ax.legend(loc='upper left',prop={'size':15})
     f.savefig(f'Data/RadComp.{i}.png',bbox_inches='tight',pad_inches=.1)
