@@ -12,7 +12,7 @@ parser.add_argument("-o", "--overlapping",action='store_true')
 args = parser.parse_args()
 
 #Define output variables
-output_path="../DataFiles/"
+output_path="DataFiles/"
 overlap = 'Yov' if args.overlapping else 'Nov'
 
 with open(output_path+f'MilkyWay.{args.definition}.{args.radius}.{overlap}.Halos.txt') as f:
@@ -30,17 +30,17 @@ rom = tangos.get_simulation('cosmo25')[-1]
 myprint('Database Loaded',clear=True)
 
 BHMilkyWays,BHSatellites = [],[]
-print('Finding Milky Way Black Holes...')
-for mw in MilkyWayHalos:
-    if 'BH' in rom[mw].keys(): BHMilkyWays.append(f'{mw}\n')
-myprint(f'{len(BHMilkyWays)} Milky Way Black Holes Found.',clear=True)
+#print('Finding Milky Way Black Holes...')
+#for mw in MilkyWayHalos:
+#    if 'BH' in rom[mw].keys(): BHMilkyWays.append(f'{mw}\n')
+#myprint(f'{len(BHMilkyWays)} Milky Way Black Holes Found.',clear=True)
 print('Finding Satellite Black Holes...')
 for sat in SatelliteHalos:
     if 'BH' in rom[sat].keys(): BHSatellites.append(f'{sat}\n')
 myprint(f'{len(BHSatellites)} Satellite Black Holes Found.',clear=True)
 
-with open(output_path + f'MilkyWay.{args.definition}.{args.radius}.{overlap}.BlackHoles.txt','w') as f:
-    f.writelines(BHMilkyWays)
+#with open(output_path + f'MilkyWay.{args.definition}.{args.radius}.{overlap}.BlackHoles.txt','w') as f:
+#    f.writelines(BHMilkyWays)
 with open(output_path + f'Satellite.{args.definition}.{args.radius}.{overlap}.BlackHoles.txt','w') as f:
     f.writelines(BHSatellites)
 print(f'BH Files Written for {args.definition}-{args.radius}-{overlap}')
