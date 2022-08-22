@@ -178,7 +178,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
     mwy2 = []
     m31x2 = []
     m31y2 = []
-    m101x,m101y,m94x,m94y,m81x,m81y,cenAx,cenAy=[[],[],[],[],[],[],[],[]]
+    m101x,m101y,m94x,m94y,m81x,m81y,cenAx,cenAy,ngc4258x,ngc4258y,ngc4631x,ngc4631y=[[],[],[],[],[],[],[],[],[],[],[],[]]
     line = 14
     while line > 1:
         mwx2.append(float(wk.cell_value(line,0))+.2)
@@ -209,6 +209,16 @@ def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
         m81x.append(float(wk.cell_value(line,10)))
         m81y.append(float(wk.cell_value(line,11)))
         line+=1
+    line=2
+    while line<6.5:
+        ngc4258x.append(float(wk.cell_value(line,12)))
+        ngc4258y.append(float(wk.cell_value(line,13)))
+        line+=1
+    line=2
+    while line<10.5:
+        ngc4631x.append(float(wk.cell_value(line,14)))
+        ngc4631y.append(float(wk.cell_value(line,15)))
+        line+=1
 
     f,ax = plt.subplots(1,1)
     ax.fill_between(x,miny,maxy,color='0.5',alpha=.5,edgecolor='None')
@@ -216,10 +226,12 @@ def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
     #ax.plot(m31x,m31y,color='purple',label='M31')
     ax.plot(mwx2,mwy2,color='orange',label='Milky Way')
     ax.plot(m31x2,m31y2,color='purple',label='M31')
-    ax.plot(m81x[:1]+m81x,[0]+m81y,label='M81',color='b')
+    #ax.plot(m81x[:1]+m81x,[0]+m81y,label='M81',color='b')
     ax.plot(m94x[:1]+m94x,[0]+m94y,label='M94',color='g')
     ax.plot(m101x[:1]+m101x,[0]+m101y,label='M101',color='r')
-    ax.plot(cenAx[:1]+cenAx,[0]+cenAy,label='Cen A',color='brown')
+    #ax.plot(cenAx[:1]+cenAx,[0]+cenAy,label='Cen A',color='brown')
+    ax.plot(ngc4258x[:1]+ngc4258x,[0]+ngc4258y,label='NGC4258',color='b')
+    ax.plot(ngc4631x[:1]+ngc4631x,[0]+ngc4631y,label='NGC4631',color='brown')
     ax.plot([-1,0],[-1,0],color='0.5',alpha=.5,label='Romulus25')
     ax.set_xlim([-12,-25])
     ax.set_ylim([0,12])
@@ -1896,4 +1908,128 @@ def NsatVsLargestSatelliteMagnitude(host,sats,rest,rad,over,path=''):
     ax.scatter(Mag,Nsat,c='k')
     f.savefig(f'{path}NsatVsLargestSatelliteMagnitude.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/NsatVsLargestSatelliteMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
+    #Log(M*/Msun) = 1.254 + 1.098(g-r)_0 - 0.4M_(r,0)
+
+    with open('DataFiles/AdditionalData/SAGA_Hosts.csv') as f:
+        SagaHost = f.readlines()
+        del SagaHost[0]
+    with open('DataFiles/AdditionalData/SAGA_Satellites.csv') as f:
+        SagaSats = f.readlines()
+        del SagaSats[0]
+    
+    SagaMk,SagaQf,SagaMksub,SagaQfsub = [],[],[],[]
+    for l in SagaHost:
+        line = l.split(',')
+        t,q,ts,qs=0,0,0,0
+        for s in SagaSats:
+            sline = s.split(',')
+            if sline[0]==line[0]:
+                t+=1
+                if sline[11]=='N': q+=1
+                if float(sline[10])>8:
+                    ts+=1
+                    if sline[11]=='N': qs+=1
+        if t>0:
+            SagaMk.append(float(line[6]))
+            SagaQf.append(q/t)
+        if ts>0:
+            SagaMksub.append(float(line[6]))
+            SagaQfsub.append(qs/ts)
+    
+    mk,qf = [],[]
+    for mw in host:
+        t,q = 0,0
+        for sat in host[mw]['Satellites']:
+            t+=1
+            if sats[sat]['Quenched']: q+=1
+        if t>0:
+            mk.append(host[mw]['Kmag'])
+            qf.append(q/t)
+    
+    f,ax=plt.subplots(1,1,figsize=(8,4.8))
+    ax.set_xlim([-21.5,-25.5])
+    ax.set_ylim([-.15,1.05])
+    ax.set_xlabel(f'M$_K$',fontsize=20)
+    ax.set_ylabel(f'f$_Q$',fontsize=20)
+    ax.tick_params(labelsize=15)
+    ax.scatter(SagaMk,SagaQf,c='darkturquoise',label='SAGA II (full)')
+    ax.scatter(SagaMksub,SagaQfsub,c='royalblue',label=r'SAGA II ($>10^8$M$_\odot$)')
+    ax.scatter(mk,qf,c='k',label='Romulus25')
+    ax.legend(loc='lower left',prop={'size':12.25},ncol=3)
+    f.savefig(f'{path}SAGAQuenchComparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGAQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+def SAGABinnedQuenchComparison(host,sats,rest,rad,over,path=''):
+    #Log(M*/Msun) = 1.254 + 1.098(g-r)_0 - 0.4M_(r,0)
+
+    with open('DataFiles/AdditionalData/SAGA_Hosts.csv') as f:
+        SagaHost = f.readlines()
+        del SagaHost[0]
+    with open('DataFiles/AdditionalData/SAGA_Satellites.csv') as f:
+        SagaSats = f.readlines()
+        del SagaSats[0]
+    
+    SagaMk,SagaQf,SagaMksub,SagaQfsub = [],[],[],[]
+    for l in SagaHost:
+        line = l.split(',')
+        t,q,ts,qs=0,0,0,0
+        for s in SagaSats:
+            sline = s.split(',')
+            if sline[0]==line[0]:
+                t+=1
+                if sline[11]=='N': q+=1
+                if float(sline[10])>8:
+                    ts+=1
+                    if sline[11]=='N': qs+=1
+        if t>0:
+            SagaMk.append(float(line[6]))
+            SagaQf.append(q/t)
+        if ts>0:
+            SagaMksub.append(float(line[6]))
+            SagaQfsub.append(qs/ts)
+    
+    mk,qf = [],[]
+    for mw in host:
+        t,q = 0,0
+        for sat in host[mw]['Satellites']:
+            t+=1
+            if sats[sat]['Quenched']: q+=1
+        if t>0:
+            mk.append(host[mw]['Kmag'])
+            qf.append(q/t)
+    
+    bins = np.arange(-25.5,-21,.5)
+    mkb,qfb,sqfb,sqfsb=[],[],[],[]
+    for i in np.arange(len(bins)-1):
+        qfc,sqfc,sqfsc=[],[],[]
+        for m in mk:
+            if bins[i]<m<bins[i+1]:
+                qfc.append(qf[mk.index(m)])
+        for m in SagaMk:
+            if bins[i]<m<bins[i+1]:
+                sqfc.append(SagaQf[SagaMk.index(m)])
+        for m in SagaMksub:
+            if bins[i]<m<bins[i+1]:
+                sqfsc.append(SagaQfsub[SagaMksub.index(m)])
+        mkb.append((bins[i]+bins[i+1])/2)
+        qfb.append(np.mean(qfc))
+        sqfb.append(np.mean(sqfc))
+        sqfsb.append(np.mean(sqfsc))
+    
+    f,ax=plt.subplots(1,1,figsize=(8,4.8))
+    ax.set_xlim([-23,-25])
+    ax.set_ylim([-.15,1.05])
+    ax.set_xlabel(f'M$_K$',fontsize=20)
+    ax.set_ylabel(f'f$_Q$',fontsize=20)
+    ax.tick_params(labelsize=15)
+    ax.plot(mkb,sqfb,marker='o',c='darkturquoise',label='SAGA II (full)')
+    ax.plot(mkb,sqfsb,marker='o',c='royalblue',label=r'SAGA II ($>10^8$M$_\odot$)')
+    ax.plot(mkb,qfb,marker='o',c='k',label='Romulus25')
+    ax.legend(loc='lower left',prop={'size':12.25},ncol=3)
+    f.savefig(f'{path}SAGABinnedQuenchComparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGABinnedQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()

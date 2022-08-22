@@ -34,7 +34,7 @@ for i in [1,2,7]:
                 if svir[sat]['Quenched']: q+=1
         if t>0:
             rvx.append(rvir[mw]['Closest_MW+'][0]/1e3)
-            rvy.append(q/t)
+            rvy.append(q/t)#*rvir[mw]['Mstar']/1e11)
             rvn.append(t)
             rvi.append(mw)
     
@@ -47,7 +47,7 @@ for i in [1,2,7]:
                 if s300[sat]['Quenched']: q+=1
         if t>0:
             r3x.append(r300[mw]['Closest_MW+'][0]/1e3)
-            r3y.append(q/t)
+            r3y.append(q/t)#*r300[mw]['Mstar']/1e11)
             r3n.append(t)
             r3i.append(mw)
 
