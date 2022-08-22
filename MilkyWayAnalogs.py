@@ -1,4 +1,3 @@
-#Code written by Jordan Van Nest, 08/2020
 import pickle, sys, argparse, os
 import numpy as np 
 
@@ -110,7 +109,7 @@ for i in np.arange(len(hnum)):
         MilkyWays[str(hnum[i])]['center'] = cen[i]
         MilkyWays[str(hnum[i])]['CumSFH'] = csfh[i]
         MilkyWays[str(hnum[i])]['SFR_250Myr'] = sfr[i]
-        MilkyWays[str(hnum[i])]['BlackHole'] = True if 'BH' in rom[-1][i].keys() else False
+        #MilkyWays[str(hnum[i])]['BlackHole'] = True if 'BH' in rom[-1][i].keys() else False
         MilkyWays[str(hnum[i])]['Satellites'] = [] #Empty array for indexes of satellites of this MW
         MilkyWays[str(hnum[i])]['EnvDen'] = 0 #Number of neighbors w/in 1Mpc where Mvir>1e11 Msol
         #MilkyWays[str(hnum[i])]['MvirPeak'] = max(rom[-1][int(hnum[i])].calculate_for_progenitors('Mvir')[0])
@@ -212,7 +211,7 @@ for mw in MilkyWays:
                     Satellites[str(hnum[i])]['center'] = cen[i]
                     Satellites[str(hnum[i])]['CumSFH'] = csfh[i]
                     Satellites[str(hnum[i])]['SFR_250Myr'] = sfr[i]
-                    Satellites[str(hnum[i])]['BlackHole'] = True if 'BH' in rom[-1][i].keys() else False
+                    #Satellites[str(hnum[i])]['BlackHole'] = True if 'BH' in rom[-1][i].keys() else False
                     Satellites[str(hnum[i])]['Host'] = mw
                     Satellites[str(hnum[i])]['Orbit'] = [np.linalg.norm(distance),
                                                          np.linalg.norm(distance)/MilkyWays[mw]['Rvir']]
@@ -333,7 +332,7 @@ out.close()
 out = open(output_path + f'LargeHalos.pickle','wb')
 pickle.dump(LargeHalos,out)
 out.close()
-myprint('Data Files Written',clear=True)
+myprint(f'Data Files Written for {args.definition}-{args.radius}-{overlap}',clear=True)
 
 #Output Text Log
 from datetime import datetime
