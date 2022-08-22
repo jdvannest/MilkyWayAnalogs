@@ -339,3 +339,18 @@ done = datetime.now()
 out = open(output_path+f'Logs/TextLog.{args.definition}.{args.radius}.{overlap}.txt','w')
 out.writelines(['Last Run:\n',f'\t{done.month}-{done.day}-{done.year}, {done.hour}:{done.minute}:{done.second} CT\n']+TextLog)
 out.close()
+
+#Writeout Halo List in Text File
+MilkyWayHalos,SatelliteHalos,LargeHalosList = [],[],[]
+for mw in MilkyWays:
+    MilkyWayHalos.append(f'{mw}\n')
+with open(output_path + f'MilkyWay.{args.definition}.{args.radius}.{overlap}.Halos.txt','w') as f:
+    f.writelines(MilkyWayHalos)
+for sat in Satellites:
+    SatelliteHalos.append(f'{sat}\n')
+with open(output_path + f'Satellite.{args.definition}.{args.radius}.{overlap}.Halos.txt','w') as f:
+    f.writelines(SatelliteHalos)
+for lh in LargeHalos:
+    LargeHalosList.append(f'{lh}\n')
+with open(output_path + f'LargeHalos.Halos.txt','w') as f:
+    f.writelines(LargeHalosList)

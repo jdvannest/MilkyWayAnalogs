@@ -1536,18 +1536,18 @@ def QuenchedFractionVsEnvironment(host,sats,rest,rad,over,path=''):
                 if sats[sat]['Quenched']:
                     q+=1
         if t>0:
-            qf.append(float(q)/float(t))
+            qf.append(float(q)/float(t)*host[mw]['Mstar']/(10**11))
             d = host[mw]['Closest_MW+'][0]/1000
             env.append(d)
             tots.append(t)
             if d<1:
-                qclose.append(float(q)/float(t))
+                qclose.append(float(q)/float(t)*host[mw]['Mstar']/(10**11))
             else:
-                qfar.append(float(q)/float(t))
+                qfar.append(float(q)/float(t)*host[mw]['Mstar']/(10**11))
     
     f,ax = plt.subplots(1,1)
     ax.set_xlabel(r'D$_{MW+}$ [Mpc]',fontsize=20)
-    ax.set_ylabel('Quenched Fraction',fontsize=20)
+    ax.set_ylabel(r'f$_Q$',fontsize=20)
     ax.tick_params(labelsize=15)
     ax.set_xlim([.06,5])
     ax.set_ylim([-.2,1.03])
@@ -1558,12 +1558,12 @@ def QuenchedFractionVsEnvironment(host,sats,rest,rad,over,path=''):
     norm = mpl.colors.BoundaryNorm(np.arange(.5,max(tots)+1.5), mpl.cm.viridis.N)
     p = ax.scatter(env,qf,s=7**2,c=tots,cmap='viridis',norm=norm,zorder=5)
     cbar = f.colorbar(p,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.set_label(r'N$_{sat}$',fontsize=20)
+    cbar.set_label(r'N$_{sat}$ [M$_*>10^8$ M$_\odot$]',fontsize=20)
     cbar.set_ticks(np.arange(1,max(tots)+1))
     ax.plot([0,1],[np.mean(qclose),np.mean(qclose)],c='b',label='Pairs',zorder=6)
     ax.plot([1,5],[np.mean(qfar),np.mean(qfar)],c='r',label='Isolated',zorder=6)
     ax.plot([1,1],[np.mean(qclose),np.mean(qfar)],c='k',zorder=6)
-    ax.legend(loc='lower left',ncol=3,prop={'size':15})
+    ax.legend(loc='lower left',ncol=3,prop={'size':14.5})
     ax.semilogx()
     f.savefig(f'{path}QuenchedFractionVsEnvironment.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/QuenchedFractionVsEnvironment.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
