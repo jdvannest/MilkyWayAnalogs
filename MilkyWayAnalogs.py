@@ -53,8 +53,8 @@ print('Loading Database...')
 os.environ['TANGOS_DB_CONNECTION'] = '/myhome2/users/munshi/Romulus/data_romulus25.working.db'
 import tangos
 rom = tangos.get_simulation('cosmo25')
-hnum, cen, mvir, rvir, vmag, rmag, kmag, bmag, mstar, csfh, sfr = rom[-1].calculate_all(
-                                'halo_number()','shrink_center','Mvir','max_radius',
+hnum, cen, mvir, mgas, rvir, vmag, rmag, kmag, bmag, mstar, csfh, sfr = rom[-1].calculate_all(
+                                'halo_number()','shrink_center','Mvir','Mgas','max_radius',
                                 'AB_V','AB_R','AB_K','AB_B','Mstar','CumSFH','SFR_encl_250Myr')
 myprint('Database Loaded',clear=True)
 
@@ -100,6 +100,7 @@ for i in np.arange(len(hnum)):
         MilkyWays[str(hnum[i])] = {}
         MilkyWays[str(hnum[i])]['Mvir'] = mvir[i]
         MilkyWays[str(hnum[i])]['Mstar'] = mstar[i]
+        MilkyWays[str(hnum[i])]['Mgas'] = mgas[i]
         MilkyWays[str(hnum[i])]['Rvir'] = rvir[i]
         MilkyWays[str(hnum[i])]['Vmag'] = vmag[i]
         MilkyWays[str(hnum[i])]['Rmag'] = rmag[i]
@@ -208,6 +209,7 @@ for mw in MilkyWays:
                     Satellites[str(hnum[i])]['Rmag'] = rmag[i]
                     Satellites[str(hnum[i])]['Gmag'] = gband(bmag[i],vmag[i])
                     Satellites[str(hnum[i])]['Mstar'] = mstar[i]
+                    Satellites[str(hnum[i])]['Mgas'] = mgas[i]
                     Satellites[str(hnum[i])]['center'] = cen[i]
                     Satellites[str(hnum[i])]['CumSFH'] = csfh[i]
                     Satellites[str(hnum[i])]['SFR_250Myr'] = sfr[i]

@@ -11,9 +11,9 @@ for i in [1,2,7]:
     s300 = pickle.load(open(f'../DataFiles/Satellite.{i}.300.Yov.pickle','rb'))
 
     f,ax = plt.subplots(1,1,figsize=(8,6))
-    ax.set_ylabel(r'f$_q$',fontsize=20)
-    ax.set_xlabel(r'D$_{MW+}$ [Mpc]',fontsize=20)
-    ax.tick_params(labelsize=15)
+    ax.set_ylabel(r'f$_q$',fontsize=25)
+    ax.set_xlabel(r'D$_{MW+}$ [Mpc]',fontsize=25)
+    ax.tick_params(labelsize=20)
     ax.set_xlim([.06,5])
     ax.set_ylim([-.15,1.03])
     ax.semilogx()
@@ -63,7 +63,8 @@ for i in [1,2,7]:
     p = ax.scatter(r3x,r3y,c=r3n,cmap='viridis',norm=norm,marker=MarkerStyle('o', fillstyle='top'),s=7**2,label='300 kpc')
     ax.scatter(rvx,rvy,c=rvn,cmap='viridis',norm=norm,marker=MarkerStyle('o', fillstyle='bottom'),s=7**2,label=r'R$_{vir}$')
     cbar = f.colorbar(p,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.set_label(r'N$_{sat}$ [M$_*>10^8$ M$_\odot$]',fontsize=20)
+    cbar.set_label(r'N$_{sat}$ [M$_*>10^8$ M$_\odot$]',fontsize=25)
+    cbar.ax.tick_params(labelsize=20)
     cbar.set_ticks(np.arange(1,max(rvn+r3n)+1))
     #Add medians
     ax.scatter(.925,np.mean(np.array(r3y)[np.where(np.array(r3x)<1)]),c='r',marker=MarkerStyle('D', fillstyle='top'),s=7**2)
@@ -75,7 +76,7 @@ for i in [1,2,7]:
     ax.vlines(1.12,ymin=min([np.mean(np.array(r3y)[np.where(np.array(r3x)>1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)>1)])]),zorder=0,
                    ymax=max([np.mean(np.array(r3y)[np.where(np.array(r3x)>1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)>1)])]),color='k')
     ax.scatter(-1,-1,c='r',marker='D',s=7**2,label='Mean')
-    ax.legend(loc='lower left',prop={'size':14},ncol=4)
+    ax.legend(loc='lower left',prop={'size':14.4},ncol=4)
     f.savefig(f'Data/QuenchedFractionComp.{i}.png',bbox_inches='tight',pad_inches=.1)
 
 

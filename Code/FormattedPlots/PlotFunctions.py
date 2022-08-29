@@ -886,9 +886,9 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,4))
-    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
-    ax.set_ylabel(r'D$_{LH}$ [Mpc]',fontsize=20)
-    ax.tick_params(which='major',labelsize=15, length=5)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=25)
+    ax.set_ylabel(r'D$_{LH}$ [Mpc]',fontsize=25)
+    ax.tick_params(which='major',labelsize=20, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
     norm = mpl.colors.BoundaryNorm(np.arange(-.5,9.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
@@ -896,9 +896,9 @@ def StellarMassVsEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
     cmap.set_bad(color='k')
     c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=15)
+    cbar.ax.tick_params(labelsize=20)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label(r'Average N$_{sat}$',fontsize=20)
+    cbar.set_label(r'Average N$_{sat}$',fontsize=25)
     cbar.set_ticks(np.arange(0,11))
     Size = True
     if Size:
@@ -946,9 +946,9 @@ def StellarMassVsEnvironmentVsQuenchFraction(host,sat,rest,rad,over,path=''):
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,4))
-    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
-    ax.set_ylabel(r'D$_{LH}$ [Mpc]',fontsize=20)
-    ax.tick_params(which='major',labelsize=15, length=5)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=25)
+    ax.set_ylabel(r'D$_{LH}$ [Mpc]',fontsize=25)
+    ax.tick_params(which='major',labelsize=20, length=5)
     norm = plt.Normalize(0,1)
     #norm = mpl.colors.BoundaryNorm([0,1], mpl.cm.viridis.N, extend='min')
     C = np.ma.masked_where(C < 0, C)
@@ -956,9 +956,9 @@ def StellarMassVsEnvironmentVsQuenchFraction(host,sat,rest,rad,over,path=''):
     cmap.set_bad(color='k')
     c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=15)
+    cbar.ax.tick_params(labelsize=20)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average f$_Q$',fontsize=20)
+    cbar.set_label('Average f$_Q$',fontsize=25)
     #cbar.set_ticks(np.arange(0,1))
     Size = True
     if Size:
@@ -1001,9 +1001,9 @@ def StellarMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,p
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,3.5))
-    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
-    ax.set_ylabel(r'D$_{10}$ [Mpc]',fontsize=20)
-    ax.tick_params(which='major',labelsize=15, length=5)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=25)
+    ax.set_ylabel(r'D$_{10}$ [Mpc]',fontsize=25)
+    ax.tick_params(which='major',labelsize=20, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
     norm = mpl.colors.BoundaryNorm(np.arange(-.5,10.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
@@ -1011,9 +1011,9 @@ def StellarMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,p
     cmap.set_bad(color='k')
     c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=15)
+    cbar.ax.tick_params(labelsize=20)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average N$_{sat}$',fontsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=25)
     cbar.set_ticks(np.arange(0,14))
     Size = True
     if Size:
@@ -1056,9 +1056,9 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path='
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,4))
-    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
-    ax.set_ylabel('D$_{MW+}$ [Mpc]',fontsize=20)
-    ax.tick_params(which='major',labelsize=15, length=5)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=25)
+    ax.set_ylabel('D$_{MW+}$ [Mpc]',fontsize=25)
+    ax.tick_params(which='major',labelsize=20, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
     norm = mpl.colors.BoundaryNorm(np.arange(-.5,int(np.amax(C)+2)-.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
@@ -1066,8 +1066,8 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path='
     cmap.set_bad(color='k')
     c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=15)
-    cbar.set_label('Average N$_{sat}$',fontsize=20)
+    cbar.ax.tick_params(labelsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=25)
     cbar.set_ticks(np.arange(0,int(np.amax(C)+2)))
     Size = True
     if Size:
@@ -1110,9 +1110,9 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,
             c += 1
         r += 1
     f,ax = plt.subplots(1,1,figsize=(8,5))
-    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=20)
-    ax.set_ylabel(r'N$_L(<$1 Mpc)',fontsize=20)
-    ax.tick_params(which='major',labelsize=15, length=5)
+    ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=25)
+    ax.set_ylabel(r'N$_L(<$1 Mpc)',fontsize=25)
+    ax.tick_params(which='major',labelsize=20, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
     norm = mpl.colors.BoundaryNorm(np.arange(-.5,9.5), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
@@ -1120,9 +1120,9 @@ def StellarMassVsEnvironmentalDensityVsAverageSatelliteCount(host,rest,rad,over,
     cmap.set_bad(color='k')
     c = ax.pcolormesh(y,x,C,cmap=cmap,norm=norm,alpha=.5)
     cbar = f.colorbar(c,cax=f.add_axes([.91,.11,.03,.77]))
-    cbar.ax.tick_params(labelsize=15)
+    cbar.ax.tick_params(labelsize=20)
     #cbar.ax.set_yticklabels(np.arange(1,int(np.amax(C))+1))
-    cbar.set_label('Average N$_{sat}$',fontsize=20)
+    cbar.set_label('Average N$_{sat}$',fontsize=25)
     cbar.set_ticks(np.arange(0,11))
     Size = True
     if Size:
@@ -1939,76 +1939,51 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
             SagaMksub.append(float(line[6]))
             SagaQfsub.append(qs/ts)
     
-    mk,qf = [],[]
+    with open(f'DataFiles/Satellite.{rest}.{rad}.{over}.BlackHoles.txt') as f:
+        bhs = f.readlines()
+        bhs = [int(x) for x in bhs]
+    mk,qf,mknobh,qfnobh = [],[],[],[]
     for mw in host:
-        t,q = 0,0
+        t,q,tb,qb = 0,0,0,0
         for sat in host[mw]['Satellites']:
             t+=1
             if sats[sat]['Quenched']: q+=1
+            if not int(sat) in bhs:
+                tb+=1
+                if sats[sat]['Quenched']: qb+=1
         if t>0:
             mk.append(host[mw]['Kmag'])
             qf.append(q/t)
+        if tb>0:
+            mknobh.append(host[mw]['Kmag'])
+            qfnobh.append(qb/tb)
     
     f,ax=plt.subplots(1,1,figsize=(8,4.8))
     ax.set_xlim([-21.5,-25.5])
     ax.set_ylim([-.15,1.05])
     ax.set_xlabel(f'M$_K$',fontsize=20)
-    ax.set_ylabel(f'f$_Q$',fontsize=20)
+    ax.set_ylabel(f'f$_q$',fontsize=20)
     ax.tick_params(labelsize=15)
     ax.scatter(SagaMk,SagaQf,c='darkturquoise',label='SAGA II (full)')
     ax.scatter(SagaMksub,SagaQfsub,c='royalblue',label=r'SAGA II ($>10^8$M$_\odot$)')
-    ax.scatter(mk,qf,c='k',label='Romulus25')
-    ax.legend(loc='lower left',prop={'size':12.25},ncol=3)
+    ax.scatter(mk,qf,c='k',label='Rom25')
+    #ax.scatter(mknobh,qfnobh,c='.5',label='Rom25 (no BH)')
+    ax.legend(loc='lower left',prop={'size':12.25})#,ncol=4)
     f.savefig(f'{path}SAGAQuenchComparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/SAGAQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
-def SAGABinnedQuenchComparison(host,sats,rest,rad,over,path=''):
-    #Log(M*/Msun) = 1.254 + 1.098(g-r)_0 - 0.4M_(r,0)
-
-    with open('DataFiles/AdditionalData/SAGA_Hosts.csv') as f:
-        SagaHost = f.readlines()
-        del SagaHost[0]
-    with open('DataFiles/AdditionalData/SAGA_Satellites.csv') as f:
-        SagaSats = f.readlines()
-        del SagaSats[0]
-    
-    SagaMk,SagaQf,SagaMksub,SagaQfsub = [],[],[],[]
-    for l in SagaHost:
-        line = l.split(',')
-        t,q,ts,qs=0,0,0,0
-        for s in SagaSats:
-            sline = s.split(',')
-            if sline[0]==line[0]:
-                t+=1
-                if sline[11]=='N': q+=1
-                if float(sline[10])>8:
-                    ts+=1
-                    if sline[11]=='N': qs+=1
-        if t>0:
-            SagaMk.append(float(line[6]))
-            SagaQf.append(q/t)
-        if ts>0:
-            SagaMksub.append(float(line[6]))
-            SagaQfsub.append(qs/ts)
-    
-    mk,qf = [],[]
-    for mw in host:
-        t,q = 0,0
-        for sat in host[mw]['Satellites']:
-            t+=1
-            if sats[sat]['Quenched']: q+=1
-        if t>0:
-            mk.append(host[mw]['Kmag'])
-            qf.append(q/t)
-    
     bins = np.arange(-25.5,-21,.5)
-    mkb,qfb,sqfb,sqfsb=[],[],[],[]
+    mkb,qfb,qfnb,sqfb,sqfsb=[],[],[],[],[]
+    qfbe,qfnbe,sqfbe,sqfsbe=[],[],[],[]
     for i in np.arange(len(bins)-1):
-        qfc,sqfc,sqfsc=[],[],[]
+        qfc,qfnc,sqfc,sqfsc=[],[],[],[]
         for m in mk:
             if bins[i]<m<bins[i+1]:
                 qfc.append(qf[mk.index(m)])
+        for m in mknobh:
+            if bins[i]<m<bins[i+1]:
+                qfnc.append(qfnobh[mknobh.index(m)])
         for m in SagaMk:
             if bins[i]<m<bins[i+1]:
                 sqfc.append(SagaQf[SagaMk.index(m)])
@@ -2017,19 +1992,51 @@ def SAGABinnedQuenchComparison(host,sats,rest,rad,over,path=''):
                 sqfsc.append(SagaQfsub[SagaMksub.index(m)])
         mkb.append((bins[i]+bins[i+1])/2)
         qfb.append(np.mean(qfc))
+        qfbe.append(np.std(qfc)/np.sqrt(len(qfc)))
+        qfnb.append(np.mean(qfnc))
+        qfnbe.append(np.std(qfnc)/np.sqrt(len(qfnc)))
         sqfb.append(np.mean(sqfc))
+        sqfbe.append(np.std(sqfc)/np.sqrt(len(sqfc)))
         sqfsb.append(np.mean(sqfsc))
+        sqfsbe.append(np.std(sqfsc)/np.sqrt(len(sqfsc)))
     
+    with open('DataFiles/AdditionalData/ELVES_Quenching.csv') as f:
+        L = f.readlines()
+        del L[:2]
+    ex,ey,eux,euy,elx,ely = [np.zeros(len(L)),np.zeros(len(L)),np.zeros(len(L)),
+                             np.zeros(len(L)),np.zeros(len(L)),np.zeros(len(L))]
+    for i in np.arange(len(L)):
+        ex[i],ey[i],eux[i],euy[i],elx[i],ely[i] = L[i].split(',')
+    #x,y,low_e,upp_e from ELVES
+    MW = (-24.132,.6,.384,.781)
+    M31 = (-24.893,.888,.744,.953)
+
     f,ax=plt.subplots(1,1,figsize=(8,4.8))
     ax.set_xlim([-23,-25])
-    ax.set_ylim([-.15,1.05])
-    ax.set_xlabel(f'M$_K$',fontsize=20)
-    ax.set_ylabel(f'f$_Q$',fontsize=20)
-    ax.tick_params(labelsize=15)
-    ax.plot(mkb,sqfb,marker='o',c='darkturquoise',label='SAGA II (full)')
-    ax.plot(mkb,sqfsb,marker='o',c='royalblue',label=r'SAGA II ($>10^8$M$_\odot$)')
-    ax.plot(mkb,qfb,marker='o',c='k',label='Romulus25')
-    ax.legend(loc='lower left',prop={'size':12.25},ncol=3)
+    ax.set_ylim([-.3,1.05])
+    ax.set_yticks([0,.2,.4,.6,.8,1])
+    ax.set_xticks(np.arange(-25,-22.9,.5))
+    ax.set_xlabel(f'M$_K$',fontsize=25)
+    ax.set_ylabel(f'f$_q$',fontsize=25)
+    ax.tick_params(labelsize=18)
+    ax.plot([-23,-25],[0,0],c='0.5',linestyle=':')
+    ax.plot([-23,-25],[1,1],c='0.5',linestyle=':')
+    ax.fill_between(ex,ely,euy,color='#cb9999',alpha=.3)
+    ax.plot(ex,ey,c='#800000',label='ELVES')
+    ax.errorbar(mkb,sqfb,yerr=sqfbe,capsize=4,c='g',zorder=0)
+    ax.plot(mkb,sqfb,marker='o',c='g',label='SAGA II (full)')
+    ax.errorbar(mkb,sqfsb,yerr=sqfsbe,capsize=4,c='yellowgreen',zorder=0)
+    ax.plot(mkb,sqfsb,marker='o',c='yellowgreen',label=r'SAGA II ($>10^8$M$_\odot$)')
+    ax.errorbar(mkb,qfb,yerr=qfbe,capsize=4,c='k',zorder=0)
+    ax.plot(mkb,qfb,marker='o',c='k',label='Rom25')
+    ax.errorbar(MW[0],MW[1],yerr=[[MW[1]-MW[2]],[MW[3]-MW[1]]],capsize=4,c='#800080')
+    ax.scatter(MW[0],MW[1],c='#800080',marker='*',s=9**2,label='Milky Way')
+    ax.errorbar(M31[0],M31[1],yerr=[[M31[1]-M31[2]],[M31[3]-M31[1]]],capsize=4,c='#ffa500')
+    ax.scatter(M31[0],M31[1],c='#ffa500',marker='*',s=9**2,label='M31')
+    #ax.plot(mkb,qfnb,marker='o',c='.5',label='Rom25 (no BH)')
+    handles, labels = plt.gca().get_legend_handles_labels()
+    order = [3,0,1,4,2,5]
+    ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='lower left',prop={'size':13.8},ncol=3)
     f.savefig(f'{path}SAGABinnedQuenchComparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/SAGABinnedQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
