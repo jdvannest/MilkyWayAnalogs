@@ -96,6 +96,8 @@ def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
 
     miny = []
     maxy = []
+    meany = []
+    erry = []
     i = 0
     while i < len(x):
         m = []
@@ -103,6 +105,8 @@ def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
             m.append(y[i])
         miny.append(min(m))
         maxy.append(max(m))
+        meany.append(np.mean(m))
+        erry.append(np.std(m))
         i += 1
 
     wkbk = xlrd.open_workbook('DataFiles/AdditionalData/M31_Vb.xls')
@@ -240,6 +244,27 @@ def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
     ax.tick_params(labelsize=15,length=5)
     ax.legend(loc='upper right',prop={'size':17})
     f.savefig(f'{path}LuminosityFunction.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/LuminosityFunction'+'.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+    #Mean+1Sigma
+    f,ax = plt.subplots(1,1)
+    ax.fill_between(x,miny,maxy,color='0.5',alpha=.2,edgecolor='None')
+    ax.fill_between(x,np.array(meany)+np.array(erry),np.array(meany)-np.array(erry),color='0.5',alpha=.5,edgecolor='None')
+    ax.plot(mwx2,mwy2,color='orange',label='Milky Way')
+    ax.plot(m31x2,m31y2,color='purple',label='M31')
+    ax.plot(m94x[:1]+m94x,[0]+m94y,label='M94',color='g')
+    ax.plot(m101x[:1]+m101x,[0]+m101y,label='M101',color='r')
+    ax.plot(ngc4258x[:1]+ngc4258x,[0]+ngc4258y,label='NGC4258',color='b')
+    ax.plot(ngc4631x[:1]+ngc4631x,[0]+ngc4631y,label='NGC4631',color='brown')
+    ax.plot(x,meany,color='k',label='Romulus25')
+    ax.set_xlim([-12,-25])
+    ax.set_ylim([0,12])
+    ax.set_xlabel(r'V [Mag]',fontsize=20)
+    ax.set_ylabel(r'N (M$_{V} < $V)',fontsize=20)
+    ax.tick_params(labelsize=15,length=5)
+    ax.legend(loc='upper right',prop={'size':17})
+    f.savefig(f'{path}LuminosityFunction.Mean.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/LuminosityFunction'+'.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
@@ -1035,7 +1060,7 @@ def StellarMassVsNeighborEnvironmentVsAverageSatelliteCount(host,rest,rad,over,p
 
 def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path=''):
     y = np.arange(9.4,11.01,.2)
-    x = np.arange(0,12,2)
+    x = np.arange(0,10,2)
     C = np.zeros((len(x),len(y)))
     N = np.zeros((len(x),len(y)))
     SD = np.zeros((len(x),len(y)))
@@ -1055,12 +1080,12 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path='
             N[c][r] = len(d)
             c += 1
         r += 1
-    f,ax = plt.subplots(1,1,figsize=(8,4))
+    f,ax = plt.subplots(1,1,figsize=(8,3))
     ax.set_xlabel(r'Log(M$_{*}$/M$_{\odot}$)',fontsize=25)
     ax.set_ylabel('D$_{MW+}$ [Mpc]',fontsize=25)
     ax.tick_params(which='major',labelsize=20, length=5)
     #norm = plt.Normalize(-1,int(np.amax(C))+1)
-    norm = mpl.colors.BoundaryNorm(np.arange(-.5,int(np.amax(C)+2)-.5), mpl.cm.viridis.N)#, extend='min')
+    norm = mpl.colors.BoundaryNorm(np.arange(-.5,7), mpl.cm.viridis.N)#, extend='min')
     C = np.ma.masked_where(C < 0, C)
     cmap = mpl.cm.get_cmap('viridis')#.copy()
     cmap.set_bad(color='k')
@@ -1078,7 +1103,7 @@ def StellarMassVsMWpEnvironmentVsAverageSatelliteCount(host,rest,rad,over,path='
                 a = (x[c+1]+x[c])/2
                 b = (y[r+1]+y[r])/2
                 if C[c][r] > -1:
-                    ax.text(b-.086,a-.5,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
+                    ax.text(b-.086,a-.6,'N: '+str(int(N[c][r]))+'\n'+r'$\sigma$: '+str(round(SD[c][r],2)),fontsize=15)
                 c +=1
             r +=1
     ax.set_xticks(y)
@@ -2000,16 +2025,42 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
         sqfsb.append(np.mean(sqfsc))
         sqfsbe.append(np.std(sqfsc)/np.sqrt(len(sqfsc)))
     
-    with open('DataFiles/AdditionalData/ELVES_Quenching.csv') as f:
-        L = f.readlines()
-        del L[:2]
-    ex,ey,eux,euy,elx,ely = [np.zeros(len(L)),np.zeros(len(L)),np.zeros(len(L)),
-                             np.zeros(len(L)),np.zeros(len(L)),np.zeros(len(L))]
-    for i in np.arange(len(L)):
-        ex[i],ey[i],eux[i],euy[i],elx[i],ely[i] = L[i].split(',')
-    #x,y,low_e,upp_e from ELVES
-    MW = (-24.132,.6,.384,.781)
-    M31 = (-24.893,.888,.744,.953)
+    #with open('DataFiles/AdditionalData/ELVES_Quenching.csv') as f:
+    #    L = f.readlines()
+    #    del L[:2]
+    #ex,ey,eux,euy,elx,ely = [np.zeros(len(L)),np.zeros(len(L)),np.zeros(len(L)),
+    #                         np.zeros(len(L)),np.zeros(len(L)),np.zeros(len(L))]
+    #for i in np.arange(len(L)):
+    #    ex[i],ey[i],eux[i],euy[i],elx[i],ely[i] = L[i].split(',')
+    ##x,y,low_e,upp_e from ELVES
+    #MW = (-24.132,.6,.384,.781)
+    #M31 = (-24.893,.888,.744,.953)
+
+    EH = pickle.load(open('DataFiles/AdditionalData/ELVES_Hosts.pickle','rb'))
+    ES = pickle.load(open('DataFiles/AdditionalData/ELVES_Satellites.pickle','rb'))
+    el,el_er,els,els_er = [],[],[],[]
+
+    for i in np.arange(len(bins)-1):
+        ec,ecs = [],[]
+        for m in EH:
+            if bins[i]<EH[m]['Kmag']<bins[i+1]:
+                t,q,ts,qs = 0,0,0,0
+                for s in EH[m]['Satellites']:
+                    if 6.75<ES[s]['Mstar']<9.5:
+                        t+=ES[s]['Likelihood']
+                        if ES[s]['Quenched']: q+=ES[s]['Likelihood']
+                    if ES[s]['Mstar']>8:# and ES[s]['Orbit']<150:
+                        ts+=ES[s]['Likelihood']
+                        if ES[s]['Quenched']: qs+=ES[s]['Likelihood']
+                if t>0:
+                    ec.append(q/t)
+                if ts>0:
+                    ecs.append(qs/ts)
+        el.append(np.mean(ec))
+        el_er.append(np.std(ec)/np.sqrt(len(ec)))
+        els.append(np.mean(ecs))
+        els_er.append(np.std(ecs)/np.sqrt(len(ecs)))
+
 
     f,ax=plt.subplots(1,1,figsize=(8,4.8))
     ax.set_xlim([-23,-25])
@@ -2021,22 +2072,59 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
     ax.tick_params(labelsize=18)
     ax.plot([-23,-25],[0,0],c='0.5',linestyle=':')
     ax.plot([-23,-25],[1,1],c='0.5',linestyle=':')
-    ax.fill_between(ex,ely,euy,color='#cb9999',alpha=.3)
-    ax.plot(ex,ey,c='#800000',label='ELVES')
+    #ax.fill_between(ex,ely,euy,color='#cb9999',alpha=.3)
+    #ax.plot(ex,ey,c='#800000',label='ELVES')
+    ax.errorbar(mkb,el,yerr=el_er,capsize=4,c='#800000',zorder=0)
+    ax.plot(mkb,el,marker='o',c='#800000',label='ELVES (full)')
+    ax.errorbar(mkb,els,yerr=els_er,capsize=4,c='#cb9999',zorder=0)
+    ax.plot(mkb,els,marker='o',c='#cb9999',label='ELVES ($>10^8$M$_\odot$)')
     ax.errorbar(mkb,sqfb,yerr=sqfbe,capsize=4,c='g',zorder=0)
     ax.plot(mkb,sqfb,marker='o',c='g',label='SAGA II (full)')
     ax.errorbar(mkb,sqfsb,yerr=sqfsbe,capsize=4,c='yellowgreen',zorder=0)
     ax.plot(mkb,sqfsb,marker='o',c='yellowgreen',label=r'SAGA II ($>10^8$M$_\odot$)')
     ax.errorbar(mkb,qfb,yerr=qfbe,capsize=4,c='k',zorder=0)
     ax.plot(mkb,qfb,marker='o',c='k',label='Rom25')
-    ax.errorbar(MW[0],MW[1],yerr=[[MW[1]-MW[2]],[MW[3]-MW[1]]],capsize=4,c='#800080')
-    ax.scatter(MW[0],MW[1],c='#800080',marker='*',s=9**2,label='Milky Way')
-    ax.errorbar(M31[0],M31[1],yerr=[[M31[1]-M31[2]],[M31[3]-M31[1]]],capsize=4,c='#ffa500')
-    ax.scatter(M31[0],M31[1],c='#ffa500',marker='*',s=9**2,label='M31')
+    #ax.errorbar(MW[0],MW[1],yerr=[[MW[1]-MW[2]],[MW[3]-MW[1]]],capsize=4,c='#800080')
+    #ax.scatter(MW[0],MW[1],c='#800080',marker='*',s=9**2,label='Milky Way')
+    #ax.errorbar(M31[0],M31[1],yerr=[[M31[1]-M31[2]],[M31[3]-M31[1]]],capsize=4,c='#ffa500')
+    #ax.scatter(M31[0],M31[1],c='#ffa500',marker='*',s=9**2,label='M31')
     #ax.plot(mkb,qfnb,marker='o',c='.5',label='Rom25 (no BH)')
     handles, labels = plt.gca().get_legend_handles_labels()
-    order = [3,0,1,4,2,5]
-    ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='lower left',prop={'size':13.8},ncol=3)
+    order = [0,1,2,3,4]
+    ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='lower left',prop={'size':13.1},ncol=3)
     f.savefig(f'{path}SAGABinnedQuenchComparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGABinnedQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+    #Only plot >1e8 subsets
+    f=plt.figure(figsize=(8,4.5))
+    ax1 = f.add_subplot(111)
+    ax1.set_xlim([-23,-25])
+    ax2 = ax1.twiny()
+    def ms(mk):
+        return(-0.36815865*mk+1.65875324) #polyfit from 2.sim.Yov MW sample
+    ax2.set_xlim([ms(-23),ms(-25)])
+    #ax2.set_xticks([10.2,10.4,10.6,10.8])
+    ax1.set_ylim([-.2,1.05])
+    ax1.set_yticks([0,.2,.4,.6,.8,1])
+    ax1.set_xticks(np.arange(-25,-22.9,.5))
+    ax1.set_xlabel(f'M$_K$',fontsize=25)
+    ax1.set_ylabel(f'f$_q$',fontsize=25)
+    ax2.set_xlabel(r'Approximate Log(M$_*$/M$_\odot$)',fontsize=25)
+    ax1.tick_params(labelsize=18,length=8)
+    ax2.tick_params(labelsize=18,direction='in',length=8)
+    ax1.plot([-23,-25],[0,0],c='0.5',linestyle=':')
+    ax1.plot([-23,-25],[1,1],c='0.5',linestyle=':')
+    ax1.errorbar(mkb,els,yerr=els_er,capsize=4,c='#800000',zorder=0)
+    ax1.plot(mkb,els,marker='o',c='#800000',label='ELVES')
+    ax1.errorbar(mkb,sqfsb,yerr=sqfsbe,capsize=4,c='g',zorder=0)
+    ax1.plot(mkb,sqfsb,marker='o',c='g',label=r'SAGA II')
+    ax1.errorbar(mkb,qfb,yerr=qfbe,capsize=4,c='k',zorder=0)
+    ax1.plot(mkb,qfb,marker='o',c='k',label='Rom25')
+    #handles, labels = plt.gca().get_legend_handles_labels()
+    #order = [2,0,1]
+    #ax1.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='lower left',prop={'size':15},ncol=3)
+    ax1.legend(loc='lower left', prop={'size':15}, ncol=3)
+    f.savefig(f'{path}SAGABinnedQuenchComparison.Subsets.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/SAGABinnedQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()

@@ -8,7 +8,7 @@ def SnM(Nsat,Ms):
 
 def SnD(Nsat,D):
 	#Calculates specific frequency of Nsat normalized to distance to large halo [Mpc]
-	return(Nsat*10**((D/1000 - 5)))
+	return(Nsat*10**((D/1000 - 4)))
 
 f,ax=plt.subplots(1,1,figsize=(6.4,3.8))
 ax.set_xlabel(r'Log(M$_*$/M$_\odot$)',fontsize=20)
@@ -42,13 +42,13 @@ ax.legend(loc='upper left',prop={'size':15})
 f.savefig('Data/BinnedSpecificFrequency.NsatMass.png',bbox_inches='tight',pad_inches=0.1)
 
 f,ax=plt.subplots(1,1,figsize=(6.4,3.8))
-ax.set_xlabel(r'D$_{LH}$ [Mpc]',fontsize=20)
+ax.set_xlabel(r'D$_{MW+}$ [Mpc]',fontsize=20)
 ax.set_ylabel(r'S$_{N,env}$',fontsize=20)
 ax.set_ylim([-.5,15])
-ax.set_xlim([0,10])
+ax.set_xlim([0,8])
 ax.tick_params(labelsize=15)
 
-x_bins = np.arange(0,11,1)
+x_bins = np.arange(0,9,1)
 x = x_bins[:-1]+.5
 minob = 0
 for i in [0,1,2]:
@@ -60,8 +60,8 @@ for i in [0,1,2]:
     for j in np.arange(len(x_bins)-1):
         Nsats = []
         for mw in M:
-            if x_bins[j] < M[mw]['Closest'][0]/1e3 < x_bins[j+1]:
-                Nsats.append(SnD(len(M[mw]['Satellites']),M[mw]['Closest'][0]))
+            if x_bins[j] < M[mw]['Closest_MW+'][0]/1e3 < x_bins[j+1]:
+                Nsats.append(SnD(len(M[mw]['Satellites']),M[mw]['Closest_MW+'][0]))
         if len(Nsats)>0:
             #y[j],yu[j],yl[j],ye[j] = np.mean(Nsats),np.percentile(Nsats,75),np.percentile(Nsats,25),np.std(Nsats)/np.sqrt(len(Nsats))
             x.append(np.mean(x_bins[j:j+2]))

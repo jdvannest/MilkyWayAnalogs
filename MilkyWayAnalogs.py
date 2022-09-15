@@ -154,7 +154,8 @@ if args.definition in ['3','4','6','7']:
                 if kmag[i] < ( (MilkyWays[mw]['Kmag'] - 1.6) if args.definition in ['4','7'] else (MilkyWays[mw]['Kmag'] + 1) ):
                     distance = cen[i] - MilkyWays[mw]['center']
                     wrap(distance)
-                    if np.linalg.norm(distance) < 700:
+                    d_lim = 300 if args.definition in ['4','7'] else 700
+                    if np.linalg.norm(distance) < d_lim:
                         if mw not in remove:
                             remove.append(mw)
                             TextLog.append(f'\t{mw} - {hnum[i]}\n')
