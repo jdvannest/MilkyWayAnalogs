@@ -2115,16 +2115,125 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
     ax2.tick_params(labelsize=18,direction='in',length=8)
     ax1.plot([-23,-25],[0,0],c='0.5',linestyle=':')
     ax1.plot([-23,-25],[1,1],c='0.5',linestyle=':')
-    ax1.errorbar(mkb,els,yerr=els_er,capsize=4,c='#800000',zorder=0)
-    ax1.plot(mkb,els,marker='o',c='#800000',label='ELVES')
-    ax1.errorbar(mkb,sqfsb,yerr=sqfsbe,capsize=4,c='g',zorder=0)
-    ax1.plot(mkb,sqfsb,marker='o',c='g',label=r'SAGA II')
+    ax1.errorbar(mkb,els,yerr=els_er,capsize=4,c='sandybrown',zorder=0)
+    ax1.plot(mkb,els,marker='o',c='sandybrown',label='ELVES')
+    ax1.errorbar(mkb,sqfsb,yerr=sqfsbe,capsize=4,c='olivedrab',zorder=0)
+    ax1.plot(mkb,sqfsb,marker='o',c='olivedrab',label=r'SAGA II')
     ax1.errorbar(mkb,qfb,yerr=qfbe,capsize=4,c='k',zorder=0)
-    ax1.plot(mkb,qfb,marker='o',c='k',label='Rom25')
+    ax1.plot(mkb,qfb,marker='o',c='k',label='Romulus25')
     #handles, labels = plt.gca().get_legend_handles_labels()
     #order = [2,0,1]
     #ax1.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='lower left',prop={'size':15},ncol=3)
     ax1.legend(loc='lower left', prop={'size':15}, ncol=3)
     f.savefig(f'{path}SAGABinnedQuenchComparison.Subsets.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/SAGABinnedQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+def SAGAMassComparison(host,sats,rest,rad,over,path=''):
+    mk,mks,mke,sv,svs,sve=[],[],[],[],[],[]
+    #mkt,mkst,mket,svt,svst,svet=0,0,0,0,0,0
+
+    for mw in host:
+        mk.append(host[mw]['Kmag'])
+    for sat in sats:
+        sv.append(sats[sat]['Vmag'])
+    
+    EH = pickle.load(open('DataFiles/AdditionalData/ELVES_Hosts.pickle','rb'))
+    ES = pickle.load(open('DataFiles/AdditionalData/ELVES_Satellites.pickle','rb'))
+    for mw in EH:
+        mke.append(EH[mw]['Kmag'])
+    for sat in ES:
+        sve.append(ES[sat]['Vmag'])
+    
+    with open('DataFiles/AdditionalData/SAGA_Hosts.csv') as f:
+        SagaHost = f.readlines()
+        del SagaHost[0]
+    with open('DataFiles/AdditionalData/SAGA_Satellites.csv') as f:
+        SagaSats = f.readlines()
+        del SagaSats[0]
+    for line in SagaHost:
+        mks.append(float(line.split(',')[6]))
+    for line in SagaSats:
+        svs.append(float(line.split(',')[7])+.2)
+
+    kbins = np.linspace(-25.5,-21.5,21)
+    vbins = np.linspace(-22,-8,21)
+    f,ax=plt.subplots(1,2,figsize=(9,3))
+    plt.subplots_adjust(wspace=0)
+    ax[0].set_yticks([])
+    ax[1].set_yticks([])
+    ax[0].set_xlim([-21.5,-25.5])
+    ax[1].set_xlim([-8,-22])
+    #ax[0].set_ylim([0,1.05])
+    #ax[1].set_ylim([0,1.05])
+    ax[0].tick_params(labelsize=15)
+    ax[1].tick_params(labelsize=15)
+    ax[0].set_xlabel(r'M$_K$',fontsize=23)
+    ax[1].set_xlabel(r'M$_V$',fontsize=23)
+    ax[0].set_ylabel('Normalized Counts',fontsize=23)
+    ax[0].set_title('Hosts',fontsize=23)
+    ax[1].set_title('Satellites',fontsize=23)
+
+    ax[0].hist(mk,kbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
+    ax[0].hist(mke,kbins,color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
+    ax[0].hist(mks,kbins,color='olivedrab',label='SAGA II',histtype='step',density=True,linewidth=2)
+    ax[0].legend(loc='upper left',prop={'size':12})
+
+    ax[1].hist(sv,vbins,color='k',histtype='step',density=True,linewidth=2)
+    ax[1].hist(sve,vbins,color='sandybrown',histtype='step',density=True,linewidth=2)
+    ax[1].hist(svs,vbins,color='olivedrab',histtype='step',density=True,linewidth=2)
+
+    f.savefig(f'{path}SAGAMassComparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGAMassComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+    f,ax = plt.subplots(1,1,figsize=(6.4,3.8))
+    ax.set_yticks([])
+    ax.set_xlim([-21.5,-25.5])
+    ax.set_xlabel(r'M$_K$',fontsize=20)
+    ax.set_ylabel('Normalized Counts',fontsize=20)
+    ax.tick_params(labelsize=15)
+
+    ax.hist(mk,kbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
+    ax.hist(mke,kbins,color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
+    ax.hist(mks,kbins,color='olivedrab',label='SAGA II',histtype='step',density=True,linewidth=2)
+    ax.legend(loc='upper left',prop={'size':15})
+
+    f.savefig(f'{path}SAGAMassComparison.Hosts.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGAMassComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+    f,ax = plt.subplots(1,1,figsize=(6.4,3.8))
+    ax.set_yticks([])
+    ax.set_xlim([-8,-22])
+    ax.set_xlabel(r'M$_V$',fontsize=20)
+    ax.set_ylabel('Normalized Counts',fontsize=20)
+    ax.tick_params(labelsize=15)
+
+    ax.hist(sv,vbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
+    ax.hist(sve,vbins,color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
+    ax.hist(svs,vbins,color='olivedrab',label='SAGA II',histtype='step',density=True,linewidth=2)
+    #ax.legend(loc='upper left',prop={'size':12})
+
+    f.savefig(f'{path}SAGAMassComparison.Satellites.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGAMassComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+    sve = np.array(sve)
+    svs = np.array(svs)
+
+    f,ax = plt.subplots(1,1,figsize=(6.4,3.8))
+    ax.set_yticks([])
+    ax.set_xlim([-8,-22])
+    ax.set_xlabel(r'M$_V$',fontsize=20)
+    ax.set_ylabel('Normalized Counts',fontsize=20)
+    ax.tick_params(labelsize=15)
+
+    ax.hist(sv,vbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
+    ax.hist(sve[sve<-12.6],vbins,color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
+    ax.hist(svs[svs<-12.6],vbins,color='olivedrab',label='SAGA II',histtype='step',density=True,linewidth=2)
+    #ax.legend(loc='upper left',prop={'size':12})
+
+    f.savefig(f'{path}SAGAMassComparison.Satellites.Subset.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGAMassComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()

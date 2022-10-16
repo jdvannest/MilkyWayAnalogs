@@ -24,9 +24,11 @@ for line in sats:
     Satellites[sid] = {}
     Satellites[sid]['Host'] = line[15:23].rstrip(' ')
     Satellites[sid]['Mstar'] = float(line[88:93])
+    Satellites[sid]['Vmag'] = float(line[75:83])
     Satellites[sid]['Quenched'] = True if line[124:130].rstrip(' ')=='True' else False
     Satellites[sid]['Orbit'] = float(line[41:47])
     Satellites[sid]['Likelihood'] = float(line[136:140])
+    Satellites[sid]['Confirmed'] = True if line[130:136].rstrip(' ')=='True' else False
     Hosts[line[15:23].rstrip(' ')]['Satellites'].append(sid)
 
 out = open('ELVES_Hosts.pickle','wb')

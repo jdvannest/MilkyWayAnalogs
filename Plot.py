@@ -15,7 +15,7 @@ def Query(prompt='',options=[]):
     looping = True
     while looping:
         response = str(input(prompt))
-        if rest in options:
+        if response in options:
                 looping = False
         else:
             print('Invalid')
@@ -56,6 +56,7 @@ def PLOT(S,MW,LH,rest,rad,over,output_path):
     # BinnedSpecificFrequencyEnvironmentalDensity(MW,rest,rad,over,output_path)
     # SAGA_Nsat_Comparison(MW,rest,rad,over,output_path)
     SAGAQuenchComparison(MW,S,rest,rad,over,output_path)
+    SAGAMassComparison(MW,S,rest,rad,over,output_path)
     # NsatVsLargestSatelliteMass(MW,S,rest,rad,over,output_path)
     # NsatVsLargestSatelliteMagnitude(MW,S,rest,rad,over,output_path)
 
