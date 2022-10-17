@@ -187,11 +187,11 @@ if args.definition in ['3','4','6','7']:
 #Determine Final Milky Way Analog Count
 print(f'{len(MilkyWays)} Milky Way Analogs Considered')
 
-#Determine Closest MW+ and Satellites for Milky Way Analogs
+#Determine Satellites for Milky Way Analogs
 print(f'Finding Satellite Halos...')
 for mw in MilkyWays:
     rad = 300 if args.radius=='300' else MilkyWays[mw]['Rvir']
-    mw_plus_id,mw_plus_dist,neighbors = [[],[],[]]
+    neighbors = []
     for i in np.arange(len(hnum)):
         if mstar[i] < 1e7 or rmag[i] > -10.8 or str(hnum[i])==mw:
             pass #Outside Rom25 resolution limit or outside SAGA detection limit
@@ -236,15 +236,6 @@ for mw in MilkyWays:
                             Satellites[str(hnum[i])]['AlternateHosts'].append(mw)
                     else:
                         sys.exit(f'Satellite {hnum[i]} has multiple hosts!!!')
-            #Check for distances for nearest MW+
-            if args.definition in ['5','6','7']:
-                if criteria[i] < upper_bound: # MW+ sized halos
-                    mw_plus_dist.append(np.linalg.norm(distance))
-                    mw_plus_id.append(str(hnum[i]))
-            else:
-                if criteria[i] > lower_bound: # MW+ sized halos
-                    mw_plus_dist.append(np.linalg.norm(distance))
-                    mw_plus_id.append(str(hnum[i]))
             #Check for EnvDen
             if np.linalg.norm(distance)<1000 and mvir[i]>1e11:
                 MilkyWays[mw]['EnvDen']+=1
@@ -253,9 +244,6 @@ for mw in MilkyWays:
             distance = MilkyWays[mw]['center'] - cen[i]
             wrap(distance)
             neighbors.append(np.linalg.norm(distance))
-    #Determine closest MW+
-    MilkyWays[mw]['Closest_MW+'] = [min(mw_plus_dist),
-                                    mw_plus_id[mw_plus_dist.index(min(mw_plus_dist))]]
     #Determine distance to 10th nearest neighbor
     neighbors.sort()
     MilkyWays[mw]['10thNeighbor'] = neighbors[9]
@@ -293,6 +281,29 @@ for sat in mw_like_sats:
     TextLog.append(f'\t{sat}\n')
 print(f'Removed {len(too_large_satellite)} Milky Ways and {len(bad_sats)} Satellites due to overmassive satellite')
 print(f'Remvoed {len(mw_like_sats)} Milky Way-like Satellites')
+
+#Determine Closest MW+ now that MW-like sats are removed
+print(f'Finding Satellite Halos...')
+for mw in MilkyWays:
+    rad = 300 if args.radius=='300' else MilkyWays[mw]['Rvir']
+    mw_plus_id,mw_plus_dist = [[],[]]
+    for i in np.arange(len(hnum)):
+        if mstar[i] < 1e7 or rmag[i] > -10.8 or str(hnum[i])==mw:
+            pass #Outside Rom25 resolution limit or outside SAGA detection limit
+        else:   #Satellite Halos
+            distance = MilkyWays[mw]['center'] - cen[i]
+            wrap(distance)
+            #Check for distances for nearest MW+
+            if args.definition in ['5','6','7']:
+                if criteria[i] < upper_bound and str(hnum[i]) not in Satellites: # MW+ sized halos
+                    mw_plus_dist.append(np.linalg.norm(distance))
+                    mw_plus_id.append(str(hnum[i]))
+            else:
+                if criteria[i] > lower_bound and str(hnum[i]) not in Satellites: # MW+ sized halos
+                    mw_plus_dist.append(np.linalg.norm(distance))
+                    mw_plus_id.append(str(hnum[i]))
+    #Determine closest MW+
+    MilkyWays[mw]['Closest_MW+'] = [min(mw_plus_dist),mw_plus_id[mw_plus_dist.index(min(mw_plus_dist))]]
 
 #Determine Satellite Quenching
 for s in Satellites:
