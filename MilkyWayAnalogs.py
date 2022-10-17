@@ -295,11 +295,11 @@ for mw in MilkyWays:
             wrap(distance)
             #Check for distances for nearest MW+
             if args.definition in ['5','6','7']:
-                if criteria[i] < upper_bound and str(hnum[i]) not in Satellites: # MW+ sized halos
+                if criteria[i] < upper_bound and np.linalg.norm(distance)>rad: # MW+ sized halos
                     mw_plus_dist.append(np.linalg.norm(distance))
                     mw_plus_id.append(str(hnum[i]))
             else:
-                if criteria[i] > lower_bound and str(hnum[i]) not in Satellites: # MW+ sized halos
+                if criteria[i] > lower_bound and np.linalg.norm(distance)>rad: # MW+ sized halos
                     mw_plus_dist.append(np.linalg.norm(distance))
                     mw_plus_id.append(str(hnum[i]))
     #Determine closest MW+
