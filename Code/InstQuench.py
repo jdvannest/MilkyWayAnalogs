@@ -63,11 +63,12 @@ for f in [(i,j,k) for i in [1,2,3,4,5,6,7] for j in ['sim','300'] for k in ['Yov
     sats = pickle.load(open(f'../DataFiles/Satellite.{f[0]}.{f[1]}.{f[2]}.pickle','rb'))
     for s in sats:
         if int(s) not in halos: 
-            halos.append(s)
+            halos.append(int(s))
             Data[str(s)] = {}
             Data[str(s)]['Mstar'] = sats[s]['Mstar']
             Old[str(s)] = sats[s]['Quenched']
 halos.sort()
+print(f'{len(halos)} halos to analyze')
 
 s = pynbody.load('/myhome2/users/munshi/Romulus/cosmo25/cosmo25p.768sg1bwK1BHe75.008192')
 s.physical_units()
@@ -75,8 +76,10 @@ h = s.halos(dosort=True)
 
 for halo in halos:
     sfr,ix = calc_inst_sf(h[halo])
-    Data[str(s)]['SFR'] = sfr
-    Data[str(s)]['Quenched'] = True if sfr[-1]/Data[str(s)]['Mstar']<1e-11 else False
-
+    Data[str(halo)]['SFR'] = sfr
+    try:
+        Data[str(halo)]['Quenched'] = True if sfr[-1]/Data[str(halo)]['Mstar']<1e-11 else False
+    except:
+        Data[str(halo)]['Quenched'] = Old[str(halo)]
 pickle.dump(Data,open('../DataFiles/InstantaneousQuenching.pickle','wb'))
 pickle.dump(Old,open('../DataFiles/250MyrQuenching.pickle','wb'))
