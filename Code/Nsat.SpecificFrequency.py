@@ -4,11 +4,11 @@ import matplotlib.pylab as plt
 
 def SnM(Nsat,Ms):
 	#Calculates specific frequency of Nsat normalized to Log(stellar mass)
-	return(Nsat*10**((np.log10(Ms) - 10.6)))
+	return(Nsat*10**(.4*(np.log10(Ms) - 10.3)))
 
 def SnD(Nsat,D):
 	#Calculates specific frequency of Nsat normalized to distance to large halo [Mpc]
-	return(Nsat*10**((D/1000 - 4)))
+	return(Nsat*10**(.4*(D/1000 - 1.5)))
 
 f,ax=plt.subplots(1,1,figsize=(6.4,3.8))
 ax.set_xlabel(r'Log(M$_*$/M$_\odot$)',fontsize=20)
@@ -19,7 +19,7 @@ ax.tick_params(labelsize=15)
 
 x_bins = np.arange(9.25,11.2,.25)
 x = x_bins[:-1]+.25/2
-fname,name,c,lw = ['1.sim','2.sim','7.300'],[r'M$_{vir}$,R$_{vir}$',r'M$_*$,R$_{vir}$',r'SAGA II'],['k','r','turquoise'],[4.5,3.75,3]
+fname,name,c,lw = ['1.sim','2.sim','7.300'],[r'M$_{vir}$, R$_{vir}$',r'M$_*$, R$_{vir}$',r'M$_K$, 300'],['k','r','turquoise'],[4.5,3.75,3]
 
 for i in [0,1,2]:
     M = pickle.load(open(f'../DataFiles/MilkyWay.{fname[i]}.Yov.pickle','rb'))
@@ -50,7 +50,7 @@ ax.tick_params(labelsize=15)
 
 x_bins = np.arange(0,9,1)
 x = x_bins[:-1]+.5
-minob = 0
+minob,obx = 0,[]
 for i in [0,1,2]:
     M = pickle.load(open(f'../DataFiles/MilkyWay.{fname[i]}.Yov.pickle','rb'))
     S = pickle.load(open(f'../DataFiles/Satellite.{fname[i]}.Yov.pickle','rb'))
@@ -74,11 +74,13 @@ for i in [0,1,2]:
     #ax.errorbar(x,y,yerr=[yl,yu],capsize=5,c=c[i],zorder=i)
     for k in np.arange(len(y)):
         if y[k]>15:
+            if x[k] not in obx: obx.append(x[k])
             ax.text(x[k]+.15,14-i,f'{round(y[k],2)}',verticalalignment='center',fontsize=15,color=c[i])
             y[k],x[k] = np.NaN,np.NaN
             minob+=1
     ax.errorbar(x,y,yerr=ye,capsize=0,c=c[i],zorder=i)
     ax.plot(x,y,c=c[i],marker='.',ms=lw[i]**2,label=name[i],zorder=i)
-ax.vlines(6.5,ymin=15-minob,ymax=15,color='.5',linestyle='--')
+for d in obx:
+    ax.vlines(d,ymin=15-minob,ymax=15,color='.5',linestyle='--')
 ax.legend(loc='upper left',prop={'size':15})
 f.savefig('Data/BinnedSpecificFrequency.NsatEnvironment.png',bbox_inches='tight',pad_inches=0.1)

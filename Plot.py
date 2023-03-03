@@ -56,7 +56,7 @@ def PLOT(S,MW,LH,rest,rad,over,output_path):
     # BinnedSpecificFrequencyEnvironmentalDensity(MW,rest,rad,over,output_path)
     # SAGA_Nsat_Comparison(MW,rest,rad,over,output_path)
     SAGAQuenchComparison(MW,S,rest,rad,over,output_path)
-    SAGAMassComparison(MW,S,rest,rad,over,output_path)
+    # SAGAMassComparison(MW,S,rest,rad,over,output_path)
     # NsatVsLargestSatelliteMass(MW,S,rest,rad,over,output_path)
     # NsatVsLargestSatelliteMagnitude(MW,S,rest,rad,over,output_path)
 

@@ -1,5 +1,5 @@
 import pickle, sys, argparse, os
-import numpy as np 
+import numpy as np
 
 parser = argparse.ArgumentParser(description="Searches Romulus25 for Milky Way Analogs"
                                 +" and identifies their Satellite halos."+

@@ -36,11 +36,11 @@ def t_at_sffrac(h1,formfrac):
 
 def SnM(Nsat,Ms):
 	#Calculates specific frequency of Nsat normalized to Log(stellar mass)
-	return(Nsat*10**((np.log10(Ms) - 10.6)))
+	return(Nsat*10**(.4*(np.log10(Ms) - 10.3)))
 
 def SnD(Nsat,D):
 	#Calculates specific frequency of Nsat normalized to distance to large halo [Mpc]
-	return(Nsat*10**((D/1000 - 5)))
+	return(Nsat*10**(.4*(D/1000 - 1.5)))
 
 def SnE(Nsat,E):
 	#Calculates specific frequency of Nsat normalized to Environmental Density
@@ -2074,24 +2074,24 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
     ax.plot([-23,-25],[1,1],c='0.5',linestyle=':')
     #ax.fill_between(ex,ely,euy,color='#cb9999',alpha=.3)
     #ax.plot(ex,ey,c='#800000',label='ELVES')
-    ax.errorbar(mkb,el,yerr=el_er,capsize=4,c='#800000',zorder=0)
-    ax.plot(mkb,el,marker='o',c='#800000',label='ELVES (full)')
+    # ax.errorbar(mkb,el,yerr=el_er,capsize=4,c='#800000',zorder=0)
+    # ax.plot(mkb,el,marker='o',c='#800000',label='ELVES (full)')
     ax.errorbar(mkb,els,yerr=els_er,capsize=4,c='#cb9999',zorder=0)
     ax.plot(mkb,els,marker='o',c='#cb9999',label='ELVES ($>10^8$M$_\odot$)')
-    ax.errorbar(mkb,sqfb,yerr=sqfbe,capsize=4,c='g',zorder=0)
-    ax.plot(mkb,sqfb,marker='o',c='g',label='SAGA II (full)')
+    # ax.errorbar(mkb,sqfb,yerr=sqfbe,capsize=4,c='g',zorder=0)
+    # ax.plot(mkb,sqfb,marker='o',c='g',label='SAGA II (full)')
     ax.errorbar(mkb,sqfsb,yerr=sqfsbe,capsize=4,c='yellowgreen',zorder=0)
     ax.plot(mkb,sqfsb,marker='o',c='yellowgreen',label=r'SAGA II ($>10^8$M$_\odot$)')
     ax.errorbar(mkb,qfb,yerr=qfbe,capsize=4,c='k',zorder=0)
     ax.plot(mkb,qfb,marker='o',c='k',label='Rom25')
-    #ax.errorbar(MW[0],MW[1],yerr=[[MW[1]-MW[2]],[MW[3]-MW[1]]],capsize=4,c='#800080')
-    #ax.scatter(MW[0],MW[1],c='#800080',marker='*',s=9**2,label='Milky Way')
-    #ax.errorbar(M31[0],M31[1],yerr=[[M31[1]-M31[2]],[M31[3]-M31[1]]],capsize=4,c='#ffa500')
-    #ax.scatter(M31[0],M31[1],c='#ffa500',marker='*',s=9**2,label='M31')
-    #ax.plot(mkb,qfnb,marker='o',c='.5',label='Rom25 (no BH)')
+    # ax.errorbar(MW[0],MW[1],yerr=[[MW[1]-MW[2]],[MW[3]-MW[1]]],capsize=4,c='#800080')
+    # ax.scatter(MW[0],MW[1],c='#800080',marker='*',s=9**2,label='Milky Way')
+    # ax.errorbar(M31[0],M31[1],yerr=[[M31[1]-M31[2]],[M31[3]-M31[1]]],capsize=4,c='#ffa500')
+    # ax.scatter(M31[0],M31[1],c='#ffa500',marker='*',s=9**2,label='M31')
+    ax.plot(mkb,qfnb,marker='o',c='.5',label='Rom25 (no BH)')
     handles, labels = plt.gca().get_legend_handles_labels()
     order = [0,1,2,3,4]
-    ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='lower left',prop={'size':13.1},ncol=3)
+    #ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='lower left',prop={'size':13.1},ncol=3)
     f.savefig(f'{path}SAGABinnedQuenchComparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/SAGABinnedQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
@@ -2113,14 +2113,27 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
     ax2.set_xlabel(r'Approximate Log(M$_*$/M$_\odot$)',fontsize=25)
     ax1.tick_params(labelsize=18,length=8)
     ax2.tick_params(labelsize=18,direction='in',length=8)
-    ax1.plot([-23,-25],[0,0],c='0.5',linestyle=':')
-    ax1.plot([-23,-25],[1,1],c='0.5',linestyle=':')
-    ax1.errorbar(mkb,els,yerr=els_er,capsize=4,c='sandybrown',zorder=0)
+    ax1.plot([-23,-25],[0,0],c='0.5',linestyle=':',zorder=0)
+    ax1.plot([-23,-25],[1,1],c='0.5',linestyle=':',zorder=0)
+    ax1.errorbar(mkb,els,yerr=els_er,capsize=4,c='sandybrown',zorder=1)
     ax1.plot(mkb,els,marker='o',c='sandybrown',label='ELVES')
-    ax1.errorbar(mkb,sqfsb,yerr=sqfsbe,capsize=4,c='olivedrab',zorder=0)
+    ax1.errorbar(mkb,sqfsb,yerr=sqfsbe,capsize=4,c='olivedrab',zorder=1)
     ax1.plot(mkb,sqfsb,marker='o',c='olivedrab',label=r'SAGA II')
-    ax1.errorbar(mkb,qfb,yerr=qfbe,capsize=4,c='k',zorder=0)
+    ax1.errorbar(mkb,qfb,yerr=qfbe,capsize=4,c='k',zorder=1)
     ax1.plot(mkb,qfb,marker='o',c='k',label='Romulus25')
+    tmw,qmw,tm31,qm31 = 0,0,0,0
+    for sat in EH['MW']['Satellites']:
+        if ES[sat]['Mstar']>8:
+            tmw += 1
+            if ES[sat]['Quenched']: qmw += 1
+    for sat in EH['M31']['Satellites']:
+        if ES[sat]['Mstar']>8:
+            tm31 += 1
+            if ES[sat]['Quenched']: qm31 += 1
+    ax1.scatter(EH['MW']['Kmag'],qmw/tmw,c='darkorchid')
+    ax1.scatter(EH['M31']['Kmag'],qm31/tm31,c='darkorchid')
+    ax1.text(EH['MW']['Kmag'],qmw/tmw+.02,'MW',fontsize=18,c='darkorchid',horizontalalignment='center',zorder=1)
+    ax1.text(EH['M31']['Kmag']-.02,qm31/tm31,'M31',fontsize=18,c='darkorchid',verticalalignment='center',zorder=1)
     #handles, labels = plt.gca().get_legend_handles_labels()
     #order = [2,0,1]
     #ax1.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='lower left',prop={'size':15},ncol=3)
@@ -2130,7 +2143,7 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
     plt.close()
 
 def SAGAMassComparison(host,sats,rest,rad,over,path=''):
-    mk,mks,mke,sv,svs,sve=[],[],[],[],[],[]
+    mk,mks,mke,sv,svs,sve,svew=[],[],[],[],[],[],[]
     #mkt,mkst,mket,svt,svst,svet=0,0,0,0,0,0
 
     for mw in host:
@@ -2144,6 +2157,7 @@ def SAGAMassComparison(host,sats,rest,rad,over,path=''):
         mke.append(EH[mw]['Kmag'])
     for sat in ES:
         sve.append(ES[sat]['Vmag'])
+        svew.append(ES[sat]['Likelihood'])
     
     with open('DataFiles/AdditionalData/SAGA_Hosts.csv') as f:
         SagaHost = f.readlines()
@@ -2180,7 +2194,7 @@ def SAGAMassComparison(host,sats,rest,rad,over,path=''):
     ax[0].legend(loc='upper left',prop={'size':12})
 
     ax[1].hist(sv,vbins,color='k',histtype='step',density=True,linewidth=2)
-    ax[1].hist(sve,vbins,color='sandybrown',histtype='step',density=True,linewidth=2)
+    ax[1].hist(sve,vbins,weights=svew,color='sandybrown',histtype='step',density=True,linewidth=2)
     ax[1].hist(svs,vbins,color='olivedrab',histtype='step',density=True,linewidth=2)
 
     f.savefig(f'{path}SAGAMassComparison.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
@@ -2193,6 +2207,10 @@ def SAGAMassComparison(host,sats,rest,rad,over,path=''):
     ax.set_xlabel(r'M$_K$',fontsize=20)
     ax.set_ylabel('Normalized Counts',fontsize=20)
     ax.tick_params(labelsize=15)
+    ax.axvline(EH['MW']['Kmag'],c='darkorchid',zorder=0)
+    ax.text(EH['MW']['Kmag']-.05,1,'MW',color='darkorchid',fontsize=15,rotation=90)
+    ax.axvline(EH['M31']['Kmag'],c='darkorchid',zorder=0)
+    ax.text(EH['M31']['Kmag']-.05,1,'M31',color='darkorchid',fontsize=15,rotation=90)
 
     ax.hist(mk,kbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
     ax.hist(mke,kbins,color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
@@ -2211,7 +2229,7 @@ def SAGAMassComparison(host,sats,rest,rad,over,path=''):
     ax.tick_params(labelsize=15)
 
     ax.hist(sv,vbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
-    ax.hist(sve,vbins,color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
+    ax.hist(sve,vbins,weights=svew,color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
     ax.hist(svs,vbins,color='olivedrab',label='SAGA II',histtype='step',density=True,linewidth=2)
     #ax.legend(loc='upper left',prop={'size':12})
 
@@ -2221,6 +2239,7 @@ def SAGAMassComparison(host,sats,rest,rad,over,path=''):
 
     sve = np.array(sve)
     svs = np.array(svs)
+    svew = np.array(svew)
 
     f,ax = plt.subplots(1,1,figsize=(6.4,3.8))
     ax.set_yticks([])
@@ -2230,10 +2249,27 @@ def SAGAMassComparison(host,sats,rest,rad,over,path=''):
     ax.tick_params(labelsize=15)
 
     ax.hist(sv,vbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
-    ax.hist(sve[sve<-12.6],vbins,color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
+    ax.hist(sve[sve<-12.6],vbins,weights=svew[sve<-12.6],color='sandybrown',label='ELVES',histtype='step',density=True,linewidth=2)
     ax.hist(svs[svs<-12.6],vbins,color='olivedrab',label='SAGA II',histtype='step',density=True,linewidth=2)
     #ax.legend(loc='upper left',prop={'size':12})
 
     f.savefig(f'{path}SAGAMassComparison.Satellites.Subset.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+    #f.savefig(f'{path}pdf/SAGAMassComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+    plt.close()
+
+    f,ax = plt.subplots(1,1,figsize=(6.4,3.8))
+    ax.set_yticks([])
+    ax.set_xlim([-8,-22])
+    ax.set_xlabel(r'M$_V$',fontsize=20)
+    ax.set_ylabel('Normalized Counts',fontsize=20)
+    ax.tick_params(labelsize=15)
+
+    ax.hist(sv,vbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
+    svec,bins = np.histogram(sve,vbins,weights=svew)
+    ax.hist(bins[:-1],bins,weights=svec/(len(sve[sve<-12])*np.diff(vbins)),color='sandybrown',label='ELVES',histtype='step',linewidth=2)
+    svsc,bins = np.histogram(svs,vbins)
+    ax.hist(bins[:-1],bins,weights=svsc/(len(svs[svs<-12])*np.diff(vbins)),color='olivedrab',label='SAGA II',histtype='step',linewidth=2)
+
+    f.savefig(f'{path}SAGAMassComparison.Satellites.Complete.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/SAGAMassComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()

@@ -4,17 +4,29 @@ import matplotlib as mpl
 import matplotlib.pylab as plt
 from matplotlib.markers import MarkerStyle
 
+NoBH = False
+Weight = True
+sw = 10**(11) #scale weight
+app = '.Subset' if NoBH else ''
+appw = '.Weighted' if Weight else ''
+
 for i in [1,2,7]:
     rvir = pickle.load(open(f'../DataFiles/MilkyWay.{i}.sim.Yov.pickle','rb'))
     r300 = pickle.load(open(f'../DataFiles/MilkyWay.{i}.300.Yov.pickle','rb'))
     svir = pickle.load(open(f'../DataFiles/Satellite.{i}.sim.Yov.pickle','rb'))
     s300 = pickle.load(open(f'../DataFiles/Satellite.{i}.300.Yov.pickle','rb'))
+    with open(f'../DataFiles/Satellite.{i}.sim.Yov.BlackHoles.txt') as f:
+        bvir = f.readlines()
+        bvir = [x.rstrip('\n') for x in bvir]
+    with open(f'../DataFiles/Satellite.{i}.300.Yov.BlackHoles.txt') as f:
+        b300 = f.readlines()
+        b300 = [x.rstrip('\n') for x in b300]
 
     f,ax = plt.subplots(1,1,figsize=(8,6))
     ax.set_ylabel(r'f$_q$',fontsize=25)
     ax.set_xlabel(r'D$_{MW+}$ [Mpc]',fontsize=25)
     ax.tick_params(labelsize=20)
-    ax.set_xlim([.06,5])
+    ax.set_xlim([2e-1,5])
     ax.set_ylim([-.15,1.03])
     ax.semilogx()
     ax.plot([-1,11],[1,1],c='.5',linestyle=':',zorder=0)
@@ -29,12 +41,13 @@ for i in [1,2,7]:
     for mw in rvir:
         t,q = 0,0
         for sat in rvir[mw]['Satellites']:
-            if svir[sat]['Mstar']>1e8:
+            if svir[sat]['Mstar']>1e8 and not (NoBH & (sat in bvir)):
                 t+=1
                 if svir[sat]['Quenched']: q+=1
         if t>0:
             rvx.append(rvir[mw]['Closest_MW+'][0]/1e3)
-            rvy.append(q/t)#*rvir[mw]['Mstar']/1e11)
+            w = rvir[mw]['Mstar']/sw if Weight else 1
+            rvy.append(q/t*w)
             rvn.append(t)
             rvi.append(mw)
     
@@ -42,12 +55,13 @@ for i in [1,2,7]:
     for mw in r300:
         t,q = 0,0
         for sat in r300[mw]['Satellites']:
-            if s300[sat]['Mstar']>1e8:
+            if s300[sat]['Mstar']>1e8 and not (NoBH & (sat in b300)):
                 t+=1
                 if s300[sat]['Quenched']: q+=1
         if t>0:
             r3x.append(r300[mw]['Closest_MW+'][0]/1e3)
-            r3y.append(q/t)#*r300[mw]['Mstar']/1e11)
+            w = r300[mw]['Mstar']/sw if Weight else 1
+            r3y.append(q/t*w)
             r3n.append(t)
             r3i.append(mw)
 
@@ -77,7 +91,7 @@ for i in [1,2,7]:
                    ymax=max([np.mean(np.array(r3y)[np.where(np.array(r3x)>1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)>1)])]),color='k')
     ax.scatter(-1,-1,c='r',marker='D',s=7**2,label='Mean')
     ax.legend(loc='lower left',prop={'size':14.4},ncol=4)
-    f.savefig(f'Data/QuenchedFractionComp.{i}.png',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'Data/QuenchedFractionComp{app}{appw}.{i}.png',bbox_inches='tight',pad_inches=.1)
 
 
 

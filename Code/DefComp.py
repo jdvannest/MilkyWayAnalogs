@@ -102,13 +102,13 @@ for ov in ['Yov','Nov']:
     ax[1].set_ylabel(r'Log(M$_*$/M$_\odot$)',fontsize=20)
     ax[0].set_ylabel(r'Log(M$_{vir}$/M$_\odot$)',fontsize=20)
 
-    ax[1].scatter(km3,ms3,c='turquoise',s=3**2,label='SAGA II')
-    ax[1].scatter(km2,ms2,edgecolor='r',facecolor='None',linewidth=1.5,s=4.5**2,label=r'M$_{*}$, R$_{vir}$')#$10^{10}<$Log(M$_{*}$)$<10^{11}$')
     ax[1].scatter(km1,ms1,edgecolor='k',facecolor='None',linewidth=1.5,s=7**2,label=r'M$_{vir}$, R$_{vir}$')#$10^{11.5}<$Log(M$_{vir}$)$<10^{12.5}$')
+    ax[1].scatter(km2,ms2,edgecolor='r',facecolor='None',linewidth=1.5,s=4.5**2,label=r'M$_{*}$, R$_{vir}$')#$10^{10}<$Log(M$_{*}$)$<10^{11}$')
+    ax[1].scatter(km3,ms3,c='turquoise',s=3**2,label='M$_K$, 300')
 
-    ax[0].scatter(km3,mv3,c='turquoise',s=3**2,label='SAGA II')
-    ax[0].scatter(km2,mv2,edgecolor='r',facecolor='None',linewidth=1.5,s=4.5**2,label=r'M$_*$, R$_{vir}$')#$10^{10}<$Log(M$_{*}$)$<10^{11}$')
     ax[0].scatter(km1,mv1,edgecolor='k',facecolor='None',linewidth=1.5,s=7**2,label=r'M$_{vir}$, R$_{vir}$')#$10^{11.5}<$Log(M$_{vir}$)$<10^{12.5}$')
+    ax[0].scatter(km2,mv2,edgecolor='r',facecolor='None',linewidth=1.5,s=4.5**2,label=r'M$_*$, R$_{vir}$')#$10^{10}<$Log(M$_{*}$)$<10^{11}$')
+    ax[0].scatter(km3,mv3,c='turquoise',s=3**2,label='M$_K$, 300')
 
     ax[0].legend(loc='upper left',prop={'size':lsize})
     f.savefig(f'Data/DefComp2.{ov}.png',bbox_inches='tight',pad_inches=.05)
