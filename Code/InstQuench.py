@@ -78,7 +78,7 @@ for halo in halos:
     sfr,ix = calc_inst_sf(h[halo])
     Data[str(halo)]['SFR'] = sfr
     try:
-        Data[str(halo)]['Quenched'] = True if sfr[-1]/Data[str(halo)]['Mstar']<1e-11 else False
+        Data[str(halo)]['Quenched'] = True if sfr.sum()/Data[str(halo)]['Mstar']<1e-11 else False
     except:
         Data[str(halo)]['Quenched'] = Old[str(halo)]
 pickle.dump(Data,open('../DataFiles/InstantaneousQuenching.pickle','wb'))
