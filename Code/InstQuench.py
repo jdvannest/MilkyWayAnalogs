@@ -1,5 +1,10 @@
-import pynbody,pickle
+import os,pymp,pynbody,pickle,sys
 import numpy as np
+def myprint(string,clear=False):
+    if clear:
+        sys.stdout.write("\033[F")
+        sys.stdout.write("\033[K") 
+    print(string)
 
 def calc_dynamical_time(rho):
     #Author: Ray Sharma
@@ -74,12 +79,21 @@ s = pynbody.load('/myhome2/users/munshi/Romulus/cosmo25/cosmo25p.768sg1bwK1BHe75
 s.physical_units()
 h = s.halos(dosort=True)
 
-for halo in halos:
-    sfr,ix = calc_inst_sf(h[halo])
-    Data[str(halo)]['SFR'] = sfr
+print(f'\tWriting Quench Data: 0.00%')
+prog = 0
+for hid in halos:
+    current = {}
+    halo = h.load_copy(hid)
+    sfr,ix = calc_inst_sf(halo)
+    current['SFR'] = sfr
     try:
-        Data[str(halo)]['Quenched'] = True if sfr.sum()/Data[str(halo)]['Mstar']<1e-11 else False
+        current['Quenched'] = True if sfr.sum()/Data[str(hid)]['Mstar']<1e-11 else False
     except:
-        Data[str(halo)]['Quenched'] = Old[str(halo)]
+        current['Quenched'] = Old[str(hid)]
+    Data[str(hid)] = current
+    prog+=1
+    myprint(f'\tWriting Quench Data: {round(prog/len(halos)*100,2)}%',clear=True)
+
+
 pickle.dump(Data,open('../DataFiles/InstantaneousQuenching.pickle','wb'))
 pickle.dump(Old,open('../DataFiles/250MyrQuenching.pickle','wb'))
