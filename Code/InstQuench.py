@@ -87,7 +87,7 @@ for hid in halos:
     sfr,ix = calc_inst_sf(halo)
     current['SFR'] = sfr
     try:
-        current['Quenched'] = True if sfr.sum()/Data[str(hid)]['Mstar']<1e-11 else False
+        current['Quenched'] = True if (sfr.sum()/1e6)/Data[str(hid)]['Mstar']<1e-11 else False
     except:
         current['Quenched'] = Old[str(hid)]
     Data[str(hid)] = current
