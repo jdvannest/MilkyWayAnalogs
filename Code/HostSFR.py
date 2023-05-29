@@ -61,7 +61,7 @@ def calc_inst_sf(halo, temp_cut=1e4, density_cut=0.2, c_star=0.15):
     return instsf, ix_sf
 
 #Load in all halos to be analyzed
-Data = {}
+Data = pymp.shared.dict()
 halos = []
 for f in [(i,j,k) for i in [1,2,3,4,5,6,7] for j in ['sim','300'] for k in ['Yov','Nov']]:
     hosts = pickle.load(open(f'../DataFiles/MilkyWay.{f[0]}.{f[1]}.{f[2]}.pickle','rb'))
@@ -77,17 +77,17 @@ s = pynbody.load('/myhome2/users/munshi/Romulus/cosmo25/cosmo25p.768sg1bwK1BHe75
 s.physical_units()
 h = s.halos(dosort=True)
 
-print(f'\tWriting Quench Data: 0.00%')
-prog = 0
-for hid in halos:
-    current = {}
-    halo = h.load_copy(hid)
-    sfr,ix = calc_inst_sf(halo)
-    current['SFR_array'] = sfr
-    current['SFR'] = sfr.sum()/1e6
-    current['sSFR'] = (sfr.sum()/1e6)/Data[str(hid)]['Mstar']
-    prog+=1
-    myprint(f'\tWriting Quench Data: {round(prog/len(halos)*100,2)}%',clear=True)
-
+print(f'\tWriting SFR Data: 0.00%')
+prog=pymp.shared.array((1,),dtype=int)
+with pymp.Parallel(10) as pl:
+    for i in pl.xrange(len(halos)):
+        current,hid = {},halos[i]
+        halo = h.load_copy(hid)
+        sfr,ix = calc_inst_sf(halo)
+        current['SFR_array'] = sfr
+        current['SFR'] = sfr.sum()/1e6
+        current['sSFR'] = (sfr.sum()/1e6)/Data[str(hid)]['Mstar']
+        prog[0]+=1
+        myprint(f'\tWriting SFR Data: {round(prog[0]/len(halos)*100,2)}%',clear=True)
 
 pickle.dump(Data,open('../DataFiles/HostSFR.pickle','wb'))
