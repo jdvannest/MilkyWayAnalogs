@@ -251,6 +251,7 @@ def VbandMagnitudeFunction(host,sats,rest,rad,over,path=''):
     f,ax = plt.subplots(1,1)
     ax.fill_between(x,miny,maxy,color='0.5',alpha=.2,edgecolor='None')
     ax.fill_between(x,np.array(meany)+np.array(erry),np.array(meany)-np.array(erry),color='0.5',alpha=.5,edgecolor='None')
+    ax.axvline(-14,c='k',linestyle='dotted')
     ax.plot(mwx2,mwy2,color='orange',label='Milky Way')
     ax.plot(m31x2,m31y2,color='purple',label='M31')
     ax.plot(m94x[:1]+m94x,[0]+m94y,label='M94',color='g')
@@ -1935,7 +1936,7 @@ def NsatVsLargestSatelliteMagnitude(host,sats,rest,rad,over,path=''):
     #f.savefig(f'{path}pdf/NsatVsLargestSatelliteMass.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
-def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
+def SAGAQuenchComparison_OLD(host,sats,rest,rad,over,path=''):
     #Log(M*/Msun) = 1.254 + 1.098(g-r)_0 - 0.4M_(r,0)
 
     with open('DataFiles/AdditionalData/SAGA_Hosts.csv') as f:
@@ -1971,11 +1972,12 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
     for mw in host:
         t,q,tb,qb = 0,0,0,0
         for sat in host[mw]['Satellites']:
-            t+=1
-            if sats[sat]['Quenched']: q+=1
-            if not int(sat) in bhs:
-                tb+=1
-                if sats[sat]['Quenched']: qb+=1
+            if sats[sat]['Mstar']>1e8:
+                t+=1
+                if sats[sat]['Quenched']: q+=1
+                if not int(sat) in bhs:
+                    tb+=1
+                    if sats[sat]['Quenched']: qb+=1
         if t>0:
             mk.append(host[mw]['Kmag'])
             qf.append(q/t)
@@ -2142,6 +2144,115 @@ def SAGAQuenchComparison(host,sats,rest,rad,over,path=''):
     #f.savefig(f'{path}pdf/SAGABinnedQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
+def SAGAQuenchComparison(host,sats,rest,rad,over,path='',BHCheck=True):
+    
+    SH = pickle.load(open('DataFiles/AdditionalData/SAGA_Hosts.pickle','rb'))
+    SS = pickle.load(open('DataFiles/AdditionalData/SAGA_Satellites.pickle','rb'))
+    EH = pickle.load(open('DataFiles/AdditionalData/ELVES_Hosts.pickle','rb'))
+    ES = pickle.load(open('DataFiles/AdditionalData/ELVES_Satellites.pickle','rb'))
+    SB = pickle.load(open('DataFiles/SBProfiles.pickle','rb'))
+    with open(f'DataFiles/Satellite.{rest}.{rad}.{over}.BlackHoles.txt') as f:
+        bhs = f.readlines()
+        bhs = [int(x) for x in bhs]
+    if not BHCheck: bhs = []
+    
+    for SBlimit in [25,1e3]: 
+        mk,qf,smk,sqf,emk,eqf = [],[],[],[],[],[]
+        for mw in host:
+            t,q = 0,0
+            for sat in host[mw]['Satellites']:
+                if sats[sat]['Mstar']>1e8 and SB[sat]['Mueff,r']<SBlimit and (int(sat) not in bhs):
+                    t+=1
+                    if sats[sat]['Quenched']: q+=1
+            if t>0:
+                mk.append(host[mw]['Kmag'])
+                qf.append(q/t)
+        for mw in SH:
+            t,q = 0,0
+            for sat in SH[mw]['Satellites']:
+                if SS[sat]['Mstar']>1e8:
+                    t+=1
+                    if SS[sat]['Quenched']: q+=1
+            if t>0:
+                smk.append(SH[mw]['Kmag'])
+                sqf.append(q/t)
+        for mw in EH:
+            t,q = 0,0
+            for sat in EH[mw]['Satellites']:
+                if ES[sat]['Mstar']>8:
+                    t+=ES[sat]['Likelihood']
+                    if ES[sat]['Quenched']: q+=ES[sat]['Likelihood']
+            if t>0:
+                emk.append(EH[mw]['Kmag'])
+                eqf.append(q/t)
+
+        bins = np.arange(-25.5,-21,.5)
+        mkb,qfb,sqfb,eqfb,qfbe,sqfbe,eqfbe = [],[],[],[],[],[],[]
+        for i in np.arange(len(bins)-1):
+            current = []
+            for j in np.arange(len(mk)):
+                if bins[i]<mk[j]<bins[i+1]:
+                    current.append(qf[j])
+            qfb.append(np.mean(current))
+            qfbe.append(np.std(current)/np.sqrt(len(current)))
+            current = []
+            for j in np.arange(len(smk)):
+                if bins[i]<smk[j]<bins[i+1]:
+                    current.append(sqf[j])
+            sqfb.append(np.mean(current))
+            sqfbe.append(np.std(current)/np.sqrt(len(current)))
+            current = []
+            for j in np.arange(len(emk)):
+                if bins[i]<emk[j]<bins[i+1]:
+                    current.append(eqf[j])
+            eqfb.append(np.mean(current))
+            eqfbe.append(np.std(current)/np.sqrt(len(current)))
+            mkb.append((bins[i]+bins[i+1])/2)
+
+        f=plt.figure(figsize=(8,4.5))
+        ax1 = f.add_subplot(111)
+        ax1.set_xlim([-23,-25])
+        ax2 = ax1.twiny()
+        def ms(mk):
+            return(-0.36815865*mk+1.65875324) #polyfit from 2.sim.Yov MW sample
+        ax2.set_xlim([ms(-23),ms(-25)])
+        #ax2.set_xticks([10.2,10.4,10.6,10.8])
+        ax1.set_ylim([-.2,1.05])
+        ax1.set_yticks([0,.2,.4,.6,.8,1])
+        ax1.set_xticks(np.arange(-25,-22.9,.5))
+        ax1.set_xlabel(f'M$_K$',fontsize=25)
+        ax1.set_ylabel(f'f$_q$',fontsize=25)
+        ax2.set_xlabel(r'Approximate Log(M$_*$/M$_\odot$)',fontsize=25)
+        ax1.tick_params(labelsize=18,length=8)
+        ax2.tick_params(labelsize=18,direction='in',length=8)
+        ax1.plot([-23,-25],[0,0],c='0.5',linestyle=':',zorder=0)
+        ax1.plot([-23,-25],[1,1],c='0.5',linestyle=':',zorder=0)
+        ax1.errorbar(mkb,eqfb,yerr=eqfbe,capsize=4,c='sandybrown',zorder=1)
+        ax1.plot(mkb,eqfb,marker='o',c='sandybrown',label='ELVES')
+        ax1.errorbar(mkb,sqfb,yerr=sqfbe,capsize=4,c='olivedrab',zorder=1)
+        ax1.plot(mkb,sqfb,marker='o',c='olivedrab',label=r'SAGA II')
+        ax1.errorbar(mkb,qfb,yerr=qfbe,capsize=4,c='k',zorder=1)
+        ax1.plot(mkb,qfb,marker='o',c='k',label='Romulus25')
+        tmw,qmw,tm31,qm31 = 0,0,0,0
+        for sat in EH['MW']['Satellites']:
+            if ES[sat]['Mstar']>8:
+                tmw += 1
+                if ES[sat]['Quenched']: qmw += 1
+        for sat in EH['M31']['Satellites']:
+            if ES[sat]['Mstar']>8:
+                tm31 += 1
+                if ES[sat]['Quenched']: qm31 += 1
+        ax1.scatter(EH['MW']['Kmag'],qmw/tmw,c='darkorchid')
+        ax1.scatter(EH['M31']['Kmag'],qm31/tm31,c='darkorchid')
+        ax1.text(EH['MW']['Kmag'],qmw/tmw+.02,'MW',fontsize=18,c='darkorchid',horizontalalignment='center',zorder=1)
+        ax1.text(EH['M31']['Kmag']-.02,qm31/tm31,'M31',fontsize=18,c='darkorchid',verticalalignment='center',zorder=1)
+        ax1.legend(loc='lower left', prop={'size':15}, ncol=3)
+        app = '.MagCut' if SBlimit==25 else ''
+        bhapp = '.Subset' if BHCheck else ''
+        f.savefig(f'{path}SAGABinnedQuenchComparison{bhapp}{app}.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
+        #f.savefig(f'{path}pdf/SAGABinnedQuenchComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
+        plt.close()
+
 def SAGAMassComparison(host,sats,rest,rad,over,path=''):
     mk,mks,mke,sv,svs,sve,svew=[],[],[],[],[],[],[]
     #mkt,mkst,mket,svt,svst,svet=0,0,0,0,0,0
@@ -2237,6 +2348,7 @@ def SAGAMassComparison(host,sats,rest,rad,over,path=''):
     #f.savefig(f'{path}pdf/SAGAMassComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)
     plt.close()
 
+    sv = np.array(sv)
     sve = np.array(sve)
     svs = np.array(svs)
     svew = np.array(svew)
@@ -2264,11 +2376,12 @@ def SAGAMassComparison(host,sats,rest,rad,over,path=''):
     ax.set_ylabel('Normalized Counts',fontsize=20)
     ax.tick_params(labelsize=15)
 
-    ax.hist(sv,vbins,color='k',label='Romulus25',histtype='step',density=True,linewidth=2)
+    svc,bins = np.histogram(sv,vbins)
+    ax.hist(bins[:-1],bins,weights=svc/(len(sv[sv<-14])*np.diff(vbins)),color='k',label='Romulus25',histtype='step',linewidth=2)
     svec,bins = np.histogram(sve,vbins,weights=svew)
-    ax.hist(bins[:-1],bins,weights=svec/(len(sve[sve<-12])*np.diff(vbins)),color='sandybrown',label='ELVES',histtype='step',linewidth=2)
+    ax.hist(bins[:-1],bins,weights=svec/(len(sve[sve<-14])*np.diff(vbins)),color='sandybrown',label='ELVES',histtype='step',linewidth=2)
     svsc,bins = np.histogram(svs,vbins)
-    ax.hist(bins[:-1],bins,weights=svsc/(len(svs[svs<-12])*np.diff(vbins)),color='olivedrab',label='SAGA II',histtype='step',linewidth=2)
+    ax.hist(bins[:-1],bins,weights=svsc/(len(svs[svs<-14])*np.diff(vbins)),color='olivedrab',label='SAGA II',histtype='step',linewidth=2)
 
     f.savefig(f'{path}SAGAMassComparison.Satellites.Complete.{rest}.{rad}.{over}.png',bbox_inches='tight',pad_inches=.1)
     #f.savefig(f'{path}pdf/SAGAMassComparison.'+rest+'.'+rad+'.'+over+'.pdf',bbox_inches='tight',pad_inches=.1)

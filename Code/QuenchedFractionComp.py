@@ -5,10 +5,14 @@ import matplotlib.pylab as plt
 from matplotlib.markers import MarkerStyle
 
 NoBH = False
-Weight = True
+Weight = False
+MagCut = True
+lines = 'semi'#['yes','semi','no']
 sw = 10**(11) #scale weight
 app = '.Subset' if NoBH else ''
 appw = '.Weighted' if Weight else ''
+appm = '.MagCut' if MagCut else ''
+SB = pickle.load(open('../DataFiles/SBProfiles.pickle','rb'))
 
 for i in [1,2,7]:
     rvir = pickle.load(open(f'../DataFiles/MilkyWay.{i}.sim.Yov.pickle','rb'))
@@ -41,7 +45,13 @@ for i in [1,2,7]:
     for mw in rvir:
         t,q = 0,0
         for sat in rvir[mw]['Satellites']:
-            if svir[sat]['Mstar']>1e8 and not (NoBH & (sat in bvir)):
+            if NoBH:
+                BHCheck=True if sat not in bvir else False
+            else: BHCheck=True
+            if MagCut:
+                MagCheck=True if SB[sat]['Mueff,r']<25 else False
+            else: MagCheck=True
+            if svir[sat]['Mstar']>1e8 and BHCheck and MagCheck:
                 t+=1
                 if svir[sat]['Quenched']: q+=1
         if t>0:
@@ -55,7 +65,12 @@ for i in [1,2,7]:
     for mw in r300:
         t,q = 0,0
         for sat in r300[mw]['Satellites']:
-            if s300[sat]['Mstar']>1e8 and not (NoBH & (sat in b300)):
+            if NoBH:
+                BHCheck=True if sat not in b300 else False
+            else: BHCheck=True
+            if MagCut:
+                MagCheck=True if SB[sat]['Mueff,r']<25 else False
+            if s300[sat]['Mstar']>1e8 and BHCheck and MagCheck:
                 t+=1
                 if s300[sat]['Quenched']: q+=1
         if t>0:
@@ -71,7 +86,10 @@ for i in [1,2,7]:
             up = rvy[rvi.index(mw)]
             dn = r3y[r3i.index(mw)]
             x = rvx[rvi.index(mw)]
-            ax.vlines(x,ymin=min([up,dn]),ymax=max([up,dn]),color='k',zorder=0)
+            if lines=='yes':
+                ax.vlines(x,ymin=min([up,dn]),ymax=max([up,dn]),color='k',zorder=0)
+            elif lines=='semi':
+                ax.vlines(x,ymin=min([up,dn]),ymax=max([up,dn]),color='.5',zorder=0)
 
     norm = mpl.colors.BoundaryNorm(np.arange(.5,max(rvn+r3n)+1.5), mpl.cm.viridis.N)
     p = ax.scatter(r3x,r3y,c=r3n,cmap='viridis',norm=norm,marker=MarkerStyle('o', fillstyle='top'),s=7**2,label='300 kpc')
@@ -91,8 +109,114 @@ for i in [1,2,7]:
                    ymax=max([np.mean(np.array(r3y)[np.where(np.array(r3x)>1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)>1)])]),color='k')
     ax.scatter(-1,-1,c='r',marker='D',s=7**2,label='Mean')
     ax.legend(loc='lower left',prop={'size':14.4},ncol=4)
-    f.savefig(f'Data/QuenchedFractionComp{app}{appw}.{i}.png',bbox_inches='tight',pad_inches=.1)
+    f.savefig(f'Data/QuenchedFractionComp{app}{appm}{appw}.{i}.png',bbox_inches='tight',pad_inches=.1)
 
+
+
+
+    f,ax = plt.subplots(1,1,figsize=(8,6))
+    ax.set_ylabel(r'Average f$_q$',fontsize=25)
+    ax.set_xlabel(r'D$_{MW+}$ [Mpc]',fontsize=25)
+    ax.tick_params(labelsize=20)
+    ax.set_xlim([2e-1,5])
+    ax.set_ylim([-.15,1.03])
+    ax.semilogx()
+    ax.plot([-1,11],[1,1],c='.5',linestyle=':',zorder=0)
+    ax.plot([-1,11],[0,0],c='.5',linestyle=':',zorder=0)
+    ax.axvline(.767,linestyle='--',label='MW - M31',color='.5',zorder=0)
+    ax.axvline(1,color='.5',zorder=0)
+    ax.text(.925,.18,'Pairs',rotation='vertical',horizontalalignment='center',verticalalignment='center',color='.5',fontsize=18)
+    ax.text(1.12,.18,'Isolated',rotation='vertical',horizontalalignment='center',verticalalignment='center',color='.5',fontsize=18)
+
+    rbins = np.logspace(np.log10(2e-1),np.log10(5),6)
+    rvx,rvy,rvn,rvi,rvd,r3x,r3y,r3n,r3i,r3d = [],[],[],[],[],[],[],[],[],[]
+    #Lower hemispheres; Rvir
+    d = []
+    for j in np.arange(len(rbins)-1):
+        t,q = 0,0
+        for mw in rvir:
+            host = False
+            if rbins[j]<rvir[mw]['Closest_MW+'][0]/1e3<rbins[j+1]:
+                for sat in rvir[mw]['Satellites']:
+                    if NoBH:
+                        BHCheck=True if sat not in bvir else False
+                    else: BHCheck=True
+                    if MagCut:
+                        MagCheck=True if SB[sat]['Mueff,r']<25 else False
+                    else: MagCheck=True
+                    if svir[sat]['Mstar']>1e8 and BHCheck and MagCheck:
+                        host = True
+                        t+=1
+                        if svir[sat]['Quenched']: q+=1
+                if host: d.append(rvir[mw]['Closest_MW+'][0]/1e3)
+        if t>0:
+            rvx.append((rbins[j+1]+rbins[j])/2)
+            w = rvir[mw]['Mstar']/sw if Weight else 1
+            rvy.append(q/t*w)
+            rvn.append(t)
+    d = np.array(d)
+    dpl,dil = np.mean(d[d<1]),np.mean(d[d>1])
+
+    #Upper hemispheres; R300
+    d = []
+    for j in np.arange(len(rbins)-1):
+        t,q= 0,0
+        for mw in r300:
+            host = False
+            if rbins[j]<r300[mw]['Closest_MW+'][0]/1e3<rbins[j+1]:
+                for sat in r300[mw]['Satellites']:
+                    if NoBH:
+                        BHCheck=True if sat not in bvir else False
+                    else: BHCheck=True
+                    if MagCut:
+                        MagCheck=True if SB[sat]['Mueff,r']<25 else False
+                    else: MagCheck=True
+                    if s300[sat]['Mstar']>1e8 and BHCheck and MagCheck:
+                        host = True
+                        t+=1
+                        if s300[sat]['Quenched']: q+=1
+                if host: d.append(r300[mw]['Closest_MW+'][0]/1e3)
+        if t>0:
+            r3x.append((rbins[j+1]+rbins[j])/2)
+            w = r300[mw]['Mstar']/sw if Weight else 1
+            r3y.append(q/t*w)
+            r3n.append(t)
+    d = np.array(d)
+    dpu,diu = np.mean(d[d<1]),np.mean(d[d>1])
+
+    x,up,dn = [],[],[]
+    for j in np.arange(len(rbins)-1):
+        x.append((rbins[j+1]+rbins[j])/2)
+        up.append(max([rvy[j],r3y[j]]))
+        dn.append(min([rvy[j],r3y[j]]))
+    ax.vlines(x,ymin=dn,ymax=up,color='.75',zorder=0)
+    
+    #norm = mpl.colors.BoundaryNorm(np.arange(.5,max(rvn+r3n)+1.5), mpl.cm.viridis.N)
+    norm = mpl.colors.BoundaryNorm(np.arange(.5,36), mpl.cm.viridis.N)
+    p = ax.scatter(r3x,r3y,c=r3n,cmap='viridis',norm=norm,marker=MarkerStyle('o', fillstyle='top'),s=10**2,label='300 kpc')
+    ax.scatter(rvx,rvy,c=rvn,cmap='viridis',norm=norm,marker=MarkerStyle('o', fillstyle='bottom'),s=10**2,label=r'R$_{vir}$')
+    cbar = f.colorbar(p,cax=f.add_axes([.91,.11,.03,.77]))
+    cbar.set_label(r'N$_{sat}$ [M$_*>10^8$ M$_\odot$]',fontsize=25)
+    cbar.ax.tick_params(labelsize=20)
+    cbar.set_ticks(np.linspace(0,50,11))
+    #Add medians
+    # ax.scatter(np.mean(np.array(r3x)[np.where(np.array(r3x)<1)]),np.mean(np.array(r3y)[np.where(np.array(r3x)<1)]),c='r',marker=MarkerStyle('D', fillstyle='top'),s=10**2)
+    # ax.scatter(np.mean(np.array(r3x)[np.where(np.array(r3x)>1)]),np.mean(np.array(r3y)[np.where(np.array(r3x)>1)]),c='r',marker=MarkerStyle('D', fillstyle='top'),s=10**2)
+    # ax.scatter(np.mean(np.array(rvx)[np.where(np.array(rvx)<1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)<1)]),c='r',marker=MarkerStyle('D', fillstyle='bottom'),s=10**2)
+    # ax.scatter(np.mean(np.array(rvx)[np.where(np.array(rvx)>1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)>1)]),c='r',marker=MarkerStyle('D', fillstyle='bottom'),s=10**2)
+    # ax.vlines(np.mean(np.array(r3x)[np.where(np.array(r3x)<1)]),ymin=min([np.mean(np.array(r3y)[np.where(np.array(r3x)<1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)<1)])]),zorder=0,
+    #                ymax=max([np.mean(np.array(r3y)[np.where(np.array(r3x)<1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)<1)])]),color='k')
+    # ax.vlines(np.mean(np.array(r3x)[np.where(np.array(r3x)>1)]),ymin=min([np.mean(np.array(r3y)[np.where(np.array(r3x)>1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)>1)])]),zorder=0,
+    #                ymax=max([np.mean(np.array(r3y)[np.where(np.array(r3x)>1)]),np.mean(np.array(rvy)[np.where(np.array(rvx)>1)])]),color='k')
+    ax.scatter(dpu,np.mean(np.array(r3y)[np.where(np.array(r3x)<1)]),c='r',marker=MarkerStyle('D', fillstyle='top'),s=10**2)
+    ax.scatter(diu,np.mean(np.array(r3y)[np.where(np.array(r3x)>1)]),c='r',marker=MarkerStyle('D', fillstyle='top'),s=10**2)
+    ax.scatter(dpl,np.mean(np.array(rvy)[np.where(np.array(rvx)<1)]),c='r',marker=MarkerStyle('D', fillstyle='bottom'),s=10**2)
+    ax.scatter(dil,np.mean(np.array(rvy)[np.where(np.array(rvx)>1)]),c='r',marker=MarkerStyle('D', fillstyle='bottom'),s=10**2)
+    ax.plot([dpl,dpu],[np.mean(np.array(rvy)[np.where(np.array(rvx)<1)]),np.mean(np.array(r3y)[np.where(np.array(r3x)<1)])],c='k',zorder=0)
+    ax.plot([dil,diu],[np.mean(np.array(rvy)[np.where(np.array(rvx)>1)]),np.mean(np.array(r3y)[np.where(np.array(r3x)>1)])],c='k',zorder=0)
+    ax.scatter(-1,-1,c='r',marker='D',s=7**2,label='Mean')
+    ax.legend(loc='lower left',prop={'size':14.4},ncol=4)
+    f.savefig(f'Data/AverageQuenchedFractionComp{app}{appm}{appw}.{i}.png',bbox_inches='tight',pad_inches=.1)
 
 
 
